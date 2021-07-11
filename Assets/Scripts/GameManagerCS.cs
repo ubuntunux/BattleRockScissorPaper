@@ -7,27 +7,16 @@ public enum GameState
     None,
     ReadyToRound,
     ReadyToAttack,
-    Attack,
+    AttackHit,
     End,
-}
-
-public enum AttackType
-{
-    Rock,
-    Scissor,
-    Paper
 }
 
 public class GameManagerCS : MonoBehaviour
 {
-    // constants
-    public float kAttackTimerTime = 3.0f;
-    public float kAttackTime = 1.0f;
-
     // Properties
     float _elapsedTime = 0.0f;
     float _attackTimerTime = 0.0f;
-    float _attackTime = 0.0f;
+    float _attackHitTime = 0.0f;
     GameState _gameState = GameState.None;
 
     //
@@ -59,7 +48,7 @@ public class GameManagerCS : MonoBehaviour
         _gameState = GameState.ReadyToRound;
         _elapsedTime = 0.0f;
         _attackTimerTime = 0.0f;
-        _attackTime = 0.0f;
+        _attackHitTime = 0.0f;
 
         PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
         PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
@@ -76,35 +65,43 @@ public class GameManagerCS : MonoBehaviour
     }
 
     public void Btn_Fight_OnClick() {
-        _attackTimerTime = 0.0f;
-        _attackTime = 0.0f;
-        _gameState = GameState.ReadyToAttack;
-		Snd_Fight.Play();
         Layer_AttackButtons.SetActive(true);
         Layer_AttackTimer.SetActive(true);
         Btn_Fight.SetActive(false);
+        Snd_Fight.Play();
+        SetReadyToAttack();
 	}
 
-    public void Btn_Rock_OnClick() {
+    void Btn_Rock_OnClick() {
         Attack(AttackType.Rock);
 	}
 
-    public void Btn_Scissor_OnClick() {
+    void Btn_Scissor_OnClick() {
         Attack(AttackType.Scissor);
 	}
 
-    public void Btn_Paper_OnClick() {
+    void Btn_Paper_OnClick() {
         Attack(AttackType.Paper);
 	}
 
-    public void Attack(AttackType attackType)
+    void Attack(AttackType attackType)
     {
         PlayerA_CS.SetAttack(attackType);
 	}
 
-    public void AttackHit(AttackType attackType)
+    // Set State
+    void SetReadyToAttack()
     {
-		PlayerA_CS.SetAttackHit(attackType);
+        _attackTimerTime = 0.0f;
+        _gameState = GameState.ReadyToAttack;
+    }
+
+    void SetAttackHit()
+    {
+        AttackTimer_CS.setTimer(0.0f);
+        _attackHitTime = 0.0f;                
+        _gameState = GameState.AttackHit;
+		PlayerA_CS.SetAttackHit();
         MainCamera.GetComponent<CameraCS>().setShake();
 	}
 
@@ -116,47 +113,23 @@ public class GameManagerCS : MonoBehaviour
             Application.Quit();
         }
 
-        if(GameState.ReadyToAttack == _gameState || GameState.Attack == _gameState)
+        if(GameState.ReadyToAttack == _gameState)
         {
-            bool doAttack = false;
-
-            if(GameState.ReadyToAttack == _gameState)
+            float attackTimerBar = 1.0f - ((_attackTimerTime % Constants.AttackTimerTime) / Constants.AttackTimerTime);
+            AttackTimer_CS.setTimer(attackTimerBar);
+            if(Constants.AttackTimerTime <= _attackTimerTime)
             {
-                float attackTimerBar = 1.0f - ((_attackTimerTime % kAttackTimerTime) / kAttackTimerTime);
-                AttackTimer_CS.setTimer(attackTimerBar);
-
-                if(kAttackTimerTime <= _attackTimerTime)
-                {
-                    doAttack = true;
-                    _attackTime = 0.0f;
-                    _attackTimerTime = 0.0f;                    
-                    AttackTimer_CS.setTimer(0.0f);
-                    _gameState = GameState.Attack;
-                }
-                else
-                {
-                    _attackTimerTime += Time.deltaTime;
-                }
+                SetAttackHit();
             }
-
-            if(GameState.Attack == _gameState)
+            _attackTimerTime += Time.deltaTime;
+        }
+        else if(GameState.AttackHit == _gameState)
+        {
+            if(Constants.AttackHitTime <= _attackHitTime)
             {
-                if(doAttack)
-                {
-                    Attack(AttackType.Paper);
-                }
-                
-                if(kAttackTime <= _attackTime)
-                {
-                    _attackTime = 0.0f;
-                    _attackTimerTime = 0.0f;
-                    _gameState = GameState.ReadyToAttack;
-                }
-                else
-                {
-                    _attackTime += Time.deltaTime;
-                }
+                SetReadyToAttack();
             }
+            _attackHitTime += Time.deltaTime;
         }
         _elapsedTime += Time.deltaTime;
     }

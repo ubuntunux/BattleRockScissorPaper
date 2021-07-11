@@ -2,25 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum AttackType
+{
+    None,
+    Rock,
+    Scissor,
+    Paper
+}
+
 public enum PlayerState
 {
     None,
     Idle,
-    AttackRock,
-    AttackScissor,
-    AttackPaper,
+    AttackMotion,
     AttackHit
 }
 
 public class PlayerCS : MonoBehaviour
 {
-    // constants
-    float kAttackMotionTime = 0.1f;
-
     // properties
     bool _isLeft;
     Vector3 _startPosition;
     PlayerState _playerState = PlayerState.None;
+    AttackType _lastAttackType = AttackType.None;
     float _elapsedTime = 0.0f;
     float _idleMotionSpeed = 0.0f;
     float _attackMotionTime = 0.0f;
@@ -50,6 +54,7 @@ public class PlayerCS : MonoBehaviour
         _isLeft = isLeft;
         _elapsedTime = 0.0f;
         _playerState = PlayerState.Idle;
+        _lastAttackType = AttackType.None;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         
         float offsetX = 2.0f;
@@ -66,11 +71,6 @@ public class PlayerCS : MonoBehaviour
         SetTexture(Texture_Idle);
     }
 
-    public bool isAttackState()
-    {
-        return (PlayerState.AttackRock == _playerState || PlayerState.AttackScissor == _playerState || PlayerState.AttackPaper == _playerState);
-    }
-
     public void SetIdle()
     {
         _playerState = PlayerState.Idle;
@@ -84,15 +84,12 @@ public class PlayerCS : MonoBehaviour
         switch(attackType)
         {
             case AttackType.Rock:
-                _playerState = PlayerState.AttackRock;
                 SetTexture(Texture_AttackRock);
                 break;
             case AttackType.Scissor:
-                _playerState = PlayerState.AttackScissor;
                 SetTexture(Texture_AttackScissor);
                 break;
             case AttackType.Paper:
-                _playerState = PlayerState.AttackPaper;
                 SetTexture(Texture_AttackPaper);
                 break;
             default:
@@ -102,10 +99,13 @@ public class PlayerCS : MonoBehaviour
 
         if(isAttackHit)
         {
+            _playerState = PlayerState.AttackHit;
             Snd_AttackHit.Play();
         }
         else
         {
+            _playerState = PlayerState.AttackMotion;
+            _lastAttackType = attackType;
             Snd_Attack.Play();
         }
     }
@@ -115,9 +115,14 @@ public class PlayerCS : MonoBehaviour
         SetAttackInner(attackType, false);
     }
 
-    public void SetAttackHit(AttackType attackType)
+    public void SetAttackHit()
     {
-        SetAttackInner(attackType, true);
+        if(_lastAttackType == AttackType.None)
+        {
+            _lastAttackType = (AttackType)(Random.Range(0, 3) + 1);
+        }
+
+        SetAttackInner(_lastAttackType, true);
     }
 
     // Update is called once per frame
@@ -130,11 +135,22 @@ public class PlayerCS : MonoBehaviour
             float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
             transform.position = _startPosition + new Vector3(_isLeft ? offsetX : -offsetX, offsetY, 0.0f);
         }
-        else if(isAttackState())
+        else if(PlayerState.AttackMotion == _playerState || PlayerState.AttackHit == _playerState)
         {
-            if (kAttackMotionTime <= _attackMotionTime)
+            if(PlayerState.AttackMotion == _playerState)
             {
-                SetIdle();
+                if (Constants.AttackMotionTime <= _attackMotionTime)
+                {
+                    SetIdle();
+                }
+            }
+            else if(PlayerState.AttackHit == _playerState)
+            {
+                if (Constants.AttackHitTime <= _attackMotionTime)
+                {
+                    _lastAttackType = AttackType.None;
+                    SetIdle();
+                }
             }
             _attackMotionTime += Time.deltaTime;
         }
