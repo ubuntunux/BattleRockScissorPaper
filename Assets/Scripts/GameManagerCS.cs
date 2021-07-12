@@ -26,6 +26,10 @@ public class GameManagerCS : MonoBehaviour
     public GameObject PlayerB;
     PlayerCS PlayerA_CS;
     PlayerCS PlayerB_CS;
+    // Effect
+    public GameObject Effect_AttackHit;
+    GameObject _effect_AttackHitA;
+    GameObject _effect_AttackHitB;
     // Sounds
     public AudioSource Snd_Fight;
     // UI
@@ -35,7 +39,9 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Btn_Scissor;
     public GameObject Btn_Paper;
     public GameObject Layer_AttackTimer;
-    AttackTimerCS AttackTimer_CS;
+    UIBarCS AttackTimer_CS;
+    public GameObject Layer_HP_Bar_A;
+    public GameObject Layer_HP_Bar_B;
     
     // Start is called before the first frame update
     void Start()
@@ -52,23 +58,73 @@ public class GameManagerCS : MonoBehaviour
 
         PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
         PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
-        PlayerA_CS.Reset(true);
-        PlayerB_CS.Reset(false);
+        PlayerA_CS.Reset(Layer_HP_Bar_A, true, false);
+        PlayerB_CS.Reset(Layer_HP_Bar_B, false, true);
 
+        // Effects
+        DestroyEffectAttackHit(true);
+        DestroyEffectAttackHit(false);
         // UI        
-        AttackTimer_CS = Layer_AttackTimer.GetComponent<AttackTimerCS>();
+        AttackTimer_CS = Layer_AttackTimer.GetComponent<UIBarCS>();
         AttackTimer_CS.Reset();
-
-        // first update
-        Layer_AttackTimer.SetActive(false);
-        Layer_AttackButtons.SetActive(false);
     }
 
-    public void Btn_Fight_OnClick() {
-        Layer_AttackButtons.SetActive(true);
-        Layer_AttackTimer.SetActive(true);
+	public void CreateEffectAttackHit(AttackType attackType, bool isLeft)
+    {
+        DestroyEffectAttackHit(isLeft);
+
+        float offsetY = Constants.GroundPosition;
+        if(AttackType.Rock == attackType)
+        {
+            offsetY = 2.0f;
+        }
+        else if(AttackType.Scissor == attackType)
+        {
+            offsetY = 1.0f;
+        }
+        else if(AttackType.Paper == attackType)
+        {
+            offsetY = 3.0f;
+        }
+
+        Vector3 pos = new Vector3(isLeft ? -Constants.AttackDistance : Constants.AttackDistance, offsetY, 0.0f);
+        Quaternion rot = Quaternion.Euler(-90, 0, 0);
+		GameObject effect_AttackHit = (GameObject)GameObject.Instantiate(Effect_AttackHit, pos, rot);
+        if(isLeft)
+        {
+            effect_AttackHit.transform.localScale = new Vector3(-effect_AttackHit.transform.localScale.x, effect_AttackHit.transform.localScale.y, effect_AttackHit.transform.localScale.z);
+            _effect_AttackHitA = effect_AttackHit;
+        }
+        else
+        {   
+            _effect_AttackHitB = effect_AttackHit;
+        }
+	}
+
+    public void DestroyEffectAttackHit(bool isLeft)
+    {
+        if(isLeft)
+        {
+            if(null != _effect_AttackHitA) 
+            {
+                Destroy(_effect_AttackHitA);
+                _effect_AttackHitA = null;
+            }
+        }
+        else
+        {
+            if(null != _effect_AttackHitB) 
+            {
+                Destroy(_effect_AttackHitB);
+                _effect_AttackHitB = null;
+            }
+        }
+    }
+
+    public void Btn_Fight_OnClick() {        
+        Reset();        
         Btn_Fight.SetActive(false);
-        Snd_Fight.Play();
+        Snd_Fight.Play();        
         SetReadyToAttack();
 	}
 
@@ -89,20 +145,78 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS.SetAttack(attackType);
 	}
 
+    bool checkLoose(AttackType lhs, AttackType rhs)
+    {
+        switch (rhs)
+        {
+            case AttackType.Rock:
+                return AttackType.Paper == lhs;
+            case AttackType.Scissor:
+                return AttackType.Rock == lhs;
+            case AttackType.Paper:
+                return AttackType.Scissor == lhs;
+        }
+        return false;
+    }
+
+    bool checkWin(AttackType lhs, AttackType rhs)
+    {
+        switch (rhs)
+        {
+            case AttackType.Rock:
+                return AttackType.Scissor == lhs;
+            case AttackType.Scissor:
+                return AttackType.Paper == lhs;
+            case AttackType.Paper:
+                return AttackType.Rock == lhs;
+        }
+        return false;
+    }
+
     // Set State
     void SetReadyToAttack()
     {
+        PlayerA_CS.SetIdle();
+        PlayerB_CS.SetIdle();
         _attackTimerTime = 0.0f;
         _gameState = GameState.ReadyToAttack;
     }
 
+    void SetEnd()
+    {
+        Btn_Fight.SetActive(true);
+        _gameState = GameState.End;
+    }
+
     void SetAttackHit()
     {
-        AttackTimer_CS.setTimer(0.0f);
+        AttackTimer_CS.setBar(0.0f);
         _attackHitTime = 0.0f;                
         _gameState = GameState.AttackHit;
 		PlayerA_CS.SetAttackHit();
+        PlayerB_CS.SetAttackHit();
+
+        AttackType attackTypeA = PlayerA_CS.getLastAttackType();
+        AttackType attackTypeB = PlayerB_CS.getLastAttackType();
+
+        if(attackTypeB == attackTypeA || checkLoose(attackTypeB, attackTypeA))
+        {
+            CreateEffectAttackHit(attackTypeB, true);
+            PlayerA_CS.SetDamage((attackTypeB == attackTypeA) ? Constants.DamageDraw : Constants.DamageLoose);
+        }
+
+        if(attackTypeA == attackTypeB || checkLoose(attackTypeA, attackTypeB))
+        {
+            CreateEffectAttackHit(attackTypeA, false);
+            PlayerB_CS.SetDamage((attackTypeA == attackTypeB) ? Constants.DamageDraw : Constants.DamageLoose);
+        }
+
         MainCamera.GetComponent<CameraCS>().setShake();
+
+        if (false == PlayerA_CS.isAlive() || false == PlayerB_CS.isAlive())
+        {
+            SetEnd();
+        }
 	}
 
      // Update is called once per frame
@@ -116,7 +230,7 @@ public class GameManagerCS : MonoBehaviour
         if(GameState.ReadyToAttack == _gameState)
         {
             float attackTimerBar = 1.0f - ((_attackTimerTime % Constants.AttackTimerTime) / Constants.AttackTimerTime);
-            AttackTimer_CS.setTimer(attackTimerBar);
+            AttackTimer_CS.setBar(attackTimerBar);
             if(Constants.AttackTimerTime <= _attackTimerTime)
             {
                 SetAttackHit();
@@ -131,6 +245,20 @@ public class GameManagerCS : MonoBehaviour
             }
             _attackHitTime += Time.deltaTime;
         }
+        if(GameState.End == _gameState)
+        {
+        }
+
+        if(null != _effect_AttackHitA && false == _effect_AttackHitA.GetComponent<ParticleSystem>().isPlaying)
+        {
+			DestroyEffectAttackHit(true);
+		}
+
+        if(null != _effect_AttackHitB && false == _effect_AttackHitB.GetComponent<ParticleSystem>().isPlaying)
+        {
+			DestroyEffectAttackHit(false);
+		}
+
         _elapsedTime += Time.deltaTime;
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackTimerCS : MonoBehaviour
+public class UIBarCS : MonoBehaviour
 {
     public GameObject Bar;
 
@@ -14,10 +14,10 @@ public class AttackTimerCS : MonoBehaviour
 
     public void Reset()
     {
-        setTimer(1.0f);
+        setBar(1.0f);
     }
 
-    public void setTimer(float ratio)
+    public void setBar(float ratio)
     {
         Bar.transform.localScale = new Vector3(ratio, 1.0f, 1.0f);
     }

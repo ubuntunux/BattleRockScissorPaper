@@ -15,29 +15,38 @@ public enum PlayerState
     None,
     Idle,
     AttackMotion,
-    AttackHit
+    AttackHit,
+    Dead
 }
 
 public class PlayerCS : MonoBehaviour
 {
     // properties
-    bool _isLeft;
+    bool _isNPC = false;
+    bool _isLeft = false;
     Vector3 _startPosition;
     PlayerState _playerState = PlayerState.None;
     AttackType _lastAttackType = AttackType.None;
     float _elapsedTime = 0.0f;
     float _idleMotionSpeed = 0.0f;
     float _attackMotionTime = 0.0f;
+    float _nextAttackMotionTime = 0.0f;
+    int _hp = Constants.InitialHP;
 
     // textures
     public Texture Texture_Idle;
     public Texture Texture_AttackRock;
     public Texture Texture_AttackScissor;
     public Texture Texture_AttackPaper;
+    public Texture Texture_Dead;
 
     // sounds
     public AudioSource Snd_Attack;
     public AudioSource Snd_AttackHit;
+
+    // ui
+    GameObject Layer_HP_Bar;
+    UIBarCS HP_Bar_CS;
 
     // Start is called before the first frame update
     void Start()
@@ -49,23 +58,23 @@ public class PlayerCS : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
     }
 
-    public void Reset(bool isLeft)
+    public void Reset(GameObject layer_hp_bar, bool isLeft, bool isNPC)
     {
+        _isNPC = isNPC;
         _isLeft = isLeft;
         _elapsedTime = 0.0f;
-        _playerState = PlayerState.Idle;
+        _playerState = PlayerState.None;
         _lastAttackType = AttackType.None;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
+        _nextAttackMotionTime = Random.insideUnitCircle.x * Constants.AttackTimerTime;
+        _hp = Constants.InitialHP;
+
+        // UI        
+        Layer_HP_Bar = layer_hp_bar;
+        HP_Bar_CS = Layer_HP_Bar.GetComponent<UIBarCS>();
+        HP_Bar_CS.Reset();
         
-        float offsetX = 2.0f;
-        float offsetY = 3.0f;
-
-        if(isLeft)
-        {
-            offsetX = -offsetX;
-        }
-
-        _startPosition = new Vector3(offsetX, offsetY, 0.0f);
+        _startPosition = new Vector3(isLeft ? -Constants.IdleDistance : Constants.IdleDistance, Constants.GroundPosition, 0.0f);
         transform.position = _startPosition;
 
         SetTexture(Texture_Idle);
@@ -73,8 +82,24 @@ public class PlayerCS : MonoBehaviour
 
     public void SetIdle()
     {
-        _playerState = PlayerState.Idle;
         SetTexture(Texture_Idle);
+        _playerState = PlayerState.Idle;
+    }
+
+     public bool isAlive()
+    {
+        return (PlayerState.Dead != _playerState);
+    }
+
+    public void SetDead()
+    {
+        SetTexture(Texture_Dead);
+        _playerState = PlayerState.Dead;
+    }
+
+    public AttackType getLastAttackType()
+    {
+        return _lastAttackType;
     }
 
     public void SetAttackInner(AttackType attackType, bool isAttackHit)
@@ -112,31 +137,71 @@ public class PlayerCS : MonoBehaviour
 
     public void SetAttack(AttackType attackType)
     {
+        if (false == isAlive() || PlayerState.AttackHit == _playerState)
+        {
+            return;
+        }
+        
+        if(attackType == AttackType.None)
+        {
+            attackType = (AttackType)(Random.Range(0, 3) + 1);
+        }
         SetAttackInner(attackType, false);
     }
 
     public void SetAttackHit()
     {
+        if (false == isAlive() || PlayerState.AttackHit == _playerState)
+        {
+            return;
+        }
+
         if(_lastAttackType == AttackType.None)
         {
             _lastAttackType = (AttackType)(Random.Range(0, 3) + 1);
         }
-
         SetAttackInner(_lastAttackType, true);
+    }
+
+    public void SetDamage(int damage)
+    {
+        _hp -= damage;
+        if(_hp <= 0)
+        {
+            _hp = 0;
+            SetDead();
+        }
+
+        HP_Bar_CS.setBar((float)_hp / Constants.InitialHP);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(PlayerState.Idle == _playerState)
+        if(PlayerState.Dead == _playerState)
         {
+        }
+        else if(PlayerState.None == _playerState || PlayerState.Idle == _playerState)
+        {
+            // Idle
             float speed = _elapsedTime * _idleMotionSpeed;
             float offsetX = Mathf.Sin(speed) * 0.4f;
             float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
             transform.position = _startPosition + new Vector3(_isLeft ? offsetX : -offsetX, offsetY, 0.0f);
+
+            if(_isNPC && PlayerState.Idle == _playerState)
+            {
+                if(_nextAttackMotionTime < 0.0f)
+                {
+                    SetAttack(AttackType.None);
+                    _nextAttackMotionTime = Random.insideUnitCircle.x * Constants.AttackTimerTime;
+                }
+                _nextAttackMotionTime -= Time.deltaTime;
+            }
         }
         else if(PlayerState.AttackMotion == _playerState || PlayerState.AttackHit == _playerState)
         {
+            // Attack
             if(PlayerState.AttackMotion == _playerState)
             {
                 if (Constants.AttackMotionTime <= _attackMotionTime)
@@ -146,6 +211,8 @@ public class PlayerCS : MonoBehaviour
             }
             else if(PlayerState.AttackHit == _playerState)
             {
+                transform.position = new Vector3(_isLeft ? -Constants.AttackDistance : Constants.AttackDistance, Constants.GroundPosition, 0.0f);
+
                 if (Constants.AttackHitTime <= _attackMotionTime)
                 {
                     _lastAttackType = AttackType.None;
