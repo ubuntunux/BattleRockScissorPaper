@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum GameState
 {
@@ -17,6 +18,7 @@ public class GameManagerCS : MonoBehaviour
     float _elapsedTime = 0.0f;
     float _attackTimerTime = 0.0f;
     float _attackHitTime = 0.0f;
+    float _attackHitTimeDelay = 0.0f;
     GameState _gameState = GameState.None;
 
     //
@@ -42,6 +44,7 @@ public class GameManagerCS : MonoBehaviour
     UIBarCS AttackTimer_CS;
     public GameObject Layer_HP_Bar_A;
     public GameObject Layer_HP_Bar_B;
+    public GameObject Text_Result;
     
     // Start is called before the first frame update
     void Start()
@@ -55,6 +58,7 @@ public class GameManagerCS : MonoBehaviour
         _elapsedTime = 0.0f;
         _attackTimerTime = 0.0f;
         _attackHitTime = 0.0f;
+        _attackHitTimeDelay = 0.0f;
 
         PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
         PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
@@ -67,6 +71,7 @@ public class GameManagerCS : MonoBehaviour
         // UI        
         AttackTimer_CS = Layer_AttackTimer.GetComponent<UIBarCS>();
         AttackTimer_CS.Reset();
+        Text_Result.SetActive(false);
     }
 
 	public void CreateEffectAttackHit(AttackType attackType, bool isLeft)
@@ -176,8 +181,8 @@ public class GameManagerCS : MonoBehaviour
     // Set State
     void SetReadyToAttack()
     {
-        PlayerA_CS.SetIdle();
-        PlayerB_CS.SetIdle();
+        PlayerA_CS.SetReadyToAttack();
+        PlayerB_CS.SetReadyToAttack();
         _attackTimerTime = 0.0f;
         _gameState = GameState.ReadyToAttack;
     }
@@ -211,12 +216,10 @@ public class GameManagerCS : MonoBehaviour
             PlayerB_CS.SetDamage((attackTypeA == attackTypeB) ? Constants.DamageDraw : Constants.DamageLoose);
         }
 
-        MainCamera.GetComponent<CameraCS>().setShake();
+        // delay
+        _attackHitTimeDelay = (false == PlayerA_CS.isAlive() || false == PlayerB_CS.isAlive()) ? Constants.AttackHitTimeDelay : 0.0f;
 
-        if (false == PlayerA_CS.isAlive() || false == PlayerB_CS.isAlive())
-        {
-            SetEnd();
-        }
+        MainCamera.GetComponent<CameraCS>().setShake();
 	}
 
      // Update is called once per frame
@@ -239,9 +242,37 @@ public class GameManagerCS : MonoBehaviour
         }
         else if(GameState.AttackHit == _gameState)
         {
-            if(Constants.AttackHitTime <= _attackHitTime)
+            if((Constants.AttackHitTime + _attackHitTimeDelay) <= _attackHitTime)
             {
-                SetReadyToAttack();
+                bool isAliveA = PlayerA_CS.isAlive();
+                bool isAliveB = PlayerB_CS.isAlive();
+                if (false == isAliveA || false == isAliveB)
+                {
+                    Text_Result.SetActive(true);
+                    if(isAliveA && false == isAliveB)
+                    {
+                        PlayerA_CS.SetWin();
+                        PlayerB_CS.SetDead();
+                        Text_Result.GetComponent<Text>().text = "You Win";
+                    }
+                    else if(false == isAliveA && isAliveB)
+                    {
+                        PlayerA_CS.SetDead();
+                        PlayerB_CS.SetWin();
+                        Text_Result.GetComponent<Text>().text = "You Loose";
+                    }
+                    else
+                    {
+                        PlayerA_CS.SetDead();
+                        PlayerB_CS.SetDead();
+                        Text_Result.GetComponent<Text>().text = "Draw";
+                    }
+                    SetEnd();
+                }
+                else
+                {
+                    SetReadyToAttack();
+                }
             }
             _attackHitTime += Time.deltaTime;
         }

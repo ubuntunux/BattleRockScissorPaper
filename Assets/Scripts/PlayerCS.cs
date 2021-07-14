@@ -16,6 +16,7 @@ public enum PlayerState
     Idle,
     AttackMotion,
     AttackHit,
+    Win,
     Dead
 }
 
@@ -38,6 +39,7 @@ public class PlayerCS : MonoBehaviour
     public Texture Texture_AttackRock;
     public Texture Texture_AttackScissor;
     public Texture Texture_AttackPaper;
+    public Texture Texture_Win;
     public Texture Texture_Dead;
 
     // sounds
@@ -47,6 +49,8 @@ public class PlayerCS : MonoBehaviour
     // ui
     GameObject Layer_HP_Bar;
     UIBarCS HP_Bar_CS;
+
+    ShakeObject _shakeObject = new ShakeObject();
 
     // Start is called before the first frame update
     void Start()
@@ -77,6 +81,8 @@ public class PlayerCS : MonoBehaviour
         _startPosition = new Vector3(isLeft ? -Constants.IdleDistance : Constants.IdleDistance, Constants.GroundPosition, 0.0f);
         transform.position = _startPosition;
 
+        _shakeObject.reset();
+
         SetTexture(Texture_Idle);
     }
 
@@ -86,9 +92,21 @@ public class PlayerCS : MonoBehaviour
         _playerState = PlayerState.Idle;
     }
 
+    public void SetReadyToAttack()
+    {
+        _lastAttackType = AttackType.None;
+        SetIdle();
+    }
+
      public bool isAlive()
     {
-        return (PlayerState.Dead != _playerState);
+        return (0 < _hp);
+    }
+
+    public void SetWin()
+    {
+        SetTexture(Texture_Win);
+        _playerState = PlayerState.Win;
     }
 
     public void SetDead()
@@ -169,10 +187,9 @@ public class PlayerCS : MonoBehaviour
         if(_hp <= 0)
         {
             _hp = 0;
-            SetDead();
         }
-
         HP_Bar_CS.setBar((float)_hp / Constants.InitialHP);
+        _shakeObject.setShake(Constants.AttackHitTime, 0.0f, 0.01f);
     }
 
     // Update is called once per frame
@@ -180,6 +197,11 @@ public class PlayerCS : MonoBehaviour
     {
         if(PlayerState.Dead == _playerState)
         {
+            // Nothing
+        }
+        else if(PlayerState.Win == _playerState)
+        {
+            // Nothing
         }
         else if(PlayerState.None == _playerState || PlayerState.Idle == _playerState)
         {
@@ -211,13 +233,11 @@ public class PlayerCS : MonoBehaviour
             }
             else if(PlayerState.AttackHit == _playerState)
             {
-                transform.position = new Vector3(_isLeft ? -Constants.AttackDistance : Constants.AttackDistance, Constants.GroundPosition, 0.0f);
+                Vector3 shakeOffset = new Vector3(0.0f, 0.0f, 0.0f);
+                _shakeObject.updateShakeObject(ref shakeOffset);
 
-                if (Constants.AttackHitTime <= _attackMotionTime)
-                {
-                    _lastAttackType = AttackType.None;
-                    SetIdle();
-                }
+                transform.position = new Vector3(_isLeft ? -Constants.AttackDistance : Constants.AttackDistance, Constants.GroundPosition, 0.0f);
+                transform.position += shakeOffset;
             }
             _attackMotionTime += Time.deltaTime;
         }

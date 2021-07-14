@@ -465,6 +465,7 @@ MonoBehaviour:
   Texture_AttackRock: {fileID: 2800000, guid: a617300bef017081788779d527a676dd, type: 3}
   Texture_AttackScissor: {fileID: 2800000, guid: 598d4467346b4e6589fa150bad773865, type: 3}
   Texture_AttackPaper: {fileID: 2800000, guid: 073a9553f43a6bd178683e95e2919b84, type: 3}
+  Texture_Win: {fileID: 2800000, guid: bc01a87947b585b2981703cd39c667d5, type: 3}
   Texture_Dead: {fileID: 2800000, guid: 61f6a9b406cc1debd8affa0f7baa6f25, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
