@@ -189,7 +189,7 @@ public class PlayerCS : MonoBehaviour
             _hp = 0;
         }
         HP_Bar_CS.setBar((float)_hp / Constants.InitialHP);
-        _shakeObject.setShake(Constants.AttackHitTime, 0.0f, 0.01f);
+        _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);
     }
 
     // Update is called once per frame

@@ -23,17 +23,29 @@ public class GameManagerCS : MonoBehaviour
 
     //
     public GameObject MainCamera;
+
     // Player
     public GameObject PlayerA;
     public GameObject PlayerB;
     PlayerCS PlayerA_CS;
     PlayerCS PlayerB_CS;
+
     // Effect
     public GameObject Effect_AttackHit;
     GameObject _effect_AttackHitA;
     GameObject _effect_AttackHitB;
+
     // Sounds
+    public AudioSource Snd_Round1;
+    public AudioSource Snd_Round2;
+    public AudioSource Snd_Round3;
+    public AudioSource Snd_Round4;
+    public AudioSource Snd_FinalRound;
     public AudioSource Snd_Fight;
+    public AudioSource Snd_Win;
+    public AudioSource Snd_Loose;
+    public AudioSource Snd_Draw;
+
     // UI
     public GameObject Btn_Fight;
     public GameObject Layer_AttackButtons;
@@ -41,10 +53,13 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Btn_Scissor;
     public GameObject Btn_Paper;
     public GameObject Layer_AttackTimer;
-    UIBarCS AttackTimer_CS;
+    FightTimerCS AttackTimer_CS;
     public GameObject Layer_HP_Bar_A;
     public GameObject Layer_HP_Bar_B;
     public GameObject Text_Result;
+    public GameObject Image_KO;
+    public Texture Texture_Ko;
+    public Texture Texture_Ko_Invert;
     
     // Start is called before the first frame update
     void Start()
@@ -69,7 +84,7 @@ public class GameManagerCS : MonoBehaviour
         DestroyEffectAttackHit(true);
         DestroyEffectAttackHit(false);
         // UI        
-        AttackTimer_CS = Layer_AttackTimer.GetComponent<UIBarCS>();
+        AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
         AttackTimer_CS.Reset();
         Text_Result.SetActive(false);
     }
@@ -253,18 +268,21 @@ public class GameManagerCS : MonoBehaviour
                     {
                         PlayerA_CS.SetWin();
                         PlayerB_CS.SetDead();
+                        Snd_Win.Play();
                         Text_Result.GetComponent<Text>().text = "You Win";
                     }
                     else if(false == isAliveA && isAliveB)
                     {
                         PlayerA_CS.SetDead();
                         PlayerB_CS.SetWin();
+                        Snd_Loose.Play();
                         Text_Result.GetComponent<Text>().text = "You Loose";
                     }
                     else
                     {
                         PlayerA_CS.SetDead();
                         PlayerB_CS.SetDead();
+                        Snd_Draw.Play();
                         Text_Result.GetComponent<Text>().text = "Draw";
                     }
                     SetEnd();
