@@ -98,9 +98,14 @@ public class PlayerCS : MonoBehaviour
         SetIdle();
     }
 
-     public bool isAlive()
+    public bool isAlive()
     {
         return (0 < _hp);
+    }
+
+    public int getHP()
+    {
+        return _hp;
     }
 
     public void SetWin()

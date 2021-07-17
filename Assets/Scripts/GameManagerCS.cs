@@ -58,8 +58,11 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Layer_HP_Bar_B;
     public GameObject Text_Result;
     public GameObject Image_KO;
-    public Texture Texture_Ko;
-    public Texture Texture_Ko_Invert;
+    public Sprite Sprite_Ko;
+    public Sprite Sprite_Ko_Invert;
+    float _ko_sprite_flicker_time = 0.0f;
+    bool _ko_sprite_flicker = false;
+    bool _ko_sprite_flicker_low_hp = false;
     
     // Start is called before the first frame update
     void Start()
@@ -87,6 +90,26 @@ public class GameManagerCS : MonoBehaviour
         AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
         AttackTimer_CS.Reset();
         Text_Result.SetActive(false);
+    }
+
+    public Texture GetTexture(GameObject obj)
+    {
+        return obj.GetComponent<Renderer>().material.GetTexture("_MainTex");
+    }
+
+    public void SetTexture(GameObject obj, Texture texture)
+    {
+        obj.GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
+    }
+
+    public Sprite GetSprite(GameObject obj)
+    {
+        return obj.GetComponent<Image>().sprite;
+    }
+
+    public void SetSprite(GameObject obj, Sprite sprite)
+    {
+        obj.GetComponent<Image>().sprite = sprite;
     }
 
 	public void CreateEffectAttackHit(AttackType attackType, bool isLeft)
@@ -196,23 +219,31 @@ public class GameManagerCS : MonoBehaviour
     // Set State
     void SetReadyToAttack()
     {
+        _ko_sprite_flicker = false;
+        SetSprite(Image_KO, Sprite_Ko);
+        AttackTimer_CS.ShowTimer(true);
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
-        _attackTimerTime = 0.0f;
+        _attackTimerTime = 0.0f;        
         _gameState = GameState.ReadyToAttack;
     }
 
     void SetEnd()
     {
+        _ko_sprite_flicker = false;
+        _ko_sprite_flicker_low_hp = false;
+        SetSprite(Image_KO, Sprite_Ko);
         Btn_Fight.SetActive(true);
+        AttackTimer_CS.ShowTimer(false);
         _gameState = GameState.End;
     }
 
     void SetAttackHit()
     {
-        AttackTimer_CS.setBar(0.0f);
-        _attackHitTime = 0.0f;                
         _gameState = GameState.AttackHit;
+        AttackTimer_CS.setBar(0.0f);
+        _attackHitTime = 0.0f;
+        int prevHP = PlayerA_CS.getHP();
 		PlayerA_CS.SetAttackHit();
         PlayerB_CS.SetAttackHit();
 
@@ -231,6 +262,17 @@ public class GameManagerCS : MonoBehaviour
             PlayerB_CS.SetDamage((attackTypeA == attackTypeB) ? Constants.DamageDraw : Constants.DamageLoose);
         }
 
+        // set flicker
+        if(prevHP != PlayerA_CS.getHP())
+        {
+            _ko_sprite_flicker = true;
+            const int flickerHP = 2;
+            if(PlayerA_CS.getHP() <= flickerHP)
+            {
+                _ko_sprite_flicker_low_hp = true;
+            }
+        }
+
         // delay
         _attackHitTimeDelay = (false == PlayerA_CS.isAlive() || false == PlayerB_CS.isAlive()) ? Constants.AttackHitTimeDelay : 0.0f;
 
@@ -245,6 +287,18 @@ public class GameManagerCS : MonoBehaviour
             Application.Quit();
         }
 
+        // update flicker
+        if(_ko_sprite_flicker || _ko_sprite_flicker_low_hp)
+        {
+            if(_ko_sprite_flicker_time < 0.0f)
+            {
+                SetSprite(Image_KO, (Sprite_Ko == GetSprite(Image_KO)) ? Sprite_Ko_Invert : Sprite_Ko);
+                _ko_sprite_flicker_time = 0.1f;
+            }
+            _ko_sprite_flicker_time -= Time.deltaTime;
+        }
+
+        // update state
         if(GameState.ReadyToAttack == _gameState)
         {
             float attackTimerBar = 1.0f - ((_attackTimerTime % Constants.AttackTimerTime) / Constants.AttackTimerTime);
