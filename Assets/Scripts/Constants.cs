@@ -8,7 +8,9 @@ public class Constants : MonoBehaviour
     static public float AttackHitTimeDelay = 0.5f;
     static public float AttackMotionTime = 0.1f;
     static public float AttackHitTime = 0.5f;
-    static public float GroundPosition = 3.0f;
+    static public float RoundReadyTime = 2.0f;
+    static public float RoundEndTime = 2.0f;
+    static public float GroundPosition = 3.1f;
     static public float AttackDistance = 1.5f;
     static public float IdleDistance = 2.0f; 
     static public int InitialHP = 5;

@@ -6,10 +6,12 @@ using UnityEngine.UI;
 public enum GameState
 {
     None,
+    ReadyToFight,
     ReadyToRound,
     ReadyToAttack,
     AttackHit,
-    End,
+    RoundEnd,
+    GameEnd,
 }
 
 public class GameManagerCS : MonoBehaviour
@@ -18,7 +20,11 @@ public class GameManagerCS : MonoBehaviour
     float _elapsedTime = 0.0f;
     float _attackTimerTime = 0.0f;
     float _attackHitTime = 0.0f;
-    float _attackHitTimeDelay = 0.0f;
+    float _attackHitTimeDelay = 0.0f;    
+    float _readyToRoundTime = 0.0f;
+    float _roundEndTime = 0.0f;
+    int _maxRoundCount = 3;
+    int _round = 0;
     GameState _gameState = GameState.None;
 
     //
@@ -63,33 +69,31 @@ public class GameManagerCS : MonoBehaviour
     float _ko_sprite_flicker_time = 0.0f;
     bool _ko_sprite_flicker = false;
     bool _ko_sprite_flicker_low_hp = false;
+    public GameObject Layer_Wins;
     
     // Start is called before the first frame update
     void Start()
     {
+        PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
+        PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
+        AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
+
         Reset();
     }
 
     void Reset()
     {
-        _gameState = GameState.ReadyToRound;
+        _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
-        _attackTimerTime = 0.0f;
-        _attackHitTime = 0.0f;
-        _attackHitTimeDelay = 0.0f;
+        _round = 0;
 
-        PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
-        PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
-        PlayerA_CS.Reset(Layer_HP_Bar_A, true, false);
-        PlayerB_CS.Reset(Layer_HP_Bar_B, false, true);
+        for(int i=0; i < 3; ++i)
+        {
+            Layer_Wins.transform.Find("WinA" + i.ToString()).gameObject.SetActive(false);
+            Layer_Wins.transform.Find("WinB" + i.ToString()).gameObject.SetActive(false);
+        }
 
-        // Effects
-        DestroyEffectAttackHit(true);
-        DestroyEffectAttackHit(false);
-        // UI        
-        AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
-        AttackTimer_CS.Reset();
-        Text_Result.SetActive(false);
+        ResetRound();
     }
 
     public Texture GetTexture(GameObject obj)
@@ -164,11 +168,11 @@ public class GameManagerCS : MonoBehaviour
         }
     }
 
-    public void Btn_Fight_OnClick() {        
-        Reset();        
+    public void Btn_Fight_OnClick()
+    {
+        Reset();
+        SetReadyToRound();
         Btn_Fight.SetActive(false);
-        Snd_Fight.Play();        
-        SetReadyToAttack();
 	}
 
     void Btn_Rock_OnClick() {
@@ -217,25 +221,62 @@ public class GameManagerCS : MonoBehaviour
     }
 
     // Set State
+    void ResetRound()
+    {
+        _attackTimerTime = 0.0f;
+        _attackHitTime = 0.0f;
+        _attackHitTimeDelay = 0.0f;
+        _readyToRoundTime = 0.0f;
+        _roundEndTime = 0.0f;
+        
+        PlayerA_CS.Reset(Layer_HP_Bar_A, true, false);
+        PlayerB_CS.Reset(Layer_HP_Bar_B, false, true);
+
+        DestroyEffectAttackHit(true);
+        DestroyEffectAttackHit(false);
+
+        Layer_AttackTimer.SetActive(false);
+        AttackTimer_CS.Reset();
+        Text_Result.SetActive(false);
+    }
+
+    void SetReadyToRound()
+    {
+        ResetRound();
+        _gameState = GameState.ReadyToRound;
+    }
+
+    void RoundEnd()
+    {
+        Layer_AttackTimer.SetActive(false);        
+        _ko_sprite_flicker = false;
+        _ko_sprite_flicker_low_hp = false;
+        SetSprite(Image_KO, Sprite_Ko);
+    }
+
+    void SetGameEnd()
+    {
+        RoundEnd();
+        Btn_Fight.SetActive(true);
+        _gameState = GameState.GameEnd;
+    }
+
+    void SetRoundEnd()
+    {
+        RoundEnd();
+        _roundEndTime = 0.0f;
+        _gameState = GameState.RoundEnd;
+    }
+
     void SetReadyToAttack()
     {
         _ko_sprite_flicker = false;
         SetSprite(Image_KO, Sprite_Ko);
-        AttackTimer_CS.ShowTimer(true);
+        Layer_AttackTimer.SetActive(true);
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
-        _attackTimerTime = 0.0f;        
+        _attackTimerTime = 0.0f;
         _gameState = GameState.ReadyToAttack;
-    }
-
-    void SetEnd()
-    {
-        _ko_sprite_flicker = false;
-        _ko_sprite_flicker_low_hp = false;
-        SetSprite(Image_KO, Sprite_Ko);
-        Btn_Fight.SetActive(true);
-        AttackTimer_CS.ShowTimer(false);
-        _gameState = GameState.End;
     }
 
     void SetAttackHit()
@@ -299,7 +340,20 @@ public class GameManagerCS : MonoBehaviour
         }
 
         // update state
-        if(GameState.ReadyToAttack == _gameState)
+        if(GameState.ReadyToFight == _gameState)
+        {
+        }
+        else if(GameState.ReadyToRound == _gameState)
+        {
+            if(Constants.RoundReadyTime <=_readyToRoundTime)
+            {
+                Snd_Fight.Play();
+                ResetRound();
+                SetReadyToAttack();
+            }
+            _readyToRoundTime += Time.deltaTime;
+        }
+        else if(GameState.ReadyToAttack == _gameState)
         {
             float attackTimerBar = 1.0f - ((_attackTimerTime % Constants.AttackTimerTime) / Constants.AttackTimerTime);
             AttackTimer_CS.setBar(attackTimerBar);
@@ -320,6 +374,7 @@ public class GameManagerCS : MonoBehaviour
                     Text_Result.SetActive(true);
                     if(isAliveA && false == isAliveB)
                     {
+                        Layer_Wins.transform.Find("WinA" + PlayerA_CS.GetWin().ToString()).gameObject.SetActive(true);
                         PlayerA_CS.SetWin();
                         PlayerB_CS.SetDead();
                         Snd_Win.Play();
@@ -327,6 +382,7 @@ public class GameManagerCS : MonoBehaviour
                     }
                     else if(false == isAliveA && isAliveB)
                     {
+                        Layer_Wins.transform.Find("WinB" + PlayerB_CS.GetWin().ToString()).gameObject.SetActive(true);
                         PlayerA_CS.SetDead();
                         PlayerB_CS.SetWin();
                         Snd_Loose.Play();
@@ -339,7 +395,7 @@ public class GameManagerCS : MonoBehaviour
                         Snd_Draw.Play();
                         Text_Result.GetComponent<Text>().text = "Draw";
                     }
-                    SetEnd();
+                    SetRoundEnd();
                 }
                 else
                 {
@@ -348,7 +404,23 @@ public class GameManagerCS : MonoBehaviour
             }
             _attackHitTime += Time.deltaTime;
         }
-        if(GameState.End == _gameState)
+        else if(GameState.RoundEnd == _gameState)
+        {
+            if(Constants.RoundEndTime <= _roundEndTime)
+            {
+                _round += 1;
+                if (_round < _maxRoundCount)
+                {
+                    SetReadyToRound();
+                }
+                else
+                {
+                    SetGameEnd();
+                }
+            }
+            _roundEndTime += Time.deltaTime;
+        }
+        else if(GameState.GameEnd == _gameState)
         {
         }
 

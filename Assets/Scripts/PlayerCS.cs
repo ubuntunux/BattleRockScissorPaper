@@ -33,6 +33,7 @@ public class PlayerCS : MonoBehaviour
     float _attackMotionTime = 0.0f;
     float _nextAttackMotionTime = 0.0f;
     int _hp = Constants.InitialHP;
+    int _wins = 0;
 
     // textures
     public Texture Texture_Idle;
@@ -72,6 +73,7 @@ public class PlayerCS : MonoBehaviour
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         _nextAttackMotionTime = Random.insideUnitCircle.x * Constants.AttackTimerTime;
         _hp = Constants.InitialHP;
+        _wins = 0;
 
         // UI        
         Layer_HP_Bar = layer_hp_bar;
@@ -108,8 +110,14 @@ public class PlayerCS : MonoBehaviour
         return _hp;
     }
 
+    public int GetWin()
+    {
+        return _wins;
+    }
+
     public void SetWin()
     {
+        _wins += 1;
         SetTexture(Texture_Win);
         _playerState = PlayerState.Win;
     }
@@ -188,6 +196,8 @@ public class PlayerCS : MonoBehaviour
 
     public void SetDamage(int damage)
     {
+        damage = 50;
+
         _hp -= damage;
         if(_hp <= 0)
         {

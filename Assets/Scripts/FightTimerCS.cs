@@ -27,15 +27,6 @@ public class FightTimerCS : MonoBehaviour
 
         _shakeObjectRed.reset();
         _shakeObjectBlue.reset();
-
-        ShowTimer(true);
-    }
-
-    public void ShowTimer(bool show)
-    {
-        Bar.SetActive(show);
-        GloveRed.SetActive(show);
-        GloveBlue.SetActive(show);
     }
 
     public void setBar(float ratio)
