@@ -196,9 +196,8 @@ public class PlayerCS : MonoBehaviour
 
     public void SetDamage(int damage)
     {
-        damage = 50;
-
         _hp -= damage;
+        
         if(_hp <= 0)
         {
             _hp = 0;

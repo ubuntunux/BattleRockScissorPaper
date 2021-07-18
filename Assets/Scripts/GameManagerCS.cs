@@ -23,8 +23,8 @@ public class GameManagerCS : MonoBehaviour
     float _attackHitTimeDelay = 0.0f;    
     float _readyToRoundTime = 0.0f;
     float _roundEndTime = 0.0f;
-    int _maxRoundCount = 3;
-    int _round = 0;
+    int _maxRoundCount = 5;
+    int _round = 1;
     GameState _gameState = GameState.None;
 
     //
@@ -85,7 +85,7 @@ public class GameManagerCS : MonoBehaviour
     {
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
-        _round = 0;
+        _round = 1;
 
         for(int i=0; i < 3; ++i)
         {
@@ -243,6 +243,15 @@ public class GameManagerCS : MonoBehaviour
     void SetReadyToRound()
     {
         ResetRound();
+        if(_maxRoundCount == _round) { Snd_FinalRound.Play(); }
+        else if (1 == _round) {Snd_Round1.Play();}
+        else if (2 == _round) {Snd_Round2.Play();}
+        else if (3 == _round) {Snd_Round3.Play();}
+        else if (4 == _round) {Snd_Round4.Play();}
+
+        Text_Result.SetActive(true);
+        Text_Result.GetComponent<Text>().text = (_maxRoundCount == _round) ? "Final Round" : ("Round " + _round.ToString());
+
         _gameState = GameState.ReadyToRound;
     }
 
@@ -345,9 +354,15 @@ public class GameManagerCS : MonoBehaviour
         }
         else if(GameState.ReadyToRound == _gameState)
         {
-            if(Constants.RoundReadyTime <=_readyToRoundTime)
+            float fightSoundTime = Constants.RoundReadyTime - 1.0f;
+            if(_readyToRoundTime <= fightSoundTime && fightSoundTime < (_readyToRoundTime + Time.deltaTime))
             {
                 Snd_Fight.Play();
+                Text_Result.GetComponent<Text>().text = "Fight!";
+            }
+
+            if(Constants.RoundReadyTime <= _readyToRoundTime)
+            {
                 ResetRound();
                 SetReadyToAttack();
             }
@@ -408,9 +423,9 @@ public class GameManagerCS : MonoBehaviour
         {
             if(Constants.RoundEndTime <= _roundEndTime)
             {
-                _round += 1;
                 if (_round < _maxRoundCount)
                 {
+                    _round += 1;
                     SetReadyToRound();
                 }
                 else
