@@ -68,23 +68,26 @@ public class PlayerCS : MonoBehaviour
         _isNPC = isNPC;
         _isLeft = isLeft;
         _elapsedTime = 0.0f;
+        _wins = 0;
+
+        Layer_HP_Bar = layer_hp_bar;
+        HP_Bar_CS = Layer_HP_Bar.GetComponent<UIBarCS>();
+        
+        _startPosition = new Vector3(isLeft ? -Constants.IdleDistance : Constants.IdleDistance, Constants.GroundPosition, 0.0f);
+
+        SetReadyToRound();
+    }
+
+    public void SetReadyToRound()
+    {
         _playerState = PlayerState.None;
         _lastAttackType = AttackType.None;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         _nextAttackMotionTime = Random.insideUnitCircle.x * Constants.AttackTimerTime;
         _hp = Constants.InitialHP;
-        _wins = 0;
-
-        // UI        
-        Layer_HP_Bar = layer_hp_bar;
-        HP_Bar_CS = Layer_HP_Bar.GetComponent<UIBarCS>();
-        HP_Bar_CS.Reset();
-        
-        _startPosition = new Vector3(isLeft ? -Constants.IdleDistance : Constants.IdleDistance, Constants.GroundPosition, 0.0f);
         transform.position = _startPosition;
-
         _shakeObject.reset();
-
+        HP_Bar_CS.Reset();
         SetTexture(Texture_Idle);
     }
 
@@ -196,8 +199,9 @@ public class PlayerCS : MonoBehaviour
 
     public void SetDamage(int damage)
     {
+        damage = 50;
+
         _hp -= damage;
-        
         if(_hp <= 0)
         {
             _hp = 0;

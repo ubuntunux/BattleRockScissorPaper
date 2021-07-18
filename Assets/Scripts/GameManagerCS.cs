@@ -23,7 +23,8 @@ public class GameManagerCS : MonoBehaviour
     float _attackHitTimeDelay = 0.0f;    
     float _readyToRoundTime = 0.0f;
     float _roundEndTime = 0.0f;
-    int _maxRoundCount = 5;
+    int _maxRoundCount = 3;
+    int _winCount = 2;
     int _round = 1;
     GameState _gameState = GameState.None;
 
@@ -92,6 +93,9 @@ public class GameManagerCS : MonoBehaviour
             Layer_Wins.transform.Find("WinA" + i.ToString()).gameObject.SetActive(false);
             Layer_Wins.transform.Find("WinB" + i.ToString()).gameObject.SetActive(false);
         }
+
+        PlayerA_CS.Reset(Layer_HP_Bar_A, true, false);
+        PlayerB_CS.Reset(Layer_HP_Bar_B, false, true);
 
         ResetRound();
     }
@@ -228,9 +232,9 @@ public class GameManagerCS : MonoBehaviour
         _attackHitTimeDelay = 0.0f;
         _readyToRoundTime = 0.0f;
         _roundEndTime = 0.0f;
-        
-        PlayerA_CS.Reset(Layer_HP_Bar_A, true, false);
-        PlayerB_CS.Reset(Layer_HP_Bar_B, false, true);
+
+        PlayerA_CS.SetReadyToRound();
+        PlayerB_CS.SetReadyToRound();
 
         DestroyEffectAttackHit(true);
         DestroyEffectAttackHit(false);
@@ -423,7 +427,8 @@ public class GameManagerCS : MonoBehaviour
         {
             if(Constants.RoundEndTime <= _roundEndTime)
             {
-                if (_round < _maxRoundCount)
+                int maxWinCount = PlayerB_CS.GetWin() < PlayerA_CS.GetWin() ? PlayerA_CS.GetWin() : PlayerB_CS.GetWin();
+                if (_round < _maxRoundCount && maxWinCount < _winCount)
                 {
                     _round += 1;
                     SetReadyToRound();
