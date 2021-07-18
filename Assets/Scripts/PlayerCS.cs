@@ -199,7 +199,7 @@ public class PlayerCS : MonoBehaviour
 
     public void SetDamage(int damage)
     {
-        damage = 50;
+        // damage = 50;
 
         _hp -= damage;
         if(_hp <= 0)
