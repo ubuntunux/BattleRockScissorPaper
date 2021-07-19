@@ -10,7 +10,7 @@ public class Constants : MonoBehaviour
     static public float AttackHitTime = 0.5f;
     static public float RoundReadyTime = 3.0f;
     static public float RoundEndTime = 3.0f;
-    static public float GroundPosition = 3.1f;
+    static public float GroundPosition = 3.2f;
     static public float AttackDistance = 1.5f;
     static public float IdleDistance = 2.0f; 
     static public int InitialHP = 5;

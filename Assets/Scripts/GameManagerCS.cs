@@ -139,11 +139,10 @@ public class GameManagerCS : MonoBehaviour
         }
 
         Vector3 pos = new Vector3(isLeft ? -Constants.AttackDistance : Constants.AttackDistance, offsetY, 0.0f);
-        Quaternion rot = Quaternion.Euler(-90, 0, 0);
+        Quaternion rot = Quaternion.Euler(-90.0f, isLeft ? 180.0f : 0.0f, 0.0f);
 		GameObject effect_AttackHit = (GameObject)GameObject.Instantiate(Effect_AttackHit, pos, rot);
         if(isLeft)
         {
-            effect_AttackHit.transform.localScale = new Vector3(-effect_AttackHit.transform.localScale.x, effect_AttackHit.transform.localScale.y, effect_AttackHit.transform.localScale.z);
             _effect_AttackHitA = effect_AttackHit;
         }
         else
