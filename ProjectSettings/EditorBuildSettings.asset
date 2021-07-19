@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 261aa73522eb335d990e7d6647ece365
   - enabled: 1
+    path: Assets/Scenes/ChallengeScene.unity
+    guid: ad3a34f0aa6052759b1d272bab694e08
+  - enabled: 1
     path: Assets/Scenes/FightScene.unity
     guid: 7b80d3b5e741e801e92bb388630ccae3
   m_configObjects: {}

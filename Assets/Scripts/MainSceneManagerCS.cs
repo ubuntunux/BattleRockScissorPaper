@@ -19,8 +19,12 @@ public class MainSceneManagerCS : MonoBehaviour
         
     }
 
+    public void Btn_Challenge_OnClock()
+    {
+        SceneManager.LoadScene("ChallengeScene");
+    }
+
     public void Btn_Online_OnClock()
     {
-        SceneManager.LoadScene("FightScene");
     }
 }
