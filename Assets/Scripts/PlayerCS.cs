@@ -242,11 +242,11 @@ public class PlayerCS : MonoBehaviour
             {
                 float attackTimerTime = GameManager.GetAttackTimerTime();
                 float RANDOM_TIME_LIMIT = 0.0f;
-                bool isOverRandomTime = (attackTimerTime < RANDOM_TIME_LIMIT && RANDOM_TIME_LIMIT <= (attackTimerTime + Time.deltaTime));
+                bool isOverRandomTime = (attackTimerTime <= RANDOM_TIME_LIMIT && RANDOM_TIME_LIMIT <= (attackTimerTime + Time.deltaTime));
 
                 if(_nextAttackMotionTime < 0.0f || isOverRandomTime)
                 {
-                    SetAttack((attackTimerTime < RANDOM_TIME_LIMIT) ? AttackType.None : _lastAttackType);
+                    SetAttack((attackTimerTime <= RANDOM_TIME_LIMIT) ? AttackType.None : _lastAttackType);
                     _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
                 }
                 _nextAttackMotionTime -= Time.deltaTime;
