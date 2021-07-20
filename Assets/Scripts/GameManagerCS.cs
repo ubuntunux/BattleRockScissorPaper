@@ -94,10 +94,15 @@ public class GameManagerCS : MonoBehaviour
             Layer_Wins.transform.Find("WinB" + i.ToString()).gameObject.SetActive(false);
         }
 
-        PlayerA_CS.Reset(Layer_HP_Bar_A, true, false);
-        PlayerB_CS.Reset(Layer_HP_Bar_B, false, true);
+        PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, true, false);
+        PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, false, true);
 
         ResetRound();
+    }
+
+    public float GetAttackTimerTime()
+    {
+        return _attackTimerTime;
     }
 
     public Texture GetTexture(GameObject obj)

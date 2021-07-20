@@ -51,6 +51,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             if(3.0f < _timer)
             {
                 SceneManager.LoadScene("FightScene");
+                GameObject gameManager = GameObject.Find("GameManager");
             }
         }
         _timer += Time.deltaTime;

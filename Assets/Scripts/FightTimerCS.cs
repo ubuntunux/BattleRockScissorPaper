@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FightTimerCS : MonoBehaviour
 {
     public GameObject Bar;
-    public GameObject GloveRed;
-    public GameObject GloveBlue;
+    public GameObject AttackTypeA;
+    public GameObject AttackTypeB;
+
+    public Sprite Sprite_Rock;
+    public Sprite Sprite_Scissor;
+    public Sprite Sprite_Paper;
 
     float _prevRatio = 0.0f;
     ShakeObject _shakeObjectRed = new ShakeObject();
@@ -23,10 +28,37 @@ public class FightTimerCS : MonoBehaviour
 
     public void Reset()
     {
+        SetAttackType(AttackType.Rock, true);
+        SetAttackType(AttackType.Rock, false);
+
         setBar(1.0f);
 
         _shakeObjectRed.reset();
         _shakeObjectBlue.reset();
+    }
+
+    public void SetAttackType(AttackType attackType, bool isLeft)
+    {
+        GameObject obj = isLeft ? AttackTypeA : AttackTypeB;
+        if(AttackType.Rock == attackType)
+        {
+            obj.GetComponent<Image>().sprite = Sprite_Rock;
+        }
+        else if(AttackType.Scissor == attackType)
+        {
+            obj.GetComponent<Image>().sprite = Sprite_Scissor;
+        }
+        else if(AttackType.Paper == attackType)
+        {
+            obj.GetComponent<Image>().sprite = Sprite_Paper;
+        }
+    }
+
+    public void SetAttackTimerShake(bool isLeft)
+    {
+        float shakeIntensity = 15.0f;
+        ShakeObject obj = isLeft ? _shakeObjectRed : _shakeObjectBlue;
+        obj.setShake(Constants.AttackHitTime, shakeIntensity, Constants.CameraShakeRandomTerm);
     }
 
     public void setBar(float ratio)
@@ -35,13 +67,6 @@ public class FightTimerCS : MonoBehaviour
         _prevRatio = ratio;
 
         Bar.transform.localScale = new Vector3(ratio, 1.0f, 1.0f);
-
-        if(0.0f == ratio && prevRatio != ratio)
-        {
-            float shakeIntensity = 15.0f;
-            _shakeObjectRed.setShake(Constants.AttackHitTime, shakeIntensity, Constants.CameraShakeRandomTerm);
-            _shakeObjectBlue.setShake(Constants.AttackHitTime, shakeIntensity, Constants.CameraShakeRandomTerm);
-        }
 
         _positionRed = new Vector3(Mathf.Lerp(-25.0f, -125.0f, ratio), 1.0f, 1.0f);
         _positionBlue = new Vector3(Mathf.Lerp(25.0f, 125.0f, ratio), 1.0f, 1.0f);
@@ -56,7 +81,7 @@ public class FightTimerCS : MonoBehaviour
         _shakeObjectRed.updateShakeObject(ref shakeOffsetRed);
         _shakeObjectBlue.updateShakeObject(ref shakeOffsetBlue);
 
-        GloveRed.transform.localPosition = _positionRed + shakeOffsetRed;
-        GloveBlue.transform.localPosition = _positionBlue + shakeOffsetBlue;
+        AttackTypeA.transform.localPosition = _positionRed + shakeOffsetRed;
+        AttackTypeB.transform.localPosition = _positionBlue + shakeOffsetBlue;
     }
 }

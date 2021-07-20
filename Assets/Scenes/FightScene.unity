@@ -541,11 +541,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1510602228}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 302.9, y: -117.45}
+  m_AnchoredPosition: {x: 200, y: -140}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &119053497
@@ -578,7 +578,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 21300000, guid: c55b775ef67b9c95992252a26602df09, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 90d47faf03d2d60b7a842273aec5cd4c, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -617,14 +617,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.7058824}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 01b0eeb718416ac8e817718ce159acee, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 637769f18cfeead31a3b55a263fa4765, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2418,6 +2418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bar: {fileID: 912242542}
+  PlayerID: {fileID: 158366334}
 --- !u!1 &745824706
 GameObject:
   m_ObjectHideFlags: 0
@@ -2486,7 +2487,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 21300000, guid: 3e8ab0babb3bfc78d8eebae0964e2a1c, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 545ca29fd89e6559bafe798a99c8930b, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -2525,14 +2526,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.7058824}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 07ab878cfde1e1cdfa8da2fdc7d2da6a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 063d9519ec35e8e14a8c9b3f020c7b6a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2567,7 +2568,7 @@ GameObject:
   - component: {fileID: 762506542}
   - component: {fileID: 762506541}
   m_Layer: 5
-  m_Name: GloveRed
+  m_Name: AttackTypeA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2612,7 +2613,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: dceaf2658d1c27744910b3dc07c1deed, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 785c009ce6cd6b1f0ad2e47eb4523afa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3859,7 +3860,7 @@ GameObject:
   - component: {fileID: 1378003138}
   - component: {fileID: 1378003137}
   m_Layer: 5
-  m_Name: GloveBlue
+  m_Name: AttackTypeB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3874,7 +3875,7 @@ RectTransform:
   m_GameObject: {fileID: 1378003135}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.49999997, y: 0.49999997, z: 1}
+  m_LocalScale: {x: -0.5, y: 0.49999997, z: 1}
   m_Children: []
   m_Father: {fileID: 1876061808}
   m_RootOrder: 1
@@ -3904,7 +3905,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fa172f889f1e34e09a34cd862c1db4d4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 785c009ce6cd6b1f0ad2e47eb4523afa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4161,8 +4162,8 @@ Transform:
   m_LocalPosition: {x: 50, y: -50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1679456834}
   - {fileID: 119053496}
+  - {fileID: 1679456834}
   - {fileID: 745824707}
   m_Father: {fileID: 147870879}
   m_RootOrder: 0
@@ -4318,11 +4319,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1510602228}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 198.09995, y: -140.80002}
+  m_AnchoredPosition: {x: 300, y: -118}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1679456835
@@ -4355,7 +4356,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 21300000, guid: af75a92d347b50ada91597e8416abcb7, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 2ea8fe4c87014aa6fb66b71d66d41b5a, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -4394,14 +4395,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.7058824}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 34842f0f7855b32dc85b28140e1a840b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d7ed30480676edd5c8f78987977458e5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4847,8 +4848,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bar: {fileID: 1663159119}
-  GloveRed: {fileID: 762506539}
-  GloveBlue: {fileID: 1378003135}
+  AttackTypeA: {fileID: 762506539}
+  AttackTypeB: {fileID: 1378003135}
+  Sprite_Rock: {fileID: 21300000, guid: 785c009ce6cd6b1f0ad2e47eb4523afa, type: 3}
+  Sprite_Scissor: {fileID: 21300000, guid: 5c1e0406f04125728aa13e1b2e8fcd70, type: 3}
+  Sprite_Paper: {fileID: 21300000, guid: c65872cd746bc3dd9b9c5a833392ce92, type: 3}
 --- !u!1 &1909328718
 GameObject:
   m_ObjectHideFlags: 0
@@ -4981,6 +4985,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bar: {fileID: 447445344}
+  PlayerID: {fileID: 1909328718}
 --- !u!1 &1960111665
 GameObject:
   m_ObjectHideFlags: 0

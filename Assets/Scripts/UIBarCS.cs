@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIBarCS : MonoBehaviour
 {
     public GameObject Bar;
+    public GameObject PlayerID;
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +17,12 @@ public class UIBarCS : MonoBehaviour
     public void Reset()
     {
         setBar(1.0f);
+        setPlayerID("PlayerID");
+    }
+
+    public void setPlayerID(string playerID)
+    {
+        PlayerID.GetComponent<Text>().text = playerID;
     }
 
     public void setBar(float ratio)

@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
-    static public float AttackTimerTime = 1.5f;
+    static public float AttackRandomTermMin = 100.1f;
+    static public float AttackRandomTermMax = 10.0f;
+    static public float AttackTimerTime = 2.0f;
     static public float AttackHitTimeDelay = 0.5f;
     static public float AttackMotionTime = 0.1f;
     static public float AttackHitTime = 0.5f;

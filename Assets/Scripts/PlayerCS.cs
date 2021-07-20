@@ -48,8 +48,10 @@ public class PlayerCS : MonoBehaviour
     public AudioSource Snd_AttackHit;
 
     // ui
+    GameManagerCS GameManager;
     GameObject Layer_HP_Bar;
     UIBarCS HP_Bar_CS;
+    GameObject Layer_AttackTimer;
 
     ShakeObject _shakeObject = new ShakeObject();
 
@@ -63,13 +65,15 @@ public class PlayerCS : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
     }
 
-    public void Reset(GameObject layer_hp_bar, bool isLeft, bool isNPC)
+    public void Reset(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, bool isLeft, bool isNPC)
     {
         _isNPC = isNPC;
         _isLeft = isLeft;
         _elapsedTime = 0.0f;
         _wins = 0;
 
+        GameManager = gameManager;
+        Layer_AttackTimer = layer_attack_timer;
         Layer_HP_Bar = layer_hp_bar;
         HP_Bar_CS = Layer_HP_Bar.GetComponent<UIBarCS>();
         
@@ -83,7 +87,7 @@ public class PlayerCS : MonoBehaviour
         _playerState = PlayerState.None;
         _lastAttackType = AttackType.None;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
-        _nextAttackMotionTime = Random.insideUnitCircle.x * Constants.AttackTimerTime;
+        _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
         _hp = Constants.InitialHP;
         transform.position = _startPosition;
         _shakeObject.reset();
@@ -93,7 +97,7 @@ public class PlayerCS : MonoBehaviour
 
     public void SetIdle()
     {
-        SetTexture(Texture_Idle);
+        SetTexture(Texture_Idle);        
         _playerState = PlayerState.Idle;
     }
 
@@ -156,16 +160,18 @@ public class PlayerCS : MonoBehaviour
                 break;
         }
 
+        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _isLeft);
+
         if(isAttackHit)
         {
-            _playerState = PlayerState.AttackHit;
             Snd_AttackHit.Play();
+            _playerState = PlayerState.AttackHit;
         }
         else
         {
-            _playerState = PlayerState.AttackMotion;
-            _lastAttackType = attackType;
             Snd_Attack.Play();
+            _lastAttackType = attackType;
+            _playerState = PlayerState.AttackMotion;
         }
     }
 
@@ -206,8 +212,10 @@ public class PlayerCS : MonoBehaviour
         {
             _hp = 0;
         }
+
         HP_Bar_CS.setBar((float)_hp / Constants.InitialHP);
-        _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);
+        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackTimerShake(_isLeft);
+        _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);        
     }
 
     // Update is called once per frame
@@ -229,12 +237,17 @@ public class PlayerCS : MonoBehaviour
             float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
             transform.position = _startPosition + new Vector3(_isLeft ? offsetX : -offsetX, offsetY, 0.0f);
 
+            // Set NPC random attack
             if(_isNPC && PlayerState.Idle == _playerState)
             {
-                if(_nextAttackMotionTime < 0.0f)
+                float attackTimerTime = GameManager.GetAttackTimerTime();
+                float RANDOM_TIME_LIMIT = 0.0f;
+                bool isOverRandomTime = (attackTimerTime < RANDOM_TIME_LIMIT && RANDOM_TIME_LIMIT <= (attackTimerTime + Time.deltaTime));
+
+                if(_nextAttackMotionTime < 0.0f || isOverRandomTime)
                 {
-                    SetAttack(AttackType.None);
-                    _nextAttackMotionTime = Random.insideUnitCircle.x * Constants.AttackTimerTime;
+                    SetAttack((attackTimerTime < RANDOM_TIME_LIMIT) ? AttackType.None : _lastAttackType);
+                    _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
                 }
                 _nextAttackMotionTime -= Time.deltaTime;
             }
