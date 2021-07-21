@@ -48,10 +48,20 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     {
         if(ChallengeState.Versus == _challengeState)
         {
-            if(3.0f < _timer)
+            //if(3.0f < _timer)
             {
                 SceneManager.LoadScene("FightScene");
-                GameObject gameManager = GameObject.Find("GameManager");
+                GameObject gameManager = GameObject.FindWithTag("GameManager");
+
+                PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
+                playerCreateInfoA._name = "PlayerA";
+                playerCreateInfoA._isNPC = false;
+
+                PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
+                playerCreateInfoB._name = "PlayerB";
+                playerCreateInfoB._isNPC = true;
+
+                gameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);
             }
         }
         _timer += Time.deltaTime;

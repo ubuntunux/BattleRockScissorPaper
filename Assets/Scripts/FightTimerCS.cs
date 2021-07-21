@@ -9,6 +9,7 @@ public class FightTimerCS : MonoBehaviour
     public GameObject AttackTypeA;
     public GameObject AttackTypeB;
 
+    public Sprite Sprite_AttackNone;
     public Sprite Sprite_Rock;
     public Sprite Sprite_Scissor;
     public Sprite Sprite_Paper;
@@ -28,8 +29,8 @@ public class FightTimerCS : MonoBehaviour
 
     public void Reset()
     {
-        SetAttackType(AttackType.Rock, true);
-        SetAttackType(AttackType.Rock, false);
+        SetAttackType(AttackType.None, true);
+        SetAttackType(AttackType.None, false);
 
         setBar(1.0f);
 
@@ -51,6 +52,10 @@ public class FightTimerCS : MonoBehaviour
         else if(AttackType.Paper == attackType)
         {
             obj.GetComponent<Image>().sprite = Sprite_Paper;
+        }
+        else
+        {
+            obj.GetComponent<Image>().sprite = Sprite_AttackNone;
         }
     }
 

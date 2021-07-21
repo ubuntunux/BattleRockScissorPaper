@@ -20,9 +20,16 @@ public enum PlayerState
     Dead
 }
 
+public class PlayerCreateInfo
+{
+    public string _name = "";
+    public bool _isNPC = false;
+}
+
 public class PlayerCS : MonoBehaviour
 {
     // properties
+    string _name;
     bool _isNPC = false;
     bool _isLeft = false;
     Vector3 _startPosition;
@@ -36,6 +43,7 @@ public class PlayerCS : MonoBehaviour
     int _wins = 0;
 
     // textures
+    public Texture Texture_Portrait;
     public Texture Texture_Idle;
     public Texture Texture_AttackRock;
     public Texture Texture_AttackScissor;
@@ -65,9 +73,10 @@ public class PlayerCS : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
     }
 
-    public void Reset(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, bool isLeft, bool isNPC)
+    public void Reset(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, bool isLeft, PlayerCreateInfo playerCreateInfo)
     {
-        _isNPC = isNPC;
+        _name = playerCreateInfo._name;
+        _isNPC = playerCreateInfo._isNPC;
         _isLeft = isLeft;
         _elapsedTime = 0.0f;
         _wins = 0;
@@ -181,11 +190,7 @@ public class PlayerCS : MonoBehaviour
         {
             return;
         }
-        
-        if(attackType == AttackType.None)
-        {
-            attackType = (AttackType)(Random.Range(0, 3) + 1);
-        }
+
         SetAttackInner(attackType, false);
     }
 
@@ -196,10 +201,6 @@ public class PlayerCS : MonoBehaviour
             return;
         }
 
-        if(_lastAttackType == AttackType.None)
-        {
-            _lastAttackType = (AttackType)(Random.Range(0, 3) + 1);
-        }
         SetAttackInner(_lastAttackType, true);
     }
 
@@ -218,6 +219,24 @@ public class PlayerCS : MonoBehaviour
         _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);        
     }
 
+    void updateNPC()
+    {
+        float attackTimerTime = GameManager.GetAttackTimerTime();
+        float RANDOM_TIME_LIMIT = 0.0f;
+        bool isOverRandomTime = (attackTimerTime <= RANDOM_TIME_LIMIT && RANDOM_TIME_LIMIT <= (attackTimerTime + Time.deltaTime));
+        if(_nextAttackMotionTime < 0.0f || isOverRandomTime)
+        {
+            AttackType attackType = (attackTimerTime <= RANDOM_TIME_LIMIT) ? AttackType.None : _lastAttackType;
+            if(AttackType.None == attackType)
+            {
+                attackType = (AttackType)(Random.Range(0, 3) + 1);
+            }
+            SetAttack(attackType);
+            _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
+        }
+        _nextAttackMotionTime -= Time.deltaTime;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -231,7 +250,7 @@ public class PlayerCS : MonoBehaviour
         }
         else if(PlayerState.None == _playerState || PlayerState.Idle == _playerState)
         {
-            // Idle
+            // update Idle
             float speed = _elapsedTime * _idleMotionSpeed;
             float offsetX = Mathf.Sin(speed) * 0.4f;
             float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
@@ -240,16 +259,7 @@ public class PlayerCS : MonoBehaviour
             // Set NPC random attack
             if(_isNPC && PlayerState.Idle == _playerState)
             {
-                float attackTimerTime = GameManager.GetAttackTimerTime();
-                float RANDOM_TIME_LIMIT = 0.0f;
-                bool isOverRandomTime = (attackTimerTime <= RANDOM_TIME_LIMIT && RANDOM_TIME_LIMIT <= (attackTimerTime + Time.deltaTime));
-
-                if(_nextAttackMotionTime < 0.0f || isOverRandomTime)
-                {
-                    SetAttack((attackTimerTime <= RANDOM_TIME_LIMIT) ? AttackType.None : _lastAttackType);
-                    _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
-                }
-                _nextAttackMotionTime -= Time.deltaTime;
+                updateNPC();
             }
         }
         else if(PlayerState.AttackMotion == _playerState || PlayerState.AttackHit == _playerState)

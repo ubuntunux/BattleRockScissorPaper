@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -54,7 +55,6 @@ public class GameManagerCS : MonoBehaviour
     public AudioSource Snd_Draw;
 
     // UI
-    public GameObject Btn_Fight;
     public GameObject Layer_AttackButtons;
     public GameObject Btn_Rock;
     public GameObject Btn_Scissor;
@@ -75,14 +75,9 @@ public class GameManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
-        PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
-        AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
-
-        Reset();
     }
 
-    void Reset()
+    public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
     {
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
@@ -94,10 +89,14 @@ public class GameManagerCS : MonoBehaviour
             Layer_Wins.transform.Find("WinB" + i.ToString()).gameObject.SetActive(false);
         }
 
-        PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, true, false);
-        PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, false, true);
+        PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
+        PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
+        AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
 
-        ResetRound();
+        PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, true, playerCreateInfoA);
+        PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, false, playerCreateInfoB);
+
+        SetReadyToRound();
     }
 
     public float GetAttackTimerTime()
@@ -176,13 +175,6 @@ public class GameManagerCS : MonoBehaviour
         }
     }
 
-    public void Btn_Fight_OnClick()
-    {
-        Reset();
-        SetReadyToRound();
-        Btn_Fight.SetActive(false);
-	}
-
     void Btn_Rock_OnClick() {
         Attack(AttackType.Rock);
 	}
@@ -204,6 +196,8 @@ public class GameManagerCS : MonoBehaviour
     {
         switch (rhs)
         {
+            case AttackType.None:
+                return true;
             case AttackType.Rock:
                 return AttackType.Paper == lhs;
             case AttackType.Scissor:
@@ -218,6 +212,8 @@ public class GameManagerCS : MonoBehaviour
     {
         switch (rhs)
         {
+            case AttackType.None:
+                return true;
             case AttackType.Rock:
                 return AttackType.Scissor == lhs;
             case AttackType.Scissor:
@@ -274,7 +270,6 @@ public class GameManagerCS : MonoBehaviour
     void SetGameEnd()
     {
         RoundEnd();
-        Btn_Fight.SetActive(true);
         _gameState = GameState.GameEnd;
     }
 
@@ -290,6 +285,7 @@ public class GameManagerCS : MonoBehaviour
         _ko_sprite_flicker = false;
         SetSprite(Image_KO, Sprite_Ko);
         Layer_AttackTimer.SetActive(true);
+        AttackTimer_CS.Reset();
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
         _attackTimerTime = 0.0f;
@@ -446,6 +442,7 @@ public class GameManagerCS : MonoBehaviour
         }
         else if(GameState.GameEnd == _gameState)
         {
+            SceneManager.LoadScene("ChallengeScene");
         }
 
         if(null != _effect_AttackHitA && false == _effect_AttackHitA.GetComponent<ParticleSystem>().isPlaying)
