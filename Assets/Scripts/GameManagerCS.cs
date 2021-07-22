@@ -27,6 +27,7 @@ public class GameManagerCS : MonoBehaviour
     int _maxRoundCount = 3;
     int _winCount = 2;
     int _round = 1;
+    bool _pause = false;
     GameState _gameState = GameState.None;
 
     //
@@ -56,6 +57,7 @@ public class GameManagerCS : MonoBehaviour
     public AudioSource Snd_Draw;
 
     // UI
+    public GameObject Btn_Exit;
     public GameObject Layer_AttackButtons;
     public GameObject Btn_Rock;
     public GameObject Btn_Scissor;
@@ -84,11 +86,17 @@ public class GameManagerCS : MonoBehaviour
     }
 
     void OnDisable()
-    {        
+    {
+    }
+
+    public void Exit()
+    {   
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();     
     }
 
     public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
     {
+        _pause = false;
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
         _round = 1;
@@ -102,6 +110,7 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
         PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
         AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
+        Btn_Exit.SetActive(false);
 
         PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, true, playerCreateInfoA);
         PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, false, playerCreateInfoB);
@@ -346,6 +355,21 @@ public class GameManagerCS : MonoBehaviour
      // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            _pause = !_pause;
+
+            PlayerA_CS.SetPause(_pause);
+            PlayerB_CS.SetPause(_pause);
+
+            Btn_Exit.SetActive(_pause);
+        }
+
+        if(_pause)
+        {
+            return;
+        }
+
         // update flicker
         if(_ko_sprite_flicker || _ko_sprite_flicker_low_hp)
         {

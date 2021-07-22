@@ -30,6 +30,7 @@ public class PlayerCS : MonoBehaviour
 {
     // properties
     string _name;
+    bool _pause = false;
     bool _isNPC = false;
     bool _isLeft = false;
     Vector3 _startPosition;
@@ -80,6 +81,7 @@ public class PlayerCS : MonoBehaviour
         _isLeft = isLeft;
         _elapsedTime = 0.0f;
         _wins = 0;
+        _pause = false;
 
         GameManager = gameManager;
         Layer_AttackTimer = layer_attack_timer;
@@ -89,6 +91,11 @@ public class PlayerCS : MonoBehaviour
         _startPosition = new Vector3(isLeft ? -Constants.IdleDistance : Constants.IdleDistance, Constants.GroundPosition, 0.0f);
 
         SetReadyToRound();
+    }
+
+    public void SetPause(bool pause)
+    {
+        _pause = pause;
     }
 
     public void SetReadyToRound()
@@ -240,6 +247,11 @@ public class PlayerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(_pause)
+        {
+            return;
+        }
+
         if(PlayerState.Dead == _playerState)
         {
             // Nothing

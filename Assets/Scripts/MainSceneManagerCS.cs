@@ -18,7 +18,7 @@ public class MainSceneManagerCS : MonoBehaviour
     public GameObject FightScene;
     public GameObject ChallenegeScene;
 
-    GameSceneType _goalGameSceneType = GameSceneType.MainScene;
+    GameSceneType _goalGameSceneType = GameSceneType.None;
     GameSceneType _gameSceneType = GameSceneType.None;
     GameSceneType _gameSceneTypePrev = GameSceneType.None;
 
@@ -27,6 +27,7 @@ public class MainSceneManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Reset();
     }
 
     void OnEnable()
@@ -44,7 +45,7 @@ public class MainSceneManagerCS : MonoBehaviour
     public void Reset()
     {
         _fadeInOutTimer = 0.0f;
-        SetActivateScene(GameSceneType.None);
+        SetActivateScene(GameSceneType.MainScene);
     }
 
     public GameObject SetSceneObject(GameSceneType sceneType)
@@ -94,10 +95,6 @@ public class MainSceneManagerCS : MonoBehaviour
             if(GameSceneType.MainScene == _gameSceneType)
             {
                 Application.Quit();
-            }
-            else
-            {
-                SetActivateScenePrev();
             }
         }
     }

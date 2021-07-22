@@ -61,6 +61,11 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+        }
+
         if(ChallengeState.Versus == _challengeState)
         {
             if(3.0f < _timer)
