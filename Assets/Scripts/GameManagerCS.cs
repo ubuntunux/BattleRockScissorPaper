@@ -31,6 +31,7 @@ public class GameManagerCS : MonoBehaviour
 
     //
     public GameObject MainCamera;
+    public GameObject MainSceneManager;
 
     // Player
     public GameObject PlayerA;
@@ -75,6 +76,15 @@ public class GameManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+    }
+
+    void OnEnable()
+    {
+        MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
+    }
+
+    void OnDisable()
+    {        
     }
 
     public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
@@ -336,11 +346,6 @@ public class GameManagerCS : MonoBehaviour
      // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
-
         // update flicker
         if(_ko_sprite_flicker || _ko_sprite_flicker_low_hp)
         {
@@ -442,7 +447,7 @@ public class GameManagerCS : MonoBehaviour
         }
         else if(GameState.GameEnd == _gameState)
         {
-            SceneManager.LoadScene("ChallengeScene");
+            MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
         }
 
         if(null != _effect_AttackHitA && false == _effect_AttackHitA.GetComponent<ParticleSystem>().isPlaying)

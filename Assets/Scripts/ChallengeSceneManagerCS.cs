@@ -11,6 +11,10 @@ public enum ChallengeState
 
 public class ChallengeSceneManagerCS : MonoBehaviour
 {
+    public GameObject MainCamera;
+    public GameObject MainSceneManager;
+    public GameObject GameManager;
+
     public GameObject LayerPortrait;
     public GameObject Portrait00;
     public GameObject LayerVersus;
@@ -22,7 +26,18 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+    }
+
+    void OnEnable()
+    {
+        MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+        MainCamera.GetComponent<Camera>().backgroundColor = new Color(0, 0, 0, 1);
+
         Reset();
+    }
+
+    void OnDisable()
+    {        
     }
 
     void Reset()
@@ -48,10 +63,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     {
         if(ChallengeState.Versus == _challengeState)
         {
-            //if(3.0f < _timer)
+            if(3.0f < _timer)
             {
-                SceneManager.LoadScene("FightScene");
-                GameObject gameManager = GameObject.FindWithTag("GameManager");
+                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
 
                 PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
                 playerCreateInfoA._name = "PlayerA";
@@ -61,7 +75,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
                 playerCreateInfoB._name = "PlayerB";
                 playerCreateInfoB._isNPC = true;
 
-                gameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);
+                GameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);
             }
         }
         _timer += Time.deltaTime;
