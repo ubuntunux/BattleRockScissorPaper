@@ -82,7 +82,6 @@ public class GameManagerCS : MonoBehaviour
 
     void OnEnable()
     {
-        MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
     }
 
     void OnDisable()
@@ -112,8 +111,8 @@ public class GameManagerCS : MonoBehaviour
         AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
         Btn_Exit.SetActive(false);
 
-        PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, true, playerCreateInfoA);
-        PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, false, playerCreateInfoB);
+        PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, playerCreateInfoA);
+        PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, playerCreateInfoB);
 
         SetReadyToRound();
     }

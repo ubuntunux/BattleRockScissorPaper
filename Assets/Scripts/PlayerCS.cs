@@ -24,6 +24,8 @@ public class PlayerCreateInfo
 {
     public string _name = "";
     public bool _isNPC = false;
+    public bool _isLeft = true;
+    public Vector3 _startPosition = new Vector3(0.0f, 0.0f, 0.0f);
 }
 
 public class PlayerCS : MonoBehaviour
@@ -45,6 +47,7 @@ public class PlayerCS : MonoBehaviour
 
     // textures
     public Texture Texture_Portrait;
+    public Texture Texture_PortraitLoose;
     public Texture Texture_Idle;
     public Texture Texture_AttackRock;
     public Texture Texture_AttackScissor;
@@ -59,7 +62,6 @@ public class PlayerCS : MonoBehaviour
     // ui
     GameManagerCS GameManager;
     GameObject Layer_HP_Bar;
-    UIBarCS HP_Bar_CS;
     GameObject Layer_AttackTimer;
 
     ShakeObject _shakeObject = new ShakeObject();
@@ -74,11 +76,12 @@ public class PlayerCS : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
     }
 
-    public void Reset(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, bool isLeft, PlayerCreateInfo playerCreateInfo)
+    public void Reset(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, PlayerCreateInfo playerCreateInfo)
     {
         _name = playerCreateInfo._name;
         _isNPC = playerCreateInfo._isNPC;
-        _isLeft = isLeft;
+        _startPosition = playerCreateInfo._startPosition;
+        _isLeft = playerCreateInfo._isLeft;
         _elapsedTime = 0.0f;
         _wins = 0;
         _pause = false;
@@ -86,9 +89,6 @@ public class PlayerCS : MonoBehaviour
         GameManager = gameManager;
         Layer_AttackTimer = layer_attack_timer;
         Layer_HP_Bar = layer_hp_bar;
-        HP_Bar_CS = Layer_HP_Bar.GetComponent<UIBarCS>();
-        
-        _startPosition = new Vector3(isLeft ? -Constants.IdleDistance : Constants.IdleDistance, Constants.GroundPosition, 0.0f);
 
         SetReadyToRound();
     }
@@ -107,7 +107,10 @@ public class PlayerCS : MonoBehaviour
         _hp = Constants.InitialHP;
         transform.position = _startPosition;
         _shakeObject.reset();
-        HP_Bar_CS.Reset();
+        if(null != Layer_HP_Bar)
+        {
+            Layer_HP_Bar.GetComponent<UIBarCS>().Reset();
+        }
         SetTexture(Texture_Idle);
     }
 
@@ -221,7 +224,7 @@ public class PlayerCS : MonoBehaviour
             _hp = 0;
         }
 
-        HP_Bar_CS.setBar((float)_hp / Constants.InitialHP);
+        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / Constants.InitialHP);
         Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackTimerShake(_isLeft);
         _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);        
     }

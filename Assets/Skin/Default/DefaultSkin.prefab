@@ -461,6 +461,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c52f1964bff72334085d3834fa008744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Texture_Portrait: {fileID: 2800000, guid: c7265ba8e32babcff930a9588994daec, type: 3}
+  Texture_PortraitDamage: {fileID: 2800000, guid: 3b47a2fea200826cb816ff3956b1ab73, type: 3}
   Texture_Idle: {fileID: 2800000, guid: fed835608c57675719f3068402ca0150, type: 3}
   Texture_AttackRock: {fileID: 2800000, guid: a617300bef017081788779d527a676dd, type: 3}
   Texture_AttackScissor: {fileID: 2800000, guid: 598d4467346b4e6589fa150bad773865, type: 3}

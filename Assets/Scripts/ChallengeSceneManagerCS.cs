@@ -19,6 +19,15 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject Portrait00;
     public GameObject LayerVersus;
 
+    public GameObject PlayerA;
+    public GameObject PlayerB;
+    public GameObject Btn_Fight;
+
+    public GameObject[] ChallengePlayers;
+
+    PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
+    PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
+
     ChallengeState _challengeState = ChallengeState.None;
 
     float _timer = 0.0f;
@@ -30,9 +39,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     void OnEnable()
     {
-        MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-        MainCamera.GetComponent<Camera>().backgroundColor = new Color(0, 0, 0, 1);
-
         Reset();
     }
 
@@ -42,6 +48,22 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     void Reset()
     {
+        playerCreateInfoA._name = "PlayerA";
+        playerCreateInfoA._isNPC = false;
+        playerCreateInfoA._isLeft = true;
+        playerCreateInfoA._startPosition = new Vector3(-Constants.SelectDistance, Constants.GroundPosition, 0.0f);
+
+        playerCreateInfoB._name = "PlayerB";
+        playerCreateInfoB._isNPC = true;
+        playerCreateInfoB._isLeft = false;
+        playerCreateInfoB._startPosition = new Vector3(Constants.SelectDistance, Constants.GroundPosition, 0.0f);
+
+        PlayerA.GetComponent<PlayerCS>().Reset(null, null, null, playerCreateInfoA);
+        PlayerB.GetComponent<PlayerCS>().Reset(null, null, null, playerCreateInfoB);
+
+        PlayerA.GetComponent<PlayerCS>().SetPause(true);
+        PlayerB.GetComponent<PlayerCS>().SetPause(true);
+
         LayerPortrait.SetActive(true);
         LayerVersus.SetActive(false);
 
@@ -50,6 +72,10 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     }
 
     public void PortraitOnClick()
+    {
+    }
+
+    public void Btn_Fight_OnClick()
     {
         LayerPortrait.SetActive(false);
         LayerVersus.SetActive(true);
@@ -71,15 +97,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             if(3.0f < _timer)
             {
                 MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
-
-                PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
-                playerCreateInfoA._name = "PlayerA";
-                playerCreateInfoA._isNPC = false;
-
-                PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
-                playerCreateInfoB._name = "PlayerB";
-                playerCreateInfoB._isNPC = true;
-
+                
+                playerCreateInfoA._startPosition = new Vector3(-Constants.IdleDistance, Constants.GroundPosition, 0.0f);
+                playerCreateInfoB._startPosition = new Vector3(Constants.IdleDistance, Constants.GroundPosition, 0.0f);
                 GameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);
             }
         }

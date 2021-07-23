@@ -14,6 +14,7 @@ public enum GameSceneType
 public class MainSceneManagerCS : MonoBehaviour
 {
     public GameObject MainCamera;
+    public GameObject MainCanvas;
     public GameObject MainScene;
     public GameObject FightScene;
     public GameObject ChallenegeScene;
@@ -31,10 +32,7 @@ public class MainSceneManagerCS : MonoBehaviour
     }
 
     void OnEnable()
-    {
-        MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-        MainCamera.GetComponent<Camera>().backgroundColor = new Color(0, 0, 0, 1);
-        
+    {   
         Reset();
     }
 
@@ -46,6 +44,17 @@ public class MainSceneManagerCS : MonoBehaviour
     {
         _fadeInOutTimer = 0.0f;
         SetActivateScene(GameSceneType.MainScene);
+    }
+
+    public void SetBackGroundToSolidColor(Color color)
+    {
+        MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+        MainCamera.GetComponent<Camera>().backgroundColor = color;
+    }
+
+    public void SetBackGroundToSkyBox()
+    {
+        MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
     }
 
     public GameObject SetSceneObject(GameSceneType sceneType)
