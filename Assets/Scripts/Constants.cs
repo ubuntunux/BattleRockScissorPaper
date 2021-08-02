@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
+    static public float FadeTime = 0.25f;
     static public float AttackRandomTermMin = 0.1f;
     static public float AttackRandomTermMax = 1.0f;
     static public float AttackTimerTime = 2.0f;
@@ -18,7 +19,7 @@ public class Constants : MonoBehaviour
     static public float SelectDistance = 4.0f; 
     static public int InitialHP = 5;
     static public int DamageDraw = 1;
-    static public int DamageLoose = 2;
+    static public int DamageLose = 2;
     static public float CameraShakeDuration = 0.2f;
     static public float CameraShakeRandomTerm = 0.01f;
     static public float CameraShakeIntensity = 1.0f;

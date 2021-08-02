@@ -153,7 +153,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Macho man
+  m_Text: Player
 --- !u!1 &512262310473571373
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,6 +166,7 @@ GameObject:
   - component: {fileID: 512262310473571409}
   - component: {fileID: 512262310473571408}
   - component: {fileID: 512262310473571375}
+  - component: {fileID: 106950195216212524}
   m_Layer: 5
   m_Name: LayerPortrait
   m_TagString: Untagged
@@ -186,7 +187,7 @@ RectTransform:
   m_Children:
   - {fileID: 512262309681463007}
   - {fileID: 512262308685194609}
-  - {fileID: 4026105323870841382}
+  - {fileID: 8319844154506769813}
   - {fileID: 2076600032165573860}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -278,6 +279,24 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &106950195216212524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512262310473571373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9d7880ccd7929f2bb2fe26cf2adf443, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _name: {fileID: 512262309681463006}
+  _portrait: {fileID: 512262308685194608}
+  _portraitLose: {fileID: 8011455711971508737}
+  _imageLose: {fileID: 605948259780918097}
+  Sprite_BackGround: {fileID: 21300000, guid: 43a7d98bd4222b64e933596512dc09ad, type: 3}
+  Sprite_BackGround_Selected: {fileID: 21300000, guid: 5a43b69f264cc33ebb91a1421cad2624, type: 3}
 --- !u!1 &605948259780918097
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,7 +309,7 @@ GameObject:
   - component: {fileID: 6302876174166287025}
   - component: {fileID: 1166544753519234227}
   m_Layer: 5
-  m_Name: ImageLoose
+  m_Name: ImageLose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -353,7 +372,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &4071511904650530699
+--- !u!1 &8011455711971508737
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -361,23 +380,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4026105323870841382}
-  - component: {fileID: 5064934885184571492}
-  - component: {fileID: 3041655008252960295}
+  - component: {fileID: 8319844154506769813}
+  - component: {fileID: 795542518962428126}
+  - component: {fileID: 9042566500251677877}
   m_Layer: 5
-  m_Name: Portraitoose
+  m_Name: PortraitLose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!224 &4026105323870841382
+--- !u!224 &8319844154506769813
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4071511904650530699}
+  m_GameObject: {fileID: 8011455711971508737}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -390,21 +409,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 5}
   m_SizeDelta: {x: 110, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &5064934885184571492
+--- !u!222 &795542518962428126
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4071511904650530699}
+  m_GameObject: {fileID: 8011455711971508737}
   m_CullTransparentMesh: 1
---- !u!114 &3041655008252960295
+--- !u!114 &9042566500251677877
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4071511904650530699}
+  m_GameObject: {fileID: 8011455711971508737}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -418,7 +437,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6b8b52b6ccde1440c9a1c6a5834ba6c5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c7265ba8e32babcff930a9588994daec, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

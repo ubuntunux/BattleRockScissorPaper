@@ -46,18 +46,19 @@ public class PlayerCS : MonoBehaviour
     int _wins = 0;
 
     // textures
-    public Texture Texture_Portrait;
-    public Texture Texture_PortraitLoose;
-    public Texture Texture_Idle;
-    public Texture Texture_AttackRock;
-    public Texture Texture_AttackScissor;
-    public Texture Texture_AttackPaper;
-    public Texture Texture_Win;
-    public Texture Texture_Dead;
+    public Sprite Sprite_Portrait;
+    public Sprite Sprite_PortraitLose;
+    public Sprite Sprite_Idle;
+    public Sprite Sprite_AttackRock;
+    public Sprite Sprite_AttackScissor;
+    public Sprite Sprite_AttackPaper;
+    public Sprite Sprite_Win;
+    public Sprite Sprite_Dead;
 
     // sounds
     public AudioSource Snd_Attack;
     public AudioSource Snd_AttackHit;
+    public AudioSource Snd_Name;
 
     // ui
     GameManagerCS GameManager;
@@ -71,9 +72,14 @@ public class PlayerCS : MonoBehaviour
     {
     }
 
-    public void SetTexture(Texture texture)
+    public Sprite GetSpritePortrait()
     {
-        GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
+        return Sprite_Portrait;
+    }
+
+    public void SetTexture(Sprite sprite)
+    {
+        GetComponent<Renderer>().material.SetTexture("_MainTex", sprite.texture);
     }
 
     public void Reset(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, PlayerCreateInfo playerCreateInfo)
@@ -111,12 +117,12 @@ public class PlayerCS : MonoBehaviour
         {
             Layer_HP_Bar.GetComponent<UIBarCS>().Reset();
         }
-        SetTexture(Texture_Idle);
+        SetTexture(Sprite_Idle);
     }
 
     public void SetIdle()
     {
-        SetTexture(Texture_Idle);        
+        SetTexture(Sprite_Idle);        
         _playerState = PlayerState.Idle;
     }
 
@@ -144,13 +150,13 @@ public class PlayerCS : MonoBehaviour
     public void SetWin()
     {
         _wins += 1;
-        SetTexture(Texture_Win);
+        SetTexture(Sprite_Win);
         _playerState = PlayerState.Win;
     }
 
     public void SetDead()
     {
-        SetTexture(Texture_Dead);
+        SetTexture(Sprite_Dead);
         _playerState = PlayerState.Dead;
     }
 
@@ -166,13 +172,13 @@ public class PlayerCS : MonoBehaviour
         switch(attackType)
         {
             case AttackType.Rock:
-                SetTexture(Texture_AttackRock);
+                SetTexture(Sprite_AttackRock);
                 break;
             case AttackType.Scissor:
-                SetTexture(Texture_AttackScissor);
+                SetTexture(Sprite_AttackScissor);
                 break;
             case AttackType.Paper:
-                SetTexture(Texture_AttackPaper);
+                SetTexture(Sprite_AttackPaper);
                 break;
             default:
                 SetIdle();

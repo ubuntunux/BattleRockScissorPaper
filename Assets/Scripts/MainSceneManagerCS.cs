@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum GameSceneType
 {
@@ -14,7 +15,7 @@ public enum GameSceneType
 public class MainSceneManagerCS : MonoBehaviour
 {
     public GameObject MainCamera;
-    public GameObject MainCanvas;
+    public GameObject FadePanel;
     public GameObject MainScene;
     public GameObject FightScene;
     public GameObject ChallenegeScene;
@@ -42,7 +43,6 @@ public class MainSceneManagerCS : MonoBehaviour
 
     public void Reset()
     {
-        _fadeInOutTimer = 0.0f;
         SetActivateScene(GameSceneType.MainScene);
     }
 
@@ -83,6 +83,8 @@ public class MainSceneManagerCS : MonoBehaviour
             return;
         }
 
+        _fadeInOutTimer = Constants.FadeTime;
+
         _gameSceneTypePrev = _gameSceneType;
         _gameSceneType = sceneType;
         
@@ -106,5 +108,13 @@ public class MainSceneManagerCS : MonoBehaviour
                 Application.Quit();
             }
         }
+
+        // if(0.0f != _fadeInOutTimer)
+        // {
+        //     float fadeInOutTimer = 1.0f - Mathf.Abs((_fadeInOutTimer / Constants.FadeTime) * 2.0f - 1.0f);
+        //     FadePanel.GetComponent<Image>().color = new Color(0,0,0, fadeInOutTimer * 0.5f);
+
+        //     _fadeInOutTimer -= Time.deltaTime;
+        // }
     }
 }

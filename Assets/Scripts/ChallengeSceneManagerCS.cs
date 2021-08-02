@@ -15,13 +15,14 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject MainSceneManager;
     public GameObject GameManager;
 
-    public GameObject LayerPortrait;
-    public GameObject Portrait00;
+    public GameObject LayerPortrait;    
     public GameObject LayerVersus;
+    public GameObject PortraitSelected;
+    public GameObject PortraitLeft;
+    public GameObject PortraitRight;
 
     public GameObject PlayerA;
     public GameObject PlayerB;
-    public GameObject Btn_Fight;
 
     public GameObject[] ChallengePlayers;
 
@@ -66,6 +67,13 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         LayerPortrait.SetActive(true);
         LayerVersus.SetActive(false);
+
+        PortraitSelected.GetComponent<ChallengePortraitCS>().Reset();
+        PortraitLeft.GetComponent<ChallengePortraitCS>().Reset();
+        PortraitRight.GetComponent<ChallengePortraitCS>().Reset();
+
+        PortraitLeft.GetComponent<ChallengePortraitCS>().SetLose();
+        PortraitSelected.GetComponent<ChallengePortraitCS>().SetSelected(true);
 
         _timer = 0.0f;
         _challengeState = ChallengeState.None;

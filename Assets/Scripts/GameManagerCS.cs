@@ -53,7 +53,7 @@ public class GameManagerCS : MonoBehaviour
     public AudioSource Snd_FinalRound;
     public AudioSource Snd_Fight;
     public AudioSource Snd_Win;
-    public AudioSource Snd_Loose;
+    public AudioSource Snd_Lose;
     public AudioSource Snd_Draw;
 
     // UI
@@ -210,7 +210,7 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS.SetAttack(attackType);
 	}
 
-    bool checkLoose(AttackType lhs, AttackType rhs)
+    bool checkLose(AttackType lhs, AttackType rhs)
     {
         switch (rhs)
         {
@@ -265,6 +265,7 @@ public class GameManagerCS : MonoBehaviour
     void SetReadyToRound()
     {
         ResetRound();
+        
         if(_maxRoundCount == _round) { Snd_FinalRound.Play(); }
         else if (1 == _round) {Snd_Round1.Play();}
         else if (2 == _round) {Snd_Round2.Play();}
@@ -322,16 +323,16 @@ public class GameManagerCS : MonoBehaviour
         AttackType attackTypeA = PlayerA_CS.getLastAttackType();
         AttackType attackTypeB = PlayerB_CS.getLastAttackType();
 
-        if(attackTypeB == attackTypeA || checkLoose(attackTypeB, attackTypeA))
+        if(attackTypeB == attackTypeA || checkLose(attackTypeB, attackTypeA))
         {
             CreateEffectAttackHit(attackTypeB, true);
-            PlayerA_CS.SetDamage((attackTypeB == attackTypeA) ? Constants.DamageDraw : Constants.DamageLoose);
+            PlayerA_CS.SetDamage((attackTypeB == attackTypeA) ? Constants.DamageDraw : Constants.DamageLose);
         }
 
-        if(attackTypeA == attackTypeB || checkLoose(attackTypeA, attackTypeB))
+        if(attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB))
         {
             CreateEffectAttackHit(attackTypeA, false);
-            PlayerB_CS.SetDamage((attackTypeA == attackTypeB) ? Constants.DamageDraw : Constants.DamageLoose);
+            PlayerB_CS.SetDamage((attackTypeA == attackTypeB) ? Constants.DamageDraw : Constants.DamageLose);
         }
 
         // set flicker
@@ -432,8 +433,8 @@ public class GameManagerCS : MonoBehaviour
                         Layer_Wins.transform.Find("WinB" + PlayerB_CS.GetWin().ToString()).gameObject.SetActive(true);
                         PlayerA_CS.SetDead();
                         PlayerB_CS.SetWin();
-                        Snd_Loose.Play();
-                        Text_Result.GetComponent<Text>().text = "You Loose";
+                        Snd_Lose.Play();
+                        Text_Result.GetComponent<Text>().text = "You Lose";
                     }
                     else
                     {
