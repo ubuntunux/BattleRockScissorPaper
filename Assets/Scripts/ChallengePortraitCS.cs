@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class ChallengePortraitCS : MonoBehaviour
 {
+    ChallengePlayerCS _challengePlayer;
+
     public GameObject _name;
     public GameObject _portrait;
     public GameObject _portraitLose;
@@ -37,6 +39,19 @@ public class ChallengePortraitCS : MonoBehaviour
     {
         GetComponent<Button>().enabled = !selected;
         GetComponent<Image>().sprite = selected ? Sprite_BackGround_Selected : Sprite_BackGround;
+    }
+
+    public ChallengePlayerCS GetChallengePlayer()
+    {
+        return _challengePlayer;
+    }
+
+    public void SetChallengePlayer(ChallengePlayerCS challengePlayer)
+    {
+        _challengePlayer = challengePlayer;
+        _name.GetComponent<Text>().text = challengePlayer.GetCharacterName();
+        _portrait.GetComponent<Image>().sprite = challengePlayer.GetImagePortrait();
+        _portraitLose.GetComponent<Image>().sprite = challengePlayer.GetImagePortraitLose();
     }
 
     // Update is called once per frame

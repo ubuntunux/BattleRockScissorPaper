@@ -13,6 +13,7 @@ public enum AttackType
 public enum PlayerState
 {
     None,
+    Select,
     Idle,
     AttackMotion,
     AttackHit,
@@ -26,11 +27,13 @@ public class PlayerCreateInfo
     public bool _isNPC = false;
     public bool _isLeft = true;
     public Vector3 _startPosition = new Vector3(0.0f, 0.0f, 0.0f);
+    public PlayerCS _skin = null;
 }
 
 public class PlayerCS : MonoBehaviour
 {
     // properties
+    public string _characterName;
     string _name;
     bool _pause = false;
     bool _isNPC = false;
@@ -45,7 +48,7 @@ public class PlayerCS : MonoBehaviour
     int _hp = Constants.InitialHP;
     int _wins = 0;
 
-    // textures
+    // Skin
     public Sprite Sprite_Portrait;
     public Sprite Sprite_PortraitLose;
     public Sprite Sprite_Idle;
@@ -54,11 +57,11 @@ public class PlayerCS : MonoBehaviour
     public Sprite Sprite_AttackPaper;
     public Sprite Sprite_Win;
     public Sprite Sprite_Dead;
+    public AudioClip AudioClip_CharacterName;
 
     // sounds
     public AudioSource Snd_Attack;
     public AudioSource Snd_AttackHit;
-    public AudioSource Snd_Name;
 
     // ui
     GameManagerCS GameManager;
@@ -72,9 +75,24 @@ public class PlayerCS : MonoBehaviour
     {
     }
 
-    public Sprite GetSpritePortrait()
+    public AudioClip GetAudioClip_CharacterName()
+    {
+        return AudioClip_CharacterName;
+    }
+
+    public string GetCharacterName()
+    {
+        return _characterName;
+    }
+
+    public Sprite GetImagePortrait()
     {
         return Sprite_Portrait;
+    }
+
+    public Sprite GetImagePortraitLose()
+    {
+        return Sprite_PortraitLose;
     }
 
     public void SetTexture(Sprite sprite)
@@ -96,12 +114,27 @@ public class PlayerCS : MonoBehaviour
         Layer_AttackTimer = layer_attack_timer;
         Layer_HP_Bar = layer_hp_bar;
 
+        SetSkin(playerCreateInfo._skin);
+
         SetReadyToRound();
     }
 
     public void SetPause(bool pause)
     {
         _pause = pause;
+    }
+
+    public void SetSkin(PlayerCS skin)
+    {
+        Sprite_Portrait = skin.Sprite_Portrait;
+        Sprite_PortraitLose = skin.Sprite_PortraitLose;
+        Sprite_Idle = skin.Sprite_Idle;
+        Sprite_AttackRock = skin.Sprite_AttackRock;
+        Sprite_AttackScissor = skin.Sprite_AttackScissor;
+        Sprite_AttackPaper = skin.Sprite_AttackPaper;
+        Sprite_Win = skin.Sprite_Win;
+        Sprite_Dead = skin.Sprite_Dead;
+        AudioClip_CharacterName = skin.AudioClip_CharacterName;
     }
 
     public void SetReadyToRound()
@@ -118,6 +151,12 @@ public class PlayerCS : MonoBehaviour
             Layer_HP_Bar.GetComponent<UIBarCS>().Reset();
         }
         SetTexture(Sprite_Idle);
+    }
+
+    public void SetSelect()
+    {
+        SetTexture(Sprite_Idle);        
+        _playerState = PlayerState.Select;
     }
 
     public void SetIdle()
@@ -254,7 +293,7 @@ public class PlayerCS : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         if(_pause)
         {
@@ -268,6 +307,12 @@ public class PlayerCS : MonoBehaviour
         else if(PlayerState.Win == _playerState)
         {
             // Nothing
+        }
+        else if(PlayerState.Select == _playerState)
+        {
+            float speed = _elapsedTime * _idleMotionSpeed;
+            float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
+            transform.position = _startPosition + new Vector3(0.0f, offsetY, 0.0f);
         }
         else if(PlayerState.None == _playerState || PlayerState.Idle == _playerState)
         {

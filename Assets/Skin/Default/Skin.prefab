@@ -136,7 +136,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: cbd4545814f1e14c585b38d12cfc8d3d, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 5d03fb1cb2ae12dd38c7a5c1fe7bc409, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -589,14 +589,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c52f1964bff72334085d3834fa008744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Sprite_Portrait: {fileID: 21300000, guid: c7265ba8e32babcff930a9588994daec, type: 3}
-  Sprite_PortraitLose: {fileID: 21300000, guid: 3b47a2fea200826cb816ff3956b1ab73, type: 3}
-  Sprite_Idle: {fileID: 21300000, guid: fed835608c57675719f3068402ca0150, type: 3}
-  Sprite_AttackRock: {fileID: 21300000, guid: a617300bef017081788779d527a676dd, type: 3}
-  Sprite_AttackScissor: {fileID: 21300000, guid: 598d4467346b4e6589fa150bad773865, type: 3}
-  Sprite_AttackPaper: {fileID: 21300000, guid: 073a9553f43a6bd178683e95e2919b84, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: bc01a87947b585b2981703cd39c667d5, type: 3}
-  Sprite_Dead: {fileID: 21300000, guid: 61f6a9b406cc1debd8affa0f7baa6f25, type: 3}
+  _characterName: Player
+  Sprite_Portrait: {fileID: 21300000, guid: ff06736d089b5d4c4b254b0d367ce310, type: 3}
+  Sprite_PortraitLose: {fileID: 21300000, guid: 32f636c6692c31502b5144776a1c6b08, type: 3}
+  Sprite_Idle: {fileID: 21300000, guid: cd155e0eeb7f535dbbcbc260a0f2fb1c, type: 3}
+  Sprite_AttackRock: {fileID: 21300000, guid: 4ecbbd7fbf7d74c6484bbfb3c29f67d0, type: 3}
+  Sprite_AttackScissor: {fileID: 21300000, guid: af8506722ebaac57b8a6773901e52792, type: 3}
+  Sprite_AttackPaper: {fileID: 21300000, guid: 05dee1b0a836ce178a6c042159c7fba2, type: 3}
+  Sprite_Win: {fileID: 21300000, guid: c4470fc0b8b554c2abd4c440db1157fb, type: 3}
+  Sprite_Dead: {fileID: 21300000, guid: 41ea76061275c57d8bb5519737f5fadb, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
-  Snd_Name: {fileID: 4031033495818667459}
+  AudioClip_CharacterName: {fileID: 8300000, guid: 5d03fb1cb2ae12dd38c7a5c1fe7bc409, type: 3}
