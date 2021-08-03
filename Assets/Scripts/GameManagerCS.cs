@@ -12,7 +12,7 @@ public enum GameState
     ReadyToAttack,
     AttackHit,
     RoundEnd,
-    GameEnd,
+    GameResult,
 }
 
 public class GameManagerCS : MonoBehaviour
@@ -24,6 +24,7 @@ public class GameManagerCS : MonoBehaviour
     float _attackHitTimeDelay = 0.0f;    
     float _readyToRoundTime = 0.0f;
     float _roundEndTime = 0.0f;
+    float _gameResultTime = 0.0f;
     int _maxRoundCount = 3;
     int _winCount = 2;
     int _round = 1;
@@ -57,6 +58,7 @@ public class GameManagerCS : MonoBehaviour
     public AudioSource Snd_Draw;
 
     // UI
+    public GameObject LayerResult;
     public GameObject Btn_Exit;
     public GameObject Layer_AttackButtons;
     public GameObject Btn_Rock;
@@ -114,6 +116,7 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, playerCreateInfoA);
         PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, playerCreateInfoB);
 
+        LayerResult.SetActive(false);
         SetReadyToRound();
     }
 
@@ -163,6 +166,7 @@ public class GameManagerCS : MonoBehaviour
         Vector3 pos = new Vector3(isLeft ? -Constants.AttackDistance : Constants.AttackDistance, offsetY, 0.0f);
         Quaternion rot = Quaternion.Euler(-90.0f, isLeft ? 180.0f : 0.0f, 0.0f);
 		GameObject effect_AttackHit = (GameObject)GameObject.Instantiate(Effect_AttackHit, pos, rot);
+
         if(isLeft)
         {
             _effect_AttackHitA = effect_AttackHit;
@@ -250,6 +254,7 @@ public class GameManagerCS : MonoBehaviour
         _attackHitTimeDelay = 0.0f;
         _readyToRoundTime = 0.0f;
         _roundEndTime = 0.0f;
+        _gameResultTime = 0.0f;
 
         PlayerA_CS.SetReadyToRound();
         PlayerB_CS.SetReadyToRound();
@@ -286,17 +291,19 @@ public class GameManagerCS : MonoBehaviour
         SetSprite(Image_KO, Sprite_Ko);
     }
 
-    void SetGameEnd()
-    {
-        RoundEnd();
-        _gameState = GameState.GameEnd;
-    }
-
     void SetRoundEnd()
     {
         RoundEnd();
         _roundEndTime = 0.0f;
         _gameState = GameState.RoundEnd;
+    }
+
+    void SetGameResult()
+    {
+        LayerResult.SetActive(true);
+        LayerResult.GetComponent<ResultCS>().Reset(PlayerA_CS, PlayerA_CS.GetWin(), PlayerB_CS, PlayerB_CS.GetWin());
+        _gameResultTime = 0.0f;
+        _gameState = GameState.GameResult;
     }
 
     void SetReadyToAttack()
@@ -357,12 +364,18 @@ public class GameManagerCS : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            _pause = !_pause;
-
-            PlayerA_CS.SetPause(_pause);
-            PlayerB_CS.SetPause(_pause);
-
-            Btn_Exit.SetActive(_pause);
+            if(GameState.GameResult == _gameState)
+            {
+                Exit();
+                return;
+            }
+            else
+            {
+                _pause = !_pause;
+                PlayerA_CS.SetPause(_pause);
+                PlayerB_CS.SetPause(_pause);
+                Btn_Exit.SetActive(_pause);
+            }
         }
 
         if(_pause)
@@ -464,14 +477,18 @@ public class GameManagerCS : MonoBehaviour
                 }
                 else
                 {
-                    SetGameEnd();
+                    SetGameResult();
                 }
             }
             _roundEndTime += Time.deltaTime;
         }
-        else if(GameState.GameEnd == _gameState)
+        else if(GameState.GameResult == _gameState)
         {
-            MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
+            if(Constants.GameResultTime <= _gameResultTime)
+            {
+                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
+            }
+            _gameResultTime += Time.deltaTime;
         }
 
         if(null != _effect_AttackHitA && false == _effect_AttackHitA.GetComponent<ParticleSystem>().isPlaying)

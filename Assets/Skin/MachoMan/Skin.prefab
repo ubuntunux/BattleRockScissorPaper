@@ -598,6 +598,7 @@ MonoBehaviour:
   Sprite_AttackPaper: {fileID: 21300000, guid: 073a9553f43a6bd178683e95e2919b84, type: 3}
   Sprite_Win: {fileID: 21300000, guid: bc01a87947b585b2981703cd39c667d5, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: 61f6a9b406cc1debd8affa0f7baa6f25, type: 3}
+  AudioClip_CharacterName: {fileID: 8300000, guid: cbd4545814f1e14c585b38d12cfc8d3d, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
-  AudioClip_CharacterName: {fileID: 8300000, guid: cbd4545814f1e14c585b38d12cfc8d3d, type: 3}
+  Snd_Name: {fileID: 4031033495818667459}

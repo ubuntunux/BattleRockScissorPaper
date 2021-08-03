@@ -14,10 +14,10 @@ public class UIBarCS : MonoBehaviour
         
     }
 
-    public void Reset()
+    public void Reset(string playerID)
     {
         setBar(1.0f);
-        setPlayerID("PlayerID");
+        setPlayerID(playerID);
     }
 
     public void setPlayerID(string playerID)

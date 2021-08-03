@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum ChallengeState
 {
@@ -23,6 +25,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     public GameObject PlayerA;
     public GameObject PlayerB;
+
+    public GameObject Text_PlayerA_Name;
+    public GameObject Text_Score;
 
     public GameObject[] ChallengePlayers;
 
@@ -70,8 +75,8 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         PortraitSelected.GetComponent<ChallengePortraitCS>().SetChallengePlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>());
         PortraitRight.GetComponent<ChallengePortraitCS>().SetChallengePlayer(ChallengePlayers[1].GetComponent<ChallengePlayerCS>());
 
-        SelectChallengePlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>());
-        _playerCharacter = ChallengePlayers[0].GetComponent<ChallengePlayerCS>();
+        SelectChallengePlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>(), false);
+        SelectPlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>());
         //
 
         playerCreateInfoA._name = "PlayerA";
@@ -91,26 +96,56 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         PlayerA.GetComponent<PlayerCS>().SetSelect();
         PlayerB.GetComponent<PlayerCS>().SetSelect();
+
+        // Load Score
+        int score = PlayerPrefs.GetInt("Score", 0);
+        SetScore(score);
     }
 
-    public void SelectChallengePlayer(ChallengePlayerCS player)
+    public void AddScore(int add_score)
     {
+        SetScore(PlayerPrefs.GetInt("Score", 0) + add_score);
+    }
+
+    public void SetScore(int score)
+    {
+        Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
+        PlayerPrefs.SetInt("Score", score);
+        PlayerPrefs.Save();
+    }
+
+    public void SelectPlayer(ChallengePlayerCS player)
+    {
+        _playerCharacter = player;
+        Text_PlayerA_Name.GetComponent<TextMeshProUGUI>().text = player.GetCharacterName();
+    }
+
+    public void SelectChallengePlayer(ChallengePlayerCS player, bool playSound)
+    {
+        AddScore(1);
+
         _selectedChallengePlayer = player;
-        PortraitSelected.GetComponent<ChallengePortraitCS>().SetChallengePlayer(player);        
-        PlayerB.GetComponent<PlayerCS>().SetSkin(player._skin.GetComponent<PlayerCS>());
+
+        PortraitSelected.GetComponent<ChallengePortraitCS>().SetChallengePlayer(player); 
+               
+        PlayerB.GetComponent<PlayerCS>().SetSkin(player._skin.GetComponent<PlayerCS>());        
         PlayerB.GetComponent<PlayerCS>().SetSelect();
+        if(playSound)
+        {
+            PlayerB.GetComponent<PlayerCS>().PlayCharacterName();
+        }
     }
 
     public void PortraitLeftOnClick()
     {
         ChallengePlayerCS player = PortraitLeft.GetComponent<ChallengePortraitCS>().GetChallengePlayer();
-        SelectChallengePlayer(player);
+        SelectChallengePlayer(player, true);
     }
 
     public void PortraitRightOnClick()
     {
         ChallengePlayerCS player = PortraitRight.GetComponent<ChallengePortraitCS>().GetChallengePlayer();
-        SelectChallengePlayer(player);
+        SelectChallengePlayer(player, true);
     }
 
     public void Btn_Fight_OnClick()
@@ -128,7 +163,10 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+            if(ChallengeState.Versus != _challengeState)
+            {
+                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+            }
         }
 
         if(ChallengeState.Versus == _challengeState)

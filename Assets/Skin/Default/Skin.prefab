@@ -600,4 +600,4 @@ MonoBehaviour:
   Sprite_Dead: {fileID: 21300000, guid: 41ea76061275c57d8bb5519737f5fadb, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
-  AudioClip_CharacterName: {fileID: 8300000, guid: 5d03fb1cb2ae12dd38c7a5c1fe7bc409, type: 3}
+  Snd_Name: {fileID: 4031033495818667459}

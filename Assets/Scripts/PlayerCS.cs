@@ -57,11 +57,11 @@ public class PlayerCS : MonoBehaviour
     public Sprite Sprite_AttackPaper;
     public Sprite Sprite_Win;
     public Sprite Sprite_Dead;
-    public AudioClip AudioClip_CharacterName;
 
     // sounds
     public AudioSource Snd_Attack;
     public AudioSource Snd_AttackHit;
+    public AudioSource Snd_Name = null;
 
     // ui
     GameManagerCS GameManager;
@@ -77,7 +77,12 @@ public class PlayerCS : MonoBehaviour
 
     public AudioClip GetAudioClip_CharacterName()
     {
-        return AudioClip_CharacterName;
+        return Snd_Name.clip;
+    }
+
+    public void PlayCharacterName()
+    {
+        Snd_Name.Play();
     }
 
     public string GetCharacterName()
@@ -113,7 +118,7 @@ public class PlayerCS : MonoBehaviour
         GameManager = gameManager;
         Layer_AttackTimer = layer_attack_timer;
         Layer_HP_Bar = layer_hp_bar;
-
+        
         SetSkin(playerCreateInfo._skin);
 
         SetReadyToRound();
@@ -134,7 +139,7 @@ public class PlayerCS : MonoBehaviour
         Sprite_AttackPaper = skin.Sprite_AttackPaper;
         Sprite_Win = skin.Sprite_Win;
         Sprite_Dead = skin.Sprite_Dead;
-        AudioClip_CharacterName = skin.AudioClip_CharacterName;
+        Snd_Name.clip = skin.Snd_Name.clip;
     }
 
     public void SetReadyToRound()
@@ -148,7 +153,7 @@ public class PlayerCS : MonoBehaviour
         _shakeObject.reset();
         if(null != Layer_HP_Bar)
         {
-            Layer_HP_Bar.GetComponent<UIBarCS>().Reset();
+            Layer_HP_Bar.GetComponent<UIBarCS>().Reset(_characterName);
         }
         SetTexture(Sprite_Idle);
     }
@@ -261,7 +266,7 @@ public class PlayerCS : MonoBehaviour
 
     public void SetDamage(int damage)
     {
-        // damage = 50;
+        damage = 50;
 
         _hp -= damage;
         if(_hp <= 0)
