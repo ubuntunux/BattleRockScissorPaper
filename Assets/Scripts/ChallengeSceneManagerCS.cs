@@ -11,11 +11,78 @@ public enum ChallengeState
     Versus,
 }
 
+public class ChallengeInfo
+{
+    public int _stage = 0;
+    public int _score = 0;
+    public int _level = 1;    
+    public int _exp = 0;
+
+    public bool TakeScore(int score)
+    {
+        if(score <= _score)
+        {
+            _score -= score;
+            return true;
+        }
+        return false;
+    }
+
+    public void AddScore(int score)
+    {
+        _score += score;
+    }
+
+    public bool AddExp(int exp)
+    {
+        _exp += exp;
+        return calcLevel();
+    }
+
+    public bool calcLevel()
+    {
+        bool levelUp = false;
+        while(_level < Constants.Exps.Length)
+        {
+            int exp_index = Mathf.Max(0, _level - 1);
+            if(Constants.Exps[exp_index] <= _exp)
+            {
+                _exp -= Constants.Exps[exp_index];
+                _level += 1;
+                levelUp = true;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return levelUp;
+    }
+
+    public void LoadData()
+    {
+        // TEST
+        _stage = 1;//Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeStageKey));
+        _score = Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeScoreKey));
+        _level = Mathf.Max(1, SystemValue.GetInt(SystemValue.ChallengeLevelKey));
+        _exp = Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeExpKey));
+    }
+    
+    public void SaveData()
+    {
+        SystemValue.SetInt(SystemValue.ChallengeStageKey, _stage);
+        SystemValue.SetInt(SystemValue.ChallengeScoreKey, _score);
+        SystemValue.SetInt(SystemValue.ChallengeLevelKey, _level);
+        SystemValue.SetInt(SystemValue.ChallengeExpKey, _exp);
+    }
+}
+
 public class ChallengeSceneManagerCS : MonoBehaviour
 {
     public GameObject MainCamera;
     public GameObject MainSceneManager;
     public GameObject GameManager;
+    public GameObject SkinManager;
 
     public GameObject LayerPortrait;    
     public GameObject LayerVersus;
@@ -26,8 +93,11 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject PlayerA;
     public GameObject PlayerB;
 
+    // challenge info
     public GameObject Text_PlayerA_Name;
     public GameObject Text_Score;
+    public GameObject Text_Level;
+    public GameObject ExpBar;
 
     public GameObject[] ChallengePlayers;
 
@@ -36,8 +106,11 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     ChallengeState _challengeState = ChallengeState.None;
 
-    ChallengePlayerCS _playerCharacter = null;
+    PlayerCS _playerCharacter = null;
     ChallengePlayerCS _selectedChallengePlayer = null;
+
+    ChallengeInfo _challengeInfo = new ChallengeInfo();
+    int _currentStage = 0;
 
     float _timer = 0.0f;
 
@@ -69,23 +142,21 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _timer = 0.0f;
         _challengeState = ChallengeState.None;
 
-        // test
-        PortraitLeft.GetComponent<ChallengePortraitCS>().SetChallengePlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>());
-        PortraitLeft.GetComponent<ChallengePortraitCS>().SetLose();
-        PortraitSelected.GetComponent<ChallengePortraitCS>().SetChallengePlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>());
-        PortraitRight.GetComponent<ChallengePortraitCS>().SetChallengePlayer(ChallengePlayers[1].GetComponent<ChallengePlayerCS>());
+        // Load challenge info
+        _challengeInfo.LoadData();
+        SetChallengeInfo(_challengeInfo);
 
-        SelectChallengePlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>(), false);
-        SelectPlayer(ChallengePlayers[0].GetComponent<ChallengePlayerCS>());
-        //
+        SelectChallengePlayer(_challengeInfo._stage, false);
+        SetPlayerCharacter();
 
-        playerCreateInfoA._name = "PlayerA";
+        // set character skin
+        playerCreateInfoA._name = _playerCharacter.GetCharacterName();
         playerCreateInfoA._isNPC = false;
         playerCreateInfoA._isLeft = true;
         playerCreateInfoA._startPosition = new Vector3(-Constants.SelectDistance, Constants.GroundPosition, 0.0f);
-        playerCreateInfoA._skin = _playerCharacter._skin.GetComponent<PlayerCS>();
+        playerCreateInfoA._skin = _playerCharacter;
 
-        playerCreateInfoB._name = "PlayerB";
+        playerCreateInfoB._name = _selectedChallengePlayer._skin.GetComponent<PlayerCS>().GetCharacterName();
         playerCreateInfoB._isNPC = true;
         playerCreateInfoB._isLeft = false;
         playerCreateInfoB._startPosition = new Vector3(Constants.SelectDistance, Constants.GroundPosition, 0.0f);
@@ -96,39 +167,76 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         PlayerA.GetComponent<PlayerCS>().SetSelect();
         PlayerB.GetComponent<PlayerCS>().SetSelect();
-
-        // Load Score
-        int score = PlayerPrefs.GetInt("Score", 0);
-        SetScore(score);
     }
 
-    public void AddScore(int add_score)
+    public void SetChallengeInfo(ChallengeInfo challengeInfo)
     {
-        SetScore(PlayerPrefs.GetInt("Score", 0) + add_score);
+        Text_Score.GetComponent<TextMeshProUGUI>().text = challengeInfo._score.ToString();
+        Text_Level.GetComponent<TextMeshProUGUI>().text = "Level: " + challengeInfo._level.ToString();
+        int exp_index = Mathf.Max(0, Mathf.Min(Constants.Exps.Length, challengeInfo._level) - 1);
+        float expRatio = Mathf.Min(1.0f, (float)challengeInfo._exp / (float)Constants.Exps[exp_index]);
+        ExpBar.transform.localScale = new Vector3(expRatio, 1.0f, 1.0f);
     }
 
-    public void SetScore(int score)
+    public void SetPlayerCharacter()
     {
-        Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
-        PlayerPrefs.SetInt("Score", score);
-        PlayerPrefs.Save();
+        // TEST
+        int skinID = 2; //SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
+        _playerCharacter = SkinManager.GetComponent<SkinManagerCS>().GetSkin(skinID);
+        Text_PlayerA_Name.GetComponent<TextMeshProUGUI>().text = _playerCharacter.GetCharacterName();
     }
 
-    public void SelectPlayer(ChallengePlayerCS player)
+    public void SetChallengePlayerPortraitByStage(GameObject challengePortrait, int stage)
     {
-        _playerCharacter = player;
-        Text_PlayerA_Name.GetComponent<TextMeshProUGUI>().text = player.GetCharacterName();
+        if(0 <= stage && stage < ChallengePlayers.Length)
+        {
+            challengePortrait.SetActive(true);
+            challengePortrait.GetComponent<ChallengePortraitCS>().SetChallengePlayerPortrait(
+                ChallengePlayers[stage].GetComponent<ChallengePlayerCS>()
+            );
+        }
+        else
+        {
+            challengePortrait.SetActive(false);
+        }
+
+        ChallengePortraitState portraitState = ChallengePortraitState.None;
+        if(PortraitSelected != challengePortrait)
+        {
+            if(stage < _challengeInfo._stage)
+            {
+                portraitState = ChallengePortraitState.Lose;
+            }
+            else if(_challengeInfo._stage < stage)
+            {
+                portraitState = ChallengePortraitState.Lock;
+            }
+        }
+        challengePortrait.GetComponent<ChallengePortraitCS>().SetPortraitState(portraitState);
     }
 
-    public void SelectChallengePlayer(ChallengePlayerCS player, bool playSound)
+    public void SelectChallengePlayer(int stage, bool playSound = true)
     {
-        AddScore(1);
+        int stageLimit = Mathf.Min(ChallengePlayers.Length - 1, _challengeInfo._stage);
+        if(stage < 0)
+        {
+            stage = 0;
+        }
+        else if(stageLimit <= stage)
+        {
+            stage = stageLimit;
+        }
 
-        _selectedChallengePlayer = player;
+        playSound = playSound && _currentStage != stage;
 
-        PortraitSelected.GetComponent<ChallengePortraitCS>().SetChallengePlayer(player); 
-               
-        PlayerB.GetComponent<PlayerCS>().SetSkin(player._skin.GetComponent<PlayerCS>());        
+        _currentStage = stage;
+
+        SetChallengePlayerPortraitByStage(PortraitLeft, stage - 1);
+        SetChallengePlayerPortraitByStage(PortraitSelected, stage);
+        SetChallengePlayerPortraitByStage(PortraitRight, stage + 1);
+
+        _selectedChallengePlayer = ChallengePlayers[stage].GetComponent<ChallengePlayerCS>();
+        PlayerB.GetComponent<PlayerCS>().SetSkin(_selectedChallengePlayer._skin.GetComponent<PlayerCS>());        
         PlayerB.GetComponent<PlayerCS>().SetSelect();
         if(playSound)
         {
@@ -138,21 +246,22 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     public void PortraitLeftOnClick()
     {
-        ChallengePlayerCS player = PortraitLeft.GetComponent<ChallengePortraitCS>().GetChallengePlayer();
-        SelectChallengePlayer(player, true);
+        SelectChallengePlayer(_currentStage - 1);
     }
 
     public void PortraitRightOnClick()
     {
-        ChallengePlayerCS player = PortraitRight.GetComponent<ChallengePortraitCS>().GetChallengePlayer();
-        SelectChallengePlayer(player, true);
+        SelectChallengePlayer(_currentStage + 1);
     }
 
     public void Btn_Fight_OnClick()
     {
         LayerPortrait.SetActive(false);
         LayerVersus.SetActive(true);
-        LayerVersus.GetComponent<VersusCS>().Reset(_playerCharacter, _selectedChallengePlayer);
+        LayerVersus.GetComponent<VersusCS>().ResetVersus(
+            _playerCharacter,
+            _selectedChallengePlayer._skin.GetComponent<PlayerCS>()
+        );
         
         _timer = 0.0f;
         _challengeState = ChallengeState.Versus;
@@ -175,9 +284,11 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             {
                 MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
                 
+                playerCreateInfoA._name = _playerCharacter.GetCharacterName();
                 playerCreateInfoA._startPosition = new Vector3(-Constants.IdleDistance, Constants.GroundPosition, 0.0f);
-                playerCreateInfoA._skin = _playerCharacter._skin.GetComponent<PlayerCS>();
+                playerCreateInfoA._skin = _playerCharacter;
 
+                playerCreateInfoB._name = _selectedChallengePlayer._skin.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoB._startPosition = new Vector3(Constants.IdleDistance, Constants.GroundPosition, 0.0f);
                 playerCreateInfoB._skin = _selectedChallengePlayer._skin.GetComponent<PlayerCS>();
 

@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum ChallengePortraitState
+{
+    None,
+    Lose,
+    Lock
+}
+
 public class ChallengePortraitCS : MonoBehaviour
 {
     ChallengePlayerCS _challengePlayer;
@@ -11,6 +18,7 @@ public class ChallengePortraitCS : MonoBehaviour
     public GameObject _portrait;
     public GameObject _portraitLose;
     public GameObject _imageLose;
+    public GameObject _imageLock;
 
     public Sprite Sprite_BackGround;
     public Sprite Sprite_BackGround_Selected;
@@ -22,17 +30,17 @@ public class ChallengePortraitCS : MonoBehaviour
 
     public void Reset()
     {
-        _portrait.SetActive(true);
-        _portraitLose.SetActive(false);
-        _imageLose.SetActive(false);
+        SetPortraitState(ChallengePortraitState.None);
         SetSelected(false);
     }
 
-    public void SetLose()
+    public void SetPortraitState(ChallengePortraitState state)
     {
-        _portrait.SetActive(false);
-        _portraitLose.SetActive(true);
-        _imageLose.SetActive(true);
+        bool isLose = ChallengePortraitState.Lose == state;
+        _portrait.SetActive(false == isLose);
+        _portraitLose.SetActive(isLose);
+        _imageLose.SetActive(isLose);
+        _imageLock.SetActive(ChallengePortraitState.Lock == state);
     }
 
     public void SetSelected(bool selected)
@@ -46,7 +54,7 @@ public class ChallengePortraitCS : MonoBehaviour
         return _challengePlayer;
     }
 
-    public void SetChallengePlayer(ChallengePlayerCS challengePlayer)
+    public void SetChallengePlayerPortrait(ChallengePlayerCS challengePlayer)
     {
         _challengePlayer = challengePlayer;
         _name.GetComponent<Text>().text = challengePlayer.GetCharacterName();

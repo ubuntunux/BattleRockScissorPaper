@@ -49,6 +49,7 @@ public class PlayerCS : MonoBehaviour
     int _wins = 0;
 
     // Skin
+    public int SkinID;
     public Sprite Sprite_Portrait;
     public Sprite Sprite_PortraitLose;
     public Sprite Sprite_Idle;
@@ -83,6 +84,11 @@ public class PlayerCS : MonoBehaviour
     public void PlayCharacterName()
     {
         Snd_Name.Play();
+    }
+
+    public string GetName()
+    {
+        return _name;
     }
 
     public string GetCharacterName()
@@ -131,6 +137,7 @@ public class PlayerCS : MonoBehaviour
 
     public void SetSkin(PlayerCS skin)
     {
+        _characterName = skin._characterName;
         Sprite_Portrait = skin.Sprite_Portrait;
         Sprite_PortraitLose = skin.Sprite_PortraitLose;
         Sprite_Idle = skin.Sprite_Idle;
@@ -153,7 +160,7 @@ public class PlayerCS : MonoBehaviour
         _shakeObject.reset();
         if(null != Layer_HP_Bar)
         {
-            Layer_HP_Bar.GetComponent<UIBarCS>().Reset(_characterName);
+            Layer_HP_Bar.GetComponent<UIBarCS>().Reset(_name);
         }
         SetTexture(Sprite_Idle);
     }

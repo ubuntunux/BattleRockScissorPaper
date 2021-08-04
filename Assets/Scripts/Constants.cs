@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
+    static public int[] Exps =
+    {
+        10,
+        20,
+        40,
+        80
+    };
+
+    static public int DefaultSkinID = 1;
+
     static public float FadeTime = 0.25f;
     static public float AttackRandomTermMin = 0.1f;
     static public float AttackRandomTermMax = 1.0f;

@@ -28,27 +28,27 @@ public class VersusCS : MonoBehaviour
         _state = VersusState.None;
     }
 
-    public void Reset(ChallengePlayerCS playerA, ChallengePlayerCS playerB)
+    public void ResetVersus(PlayerCS playerA, PlayerCS playerB)
     {
         _timer = 0.0f;
         _state = VersusState.None;
-        SetChallengePlayerA(playerA);
-        SetChallengePlayerB(playerB);
+        SetVersusPortraitPlayerA(playerA);
+        SetVersusPortraitPlayerB(playerB);
     }
     
-    public void SetChallengePlayerA(ChallengePlayerCS player)
+    public void SetVersusPortraitPlayerA(PlayerCS player)
     {
-        string name = player._skin.GetComponent<PlayerCS>().GetCharacterName();
-        Sprite portrait = player._skin.GetComponent<PlayerCS>().GetImagePortrait();
-        AudioClip audioClip = player._skin.GetComponent<PlayerCS>().GetAudioClip_CharacterName();
+        string name = player.GetCharacterName();
+        Sprite portrait = player.GetImagePortrait();
+        AudioClip audioClip = player.GetAudioClip_CharacterName();
         PlayerA.GetComponent<VersusPortraitCS>().SetVersusPortrait(name, portrait, audioClip);
     }
 
-    public void SetChallengePlayerB(ChallengePlayerCS player)
+    public void SetVersusPortraitPlayerB(PlayerCS player)
     {
-        string name = player._skin.GetComponent<PlayerCS>().GetCharacterName();
-        Sprite portrait = player._skin.GetComponent<PlayerCS>().GetImagePortrait();
-        AudioClip audioClip = player._skin.GetComponent<PlayerCS>().GetAudioClip_CharacterName();
+        string name = player.GetCharacterName();
+        Sprite portrait = player.GetImagePortrait();
+        AudioClip audioClip = player.GetAudioClip_CharacterName();
         PlayerB.GetComponent<VersusPortraitCS>().SetVersusPortrait(name, portrait, audioClip);
     }
 
