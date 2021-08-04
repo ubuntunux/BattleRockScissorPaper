@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum GameState
 {
@@ -278,7 +279,7 @@ public class GameManagerCS : MonoBehaviour
         else if (4 == _round) {Snd_Round4.Play();}
 
         Text_Result.SetActive(true);
-        Text_Result.GetComponent<Text>().text = (_maxRoundCount == _round) ? "Final Round" : ("Round " + _round.ToString());
+        Text_Result.GetComponent<TextMeshProUGUI>().text = (_maxRoundCount == _round) ? "Final Round" : ("Round " + _round.ToString());
 
         _gameState = GameState.ReadyToRound;
     }
@@ -404,7 +405,7 @@ public class GameManagerCS : MonoBehaviour
             if(_readyToRoundTime <= fightSoundTime && fightSoundTime < (_readyToRoundTime + Time.deltaTime))
             {
                 Snd_Fight.Play();
-                Text_Result.GetComponent<Text>().text = "Fight!";
+                Text_Result.GetComponent<TextMeshProUGUI>().text = "Fight!";
             }
 
             if(Constants.RoundReadyTime <= _readyToRoundTime)
@@ -439,7 +440,7 @@ public class GameManagerCS : MonoBehaviour
                         PlayerA_CS.SetWin();
                         PlayerB_CS.SetDead();
                         Snd_Win.Play();
-                        Text_Result.GetComponent<Text>().text = "You Win";
+                        Text_Result.GetComponent<TextMeshProUGUI>().text = "You Win";
                     }
                     else if(false == isAliveA && isAliveB)
                     {
@@ -447,14 +448,14 @@ public class GameManagerCS : MonoBehaviour
                         PlayerA_CS.SetDead();
                         PlayerB_CS.SetWin();
                         Snd_Lose.Play();
-                        Text_Result.GetComponent<Text>().text = "You Lose";
+                        Text_Result.GetComponent<TextMeshProUGUI>().text = "You Lose";
                     }
                     else
                     {
                         PlayerA_CS.SetDead();
                         PlayerB_CS.SetDead();
                         Snd_Draw.Play();
-                        Text_Result.GetComponent<Text>().text = "Draw";
+                        Text_Result.GetComponent<TextMeshProUGUI>().text = "Draw";
                     }
                     SetRoundEnd();
                 }

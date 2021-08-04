@@ -7,8 +7,7 @@ public class ResultCS : MonoBehaviour
 {
     public GameObject Result_PlayerA;
     public GameObject Result_PlayerB;
-    public GameObject Text_PlayerA_Result;
-    public GameObject Text_PlayerB_Result;
+    public GameObject Text_Result;
     
     public AudioSource Snd_Win;
     public AudioSource Snd_Lose;
@@ -37,24 +36,24 @@ public class ResultCS : MonoBehaviour
             Snd_Draw.Play();
             spritePlayerA = playerA.GetImagePortrait();
             spritePlayerB = playerB.GetImagePortrait();
-            Text_PlayerA_Result.GetComponent<Text>().text = "Draw";
-            Text_PlayerB_Result.GetComponent<Text>().text = "Draw";
+            Text_Result.GetComponent<Text>().text = "Draw";
+            Text_Result.GetComponent<Text>().color = new Color(0.5f, 0.5f, 0.5f, 1.0f);
         }
         else if(playerA_Win < playerB_Win)
         {
             Snd_Lose.Play();
             spritePlayerA = playerA.GetImagePortraitLose();
             spritePlayerB = playerB.GetImagePortrait();
-            Text_PlayerA_Result.GetComponent<Text>().text = "Lose";
-            Text_PlayerB_Result.GetComponent<Text>().text = "Win";
+            Text_Result.GetComponent<Text>().text = "You Lose";
+            Text_Result.GetComponent<Text>().color = new Color(0.4f, 0.4f, 1.0f, 1.0f);
         }
         else if(playerB_Win < playerA_Win)
         {
             Snd_Win.Play();
             spritePlayerA = playerA.GetImagePortrait();
             spritePlayerB = playerB.GetImagePortraitLose();
-            Text_PlayerA_Result.GetComponent<Text>().text = "Win";
-            Text_PlayerB_Result.GetComponent<Text>().text = "Lose";
+            Text_Result.GetComponent<Text>().text = "You Win";
+            Text_Result.GetComponent<Text>().color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
         }
 
         Result_PlayerA.GetComponent<VersusPortraitCS>().SetVersusPortrait(playerA.GetComponent<PlayerCS>().GetCharacterName(), spritePlayerA, null);
