@@ -12,7 +12,7 @@ public enum ChallengePortraitState
 
 public class ChallengePortraitCS : MonoBehaviour
 {
-    ChallengePlayerCS _challengePlayer;
+    PlayerCS _challengePlayer;
 
     public GameObject _name;
     public GameObject _portrait;
@@ -49,12 +49,12 @@ public class ChallengePortraitCS : MonoBehaviour
         GetComponent<Image>().sprite = selected ? Sprite_BackGround_Selected : Sprite_BackGround;
     }
 
-    public ChallengePlayerCS GetChallengePlayer()
+    public PlayerCS GetChallengePlayer()
     {
         return _challengePlayer;
     }
 
-    public void SetChallengePlayerPortrait(ChallengePlayerCS challengePlayer)
+    public void SetChallengePlayerPortrait(PlayerCS challengePlayer)
     {
         _challengePlayer = challengePlayer;
         _name.GetComponent<Text>().text = challengePlayer.GetCharacterName();

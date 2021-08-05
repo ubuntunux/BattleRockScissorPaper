@@ -24,6 +24,7 @@ public enum PlayerState
 public class PlayerCreateInfo
 {
     public string _name = "";
+    public int _level = 1;
     public bool _isNPC = false;
     public bool _isLeft = true;
     public Vector3 _startPosition = new Vector3(0.0f, 0.0f, 0.0f);
@@ -45,7 +46,8 @@ public class PlayerCS : MonoBehaviour
     float _idleMotionSpeed = 0.0f;
     float _attackMotionTime = 0.0f;
     float _nextAttackMotionTime = 0.0f;
-    int _hp = Constants.InitialHP;
+    PlayerStat _stat = new PlayerStat();
+    int _hp = 0;
     int _wins = 0;
 
     // Skin
@@ -86,6 +88,11 @@ public class PlayerCS : MonoBehaviour
         Snd_Name.Play();
     }
 
+    public PlayerStat GetStat()
+    {
+        return _stat;
+    }
+
     public string GetName()
     {
         return _name;
@@ -116,10 +123,13 @@ public class PlayerCS : MonoBehaviour
         _name = playerCreateInfo._name;
         _isNPC = playerCreateInfo._isNPC;
         _startPosition = playerCreateInfo._startPosition;
-        _isLeft = playerCreateInfo._isLeft;
+        _isLeft = playerCreateInfo._isLeft;        
         _elapsedTime = 0.0f;
         _wins = 0;
         _pause = false;
+
+        _stat = Constants.PlayerStats[playerCreateInfo._level];
+        _hp = _stat._hp;
 
         GameManager = gameManager;
         Layer_AttackTimer = layer_attack_timer;
@@ -155,7 +165,7 @@ public class PlayerCS : MonoBehaviour
         _lastAttackType = AttackType.None;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
-        _hp = Constants.InitialHP;
+        _hp = _stat._hp;
         transform.position = _startPosition;
         _shakeObject.reset();
         if(null != Layer_HP_Bar)
@@ -273,15 +283,13 @@ public class PlayerCS : MonoBehaviour
 
     public void SetDamage(int damage)
     {
-        damage = 50;
-
         _hp -= damage;
         if(_hp <= 0)
         {
             _hp = 0;
         }
 
-        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / Constants.InitialHP);
+        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _stat._hp);
         Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackTimerShake(_isLeft);
         _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);        
     }

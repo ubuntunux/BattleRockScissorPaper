@@ -334,13 +334,13 @@ public class GameManagerCS : MonoBehaviour
         if(attackTypeB == attackTypeA || checkLose(attackTypeB, attackTypeA))
         {
             CreateEffectAttackHit(attackTypeB, true);
-            PlayerA_CS.SetDamage((attackTypeB == attackTypeA) ? Constants.DamageDraw : Constants.DamageLose);
+            PlayerA_CS.SetDamage(PlayerB_CS.GetStat().GetPower(attackTypeB == attackTypeA));
         }
 
         if(attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB))
         {
             CreateEffectAttackHit(attackTypeA, false);
-            PlayerB_CS.SetDamage((attackTypeA == attackTypeB) ? Constants.DamageDraw : Constants.DamageLose);
+            PlayerB_CS.SetDamage(PlayerA_CS.GetStat().GetPower(attackTypeA == attackTypeB));
         }
 
         // set flicker
