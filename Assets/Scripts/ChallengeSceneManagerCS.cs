@@ -14,6 +14,7 @@ public enum ChallengeState
 public class ChallengeInfo
 {
     public int _stage = 0;
+    public int _lastStage = 0;
     public int _score = 0;
     public int _level = 1;    
     public int _exp = 0;
@@ -61,8 +62,8 @@ public class ChallengeInfo
 
     public void LoadData()
     {
-        // TEST
-        _stage = 1;//Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeStageKey));
+        _stage = Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeStageKey));
+        _lastStage = Mathf.Max(0, SystemValue.GetInt(SystemValue.LastChallengeStageKey));
         _score = Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeScoreKey));
         _level = Mathf.Max(1, SystemValue.GetInt(SystemValue.ChallengeLevelKey));
         _exp = Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeExpKey));
@@ -71,6 +72,7 @@ public class ChallengeInfo
     public void SaveData()
     {
         SystemValue.SetInt(SystemValue.ChallengeStageKey, _stage);
+        SystemValue.SetInt(SystemValue.LastChallengeStageKey, _lastStage);
         SystemValue.SetInt(SystemValue.ChallengeScoreKey, _score);
         SystemValue.SetInt(SystemValue.ChallengeLevelKey, _level);
         SystemValue.SetInt(SystemValue.ChallengeExpKey, _exp);
@@ -148,7 +150,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _challengeInfo.LoadData();
         SetChallengeInfo(_challengeInfo);
 
-        SelectChallengePlayer(_challengeInfo._stage, false);
+        SelectChallengePlayer(_challengeInfo._lastStage, false);
         SetPlayerCharacter();
 
         // set character skin
@@ -182,10 +184,42 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         ExpBar.transform.localScale = new Vector3(expRatio, 1.0f, 1.0f);
     }
 
+    public void SetLastChallengeStage(int stage)
+    {
+        _challengeInfo._lastStage = stage;
+        _challengeInfo.SaveData();
+    }
+
+    public bool AddChallengeScore(int challengeLevel, int attackPoint, int hp)
+    {
+        bool levelUp = false;
+        int score = attackPoint + hp;
+        int exp = score + Constants.Exps[_challengeInfo._level] / 10;
+
+        _challengeInfo._score += score;
+        _challengeInfo._exp += exp;
+
+        while(_challengeInfo._level < Constants.Exps.Length)
+        {
+            int nextExp = Constants.Exps[_challengeInfo._level + 1];
+            if(nextExp <= _challengeInfo._exp)
+            {
+                _challengeInfo._exp -= nextExp;
+                _challengeInfo._level += 1;
+                levelUp = true;
+            }
+            else
+            {
+                break;
+            }
+        }
+        _challengeInfo.SaveData();
+        return levelUp;
+    }
+
     public void SetPlayerCharacter()
     {
-        // TEST
-        int skinID = 2; //SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
+        int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
         _playerCharacter = SkinManager.GetComponent<SkinManagerCS>().GetSkin(skinID);
         Text_PlayerA_Name.GetComponent<TextMeshProUGUI>().text = _playerCharacter.GetCharacterName();
     }
@@ -234,6 +268,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         playSound = playSound && _currentStage != stage;
 
         _currentStage = stage;
+        SetLastChallengeStage(stage);
 
         SetChallengePlayerPortraitByStage(PortraitLeft, stage - 1);
         SetChallengePlayerPortraitByStage(PortraitSelected, stage);
@@ -242,7 +277,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _selectedChallengePlayer = ChallengePlayers[stage].GetComponent<PlayerCS>();
 
         Text_PlayerB_Name.GetComponent<TextMeshProUGUI>().text = _selectedChallengePlayer.GetCharacterName();
-        int level = stage + 1;
+        int level = stage;
         Text_PlayerB_Level.GetComponent<TextMeshProUGUI>().text = "Level: " + level.ToString();
 
         PlayerB.GetComponent<PlayerCS>().SetSkin(_selectedChallengePlayer);

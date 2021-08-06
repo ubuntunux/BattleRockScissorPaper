@@ -31,14 +31,17 @@ public class Constants : MonoBehaviour
         10,
         20,
         40,
-        80
+        80,
     };
 
     static public PlayerStat[] PlayerStats =
     {
+        // (level, hp, powerString, powerWeak)
         new PlayerStat(0, 1, 1, 1),
         new PlayerStat(1, 5, 2, 1),
-        new PlayerStat(2, 7, 3, 2),
+        new PlayerStat(2, 5, 3, 1),
+        new PlayerStat(3, 6, 4, 2),
+        new PlayerStat(4, 7, 4, 2),
     };
 
     static public int DefaultSkinID = 1;

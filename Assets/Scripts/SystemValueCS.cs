@@ -8,6 +8,7 @@ public class SystemValue : MonoBehaviour
 
     // challenge
     public static string ChallengeStageKey = "ChallengeStage";
+    public static string LastChallengeStageKey = "LastChallengeStage";
     public static string ChallengeScoreKey = "ChallengeScore";
     public static string ChallengeLevelKey = "ChallengeLevel";
     public static string ChallengeExpKey = "ChallengeExp";

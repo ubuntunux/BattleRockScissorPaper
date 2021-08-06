@@ -32,9 +32,14 @@ public class GameManagerCS : MonoBehaviour
     bool _pause = false;
     GameState _gameState = GameState.None;
 
+    // Record
+    int _recordAttackPoint = 0;
+    int _recordHP = 0;
+
     //
     public GameObject MainCamera;
     public GameObject MainSceneManager;
+    public GameObject ChallengeSceneManager;
 
     // Player
     public GameObject PlayerA;
@@ -102,6 +107,10 @@ public class GameManagerCS : MonoBehaviour
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
         _round = 1;
+
+        // record
+        _recordAttackPoint = 0;
+        _recordHP = 0;
 
         for(int i=0; i < 3; ++i)
         {
@@ -324,7 +333,7 @@ public class GameManagerCS : MonoBehaviour
         _gameState = GameState.AttackHit;
         AttackTimer_CS.setBar(0.0f);
         _attackHitTime = 0.0f;
-        int prevHP = PlayerA_CS.getHP();
+        int prevHP = PlayerA_CS.GetHP();
 		PlayerA_CS.SetAttackHit();
         PlayerB_CS.SetAttackHit();
 
@@ -340,15 +349,20 @@ public class GameManagerCS : MonoBehaviour
         if(attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB))
         {
             CreateEffectAttackHit(attackTypeA, false);
-            PlayerB_CS.SetDamage(PlayerA_CS.GetStat().GetPower(attackTypeA == attackTypeB));
+            int damage = PlayerA_CS.GetStat().GetPower(attackTypeA == attackTypeB);
+            PlayerB_CS.SetDamage(damage);
+            
+            _recordAttackPoint += damage;
         }
 
         // set flicker
-        if(prevHP != PlayerA_CS.getHP())
+        if(prevHP != PlayerA_CS.GetHP())
         {
             _ko_sprite_flicker = true;
+
             const int flickerHP = 2;
-            if(PlayerA_CS.getHP() <= flickerHP)
+
+            if(PlayerA_CS.GetHP() <= flickerHP)
             {
                 _ko_sprite_flicker_low_hp = true;
             }
@@ -457,6 +471,10 @@ public class GameManagerCS : MonoBehaviour
                         Snd_Draw.Play();
                         Text_Result.GetComponent<TextMeshProUGUI>().text = "Draw";
                     }
+
+                    // record
+                    _recordHP += PlayerA_CS.GetHP();
+
                     SetRoundEnd();
                 }
                 else
@@ -470,6 +488,10 @@ public class GameManagerCS : MonoBehaviour
         {
             if(Constants.RoundEndTime <= _roundEndTime)
             {
+                // Result
+                ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
+                bool levelUp = challenegeSceneManager.AddChallengeScore(PlayerB_CS.GetStat()._level, _recordAttackPoint, _recordHP);
+
                 int maxWinCount = PlayerB_CS.GetWin() < PlayerA_CS.GetWin() ? PlayerA_CS.GetWin() : PlayerB_CS.GetWin();
                 if (_round < _maxRoundCount && maxWinCount < _winCount)
                 {

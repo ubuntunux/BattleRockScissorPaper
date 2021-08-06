@@ -198,7 +198,7 @@ public class PlayerCS : MonoBehaviour
         return (0 < _hp);
     }
 
-    public int getHP()
+    public int GetHP()
     {
         return _hp;
     }
@@ -284,6 +284,7 @@ public class PlayerCS : MonoBehaviour
     public void SetDamage(int damage)
     {
         _hp -= damage;
+
         if(_hp <= 0)
         {
             _hp = 0;
