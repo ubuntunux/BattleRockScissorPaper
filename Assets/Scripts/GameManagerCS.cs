@@ -51,6 +51,8 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Effect_AttackHit;
     GameObject _effect_AttackHitA;
     GameObject _effect_AttackHitB;
+    public GameObject Image_Bam_A;
+    public GameObject Image_Bam_B;
 
     // Sounds
     public AudioSource Snd_Round1;
@@ -75,7 +77,7 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Layer_HP_Bar_A;
     public GameObject Layer_HP_Bar_B;
     public GameObject Text_Result;
-    public GameObject Image_KO;
+    public GameObject Image_KO;    
     public Sprite Sprite_Ko;
     public Sprite Sprite_Ko_Invert;
     float _ko_sprite_flicker_time = 0.0f;
@@ -275,6 +277,8 @@ public class GameManagerCS : MonoBehaviour
         Layer_AttackTimer.SetActive(false);
         AttackTimer_CS.Reset();
         Text_Result.SetActive(false);
+        Image_Bam_A.SetActive(false);
+        Image_Bam_B.SetActive(false);
     }
 
     void SetReadyToRound()
@@ -343,12 +347,14 @@ public class GameManagerCS : MonoBehaviour
         if(attackTypeB == attackTypeA || checkLose(attackTypeB, attackTypeA))
         {
             CreateEffectAttackHit(attackTypeB, true);
+            Image_Bam_A.SetActive(true);        
             PlayerA_CS.SetDamage(PlayerB_CS.GetStat().GetPower(attackTypeB == attackTypeA));
         }
 
         if(attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB))
         {
             CreateEffectAttackHit(attackTypeA, false);
+            Image_Bam_B.SetActive(true);
             int damage = PlayerA_CS.GetStat().GetPower(attackTypeA == attackTypeB);
             PlayerB_CS.SetDamage(damage);
             
@@ -443,11 +449,15 @@ public class GameManagerCS : MonoBehaviour
         {
             if((Constants.AttackHitTime + _attackHitTimeDelay) <= _attackHitTime)
             {
+                Image_Bam_A.SetActive(false);
+                Image_Bam_B.SetActive(false);
+
                 bool isAliveA = PlayerA_CS.isAlive();
                 bool isAliveB = PlayerB_CS.isAlive();
                 if (false == isAliveA || false == isAliveB)
                 {
                     Text_Result.SetActive(true);
+
                     if(isAliveA && false == isAliveB)
                     {
                         Layer_Wins.transform.Find("WinA" + PlayerA_CS.GetWin().ToString()).gameObject.SetActive(true);
@@ -488,11 +498,12 @@ public class GameManagerCS : MonoBehaviour
         {
             if(Constants.RoundEndTime <= _roundEndTime)
             {
+                bool isPlayerA_Win = PlayerB_CS.GetWin() < PlayerA_CS.GetWin();
                 // Result
                 ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
-                bool levelUp = challenegeSceneManager.AddChallengeScore(PlayerB_CS.GetStat()._level, _recordAttackPoint, _recordHP);
+                bool levelUp = challenegeSceneManager.AddChallengeScore(PlayerB_CS.GetStat()._level, _recordAttackPoint, _recordHP, isPlayerA_Win);
 
-                int maxWinCount = PlayerB_CS.GetWin() < PlayerA_CS.GetWin() ? PlayerA_CS.GetWin() : PlayerB_CS.GetWin();
+                int maxWinCount = isPlayerA_Win ? PlayerA_CS.GetWin() : PlayerB_CS.GetWin();
                 if (_round < _maxRoundCount && maxWinCount < _winCount)
                 {
                     _round += 1;
