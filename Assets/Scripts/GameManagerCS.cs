@@ -40,7 +40,7 @@ public class GameManagerCS : MonoBehaviour
     public GameObject MainCamera;
     public GameObject MainSceneManager;
     public GameObject ChallengeSceneManager;
-
+    
     // Player
     public GameObject PlayerA;
     public GameObject PlayerB;
@@ -64,6 +64,9 @@ public class GameManagerCS : MonoBehaviour
     public AudioSource Snd_Win;
     public AudioSource Snd_Lose;
     public AudioSource Snd_Draw;
+    public AudioSource Snd_Bell_1;
+    public AudioSource Snd_Bell_2;
+    public AudioSource Snd_Bell_3;
 
     // UI
     public GameObject LayerResult;
@@ -430,6 +433,7 @@ public class GameManagerCS : MonoBehaviour
 
             if(Constants.RoundReadyTime <= _readyToRoundTime)
             {
+                Snd_Bell_1.Play();
                 ResetRound();
                 SetReadyToAttack();
             }
@@ -480,6 +484,16 @@ public class GameManagerCS : MonoBehaviour
                         PlayerB_CS.SetDead();
                         Snd_Draw.Play();
                         Text_Result.GetComponent<TextMeshProUGUI>().text = "Draw";
+                    }
+                    
+                    int maxWinCount = Mathf.Max(PlayerA_CS.GetWin(), PlayerB_CS.GetWin());
+                    if (_round < _maxRoundCount && maxWinCount < _winCount)
+                    {
+                        Snd_Bell_2.Play();
+                    }
+                    else
+                    {
+                        Snd_Bell_3.Play();
                     }
 
                     // record

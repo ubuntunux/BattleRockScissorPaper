@@ -62,8 +62,11 @@ public class PlayerCS : MonoBehaviour
     public Sprite Sprite_Dead;
 
     // sounds
-    public AudioSource Snd_Attack;
+    public AudioSource Snd_Attack;    
     public AudioSource Snd_AttackHit;
+    public AudioSource Snd_AttackVoice;
+    public AudioSource Snd_AttackHitVoice;
+    public AudioSource Snd_AttackDeadVoice;
     public AudioSource Snd_Name = null;
 
     // ui
@@ -250,6 +253,7 @@ public class PlayerCS : MonoBehaviour
 
         if(isAttackHit)
         {
+            Snd_AttackVoice.Play();
             Snd_AttackHit.Play();
             _playerState = PlayerState.AttackHit;
         }
@@ -288,6 +292,11 @@ public class PlayerCS : MonoBehaviour
         if(_hp <= 0)
         {
             _hp = 0;
+            Snd_AttackDeadVoice.Play();
+        }
+        else
+        {
+            Snd_AttackHitVoice.Play();
         }
 
         Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _stat._hp);
@@ -307,7 +316,9 @@ public class PlayerCS : MonoBehaviour
             {
                 attackType = (AttackType)(Random.Range(0, 3) + 1);
             }
+
             SetAttack(attackType);
+
             _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
         }
         _nextAttackMotionTime -= Time.deltaTime;
