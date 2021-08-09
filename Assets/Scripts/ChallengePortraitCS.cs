@@ -46,7 +46,7 @@ public class ChallengePortraitCS : MonoBehaviour
     public void SetSelected(bool selected)
     {
         GetComponent<Button>().enabled = !selected;
-        GetComponent<Image>().sprite = selected ? Sprite_BackGround_Selected : Sprite_BackGround;
+        //GetComponent<Image>().sprite = selected ? Sprite_BackGround_Selected : Sprite_BackGround;
     }
 
     public PlayerCS GetChallengePlayer()
@@ -57,7 +57,6 @@ public class ChallengePortraitCS : MonoBehaviour
     public void SetChallengePlayerPortrait(PlayerCS challengePlayer)
     {
         _challengePlayer = challengePlayer;
-        _name.GetComponent<Text>().text = challengePlayer.GetCharacterName();
         _portrait.GetComponent<Image>().sprite = challengePlayer.GetImagePortrait();
         _portraitLose.GetComponent<Image>().sprite = challengePlayer.GetImagePortraitLose();
     }

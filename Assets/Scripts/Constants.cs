@@ -2,50 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct PlayerStat
-{
-    public PlayerStat(int level, int hp, int powerString, int powerWeak)
-    {
-        _level = level;
-        _hp = hp;
-        _powerString = powerString;
-        _powerWeak = powerWeak;
-    }
-
-    public int GetPower(bool isWeakDamage)
-    {
-        return isWeakDamage ? _powerWeak : _powerString;
-    }
-
-    public int _level;
-    public int _hp;
-    public int _powerString;
-    public int _powerWeak;
-}
-
 public class Constants : MonoBehaviour
 {
-    static public int[] Exps =
-    {
-        0,
-        10,
-        20,
-        40,
-        80,
-    };
-
-    static public PlayerStat[] PlayerStats =
-    {
-        // (level, hp, powerString, powerWeak)
-        new PlayerStat(0, 1, 1, 1),
-        new PlayerStat(1, 5, 2, 1),
-        new PlayerStat(2, 5, 3, 1),
-        new PlayerStat(3, 6, 4, 2),
-        new PlayerStat(4, 7, 4, 2),
-    };
-
     static public int DefaultSkinID = 1;
-
     static public float FadeTime = 0.25f;
     static public float AttackRandomTermMin = 0.1f;
     static public float AttackRandomTermMax = 1.0f;

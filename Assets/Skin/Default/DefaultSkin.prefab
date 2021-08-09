@@ -593,6 +593,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Player
+  Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
+  Age: 25
+  HP: 3
+  Power: 1
   SkinID: 0
   Sprite_Portrait: {fileID: 21300000, guid: ff06736d089b5d4c4b254b0d367ce310, type: 3}
   Sprite_PortraitLose: {fileID: 21300000, guid: 32f636c6692c31502b5144776a1c6b08, type: 3}

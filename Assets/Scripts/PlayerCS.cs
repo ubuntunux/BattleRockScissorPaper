@@ -24,7 +24,6 @@ public enum PlayerState
 public class PlayerCreateInfo
 {
     public string _name = "";
-    public int _level = 1;
     public bool _isNPC = false;
     public bool _isLeft = true;
     public Vector3 _startPosition = new Vector3(0.0f, 0.0f, 0.0f);
@@ -46,12 +45,17 @@ public class PlayerCS : MonoBehaviour
     float _idleMotionSpeed = 0.0f;
     float _attackMotionTime = 0.0f;
     float _nextAttackMotionTime = 0.0f;
-    PlayerStat _stat = new PlayerStat();
     int _hp = 0;
     int _wins = 0;
 
+    // Stat
+    public int Age = 25;
+    public int HP = 3;
+    public int Power = 1;
+
     // Skin
     public int SkinID;
+    public Sprite Sprite_Born;
     public Sprite Sprite_Portrait;
     public Sprite Sprite_PortraitLose;
     public Sprite Sprite_Idle;
@@ -62,7 +66,7 @@ public class PlayerCS : MonoBehaviour
     public Sprite Sprite_Dead;
 
     // sounds
-    public AudioSource Snd_Attack;    
+    public AudioSource Snd_Attack;
     public AudioSource Snd_AttackHit;
     public AudioSource Snd_AttackVoice;
     public AudioSource Snd_AttackHitVoice;
@@ -91,11 +95,6 @@ public class PlayerCS : MonoBehaviour
         Snd_Name.Play();
     }
 
-    public PlayerStat GetStat()
-    {
-        return _stat;
-    }
-
     public string GetName()
     {
         return _name;
@@ -104,6 +103,11 @@ public class PlayerCS : MonoBehaviour
     public string GetCharacterName()
     {
         return _characterName;
+    }
+
+     public int GetPower(bool isCounter)
+    {
+        return isCounter ? Power * 2 : Power;
     }
 
     public Sprite GetImagePortrait()
@@ -131,8 +135,7 @@ public class PlayerCS : MonoBehaviour
         _wins = 0;
         _pause = false;
 
-        _stat = Constants.PlayerStats[playerCreateInfo._level];
-        _hp = _stat._hp;
+        _hp = HP;
 
         GameManager = gameManager;
         Layer_AttackTimer = layer_attack_timer;
@@ -150,7 +153,12 @@ public class PlayerCS : MonoBehaviour
 
     public void SetSkin(PlayerCS skin)
     {
+        SkinID = skin.SkinID; 
         _characterName = skin._characterName;
+        Age = skin.Age;
+        HP = skin.HP;
+        Power = skin.Power;        
+        Sprite_Born = skin.Sprite_Born;
         Sprite_Portrait = skin.Sprite_Portrait;
         Sprite_PortraitLose = skin.Sprite_PortraitLose;
         Sprite_Idle = skin.Sprite_Idle;
@@ -168,7 +176,7 @@ public class PlayerCS : MonoBehaviour
         _lastAttackType = AttackType.None;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
-        _hp = _stat._hp;
+        _hp = HP;
         transform.position = _startPosition;
         _shakeObject.reset();
         if(null != Layer_HP_Bar)
@@ -299,7 +307,7 @@ public class PlayerCS : MonoBehaviour
             Snd_AttackHitVoice.Play();
         }
 
-        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _stat._hp);
+        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / HP);
         Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackTimerShake(_isLeft);
         _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);        
     }
@@ -344,7 +352,7 @@ public class PlayerCS : MonoBehaviour
         {
             float speed = _elapsedTime * _idleMotionSpeed;
             float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
-            transform.position = _startPosition + new Vector3(0.0f, offsetY, 0.0f);
+            transform.position = _startPosition + new Vector3(_isLeft ? 1.0f : -1.0f, offsetY, -1.0f);
         }
         else if(PlayerState.None == _playerState || PlayerState.Idle == _playerState)
         {

@@ -13,9 +13,8 @@ enum VersusState
 
 public class VersusCS : MonoBehaviour
 {
-    public GameObject PlayerA;
-    public GameObject PlayerB;
-    
+    public AudioSource Snd_PlayerA_Name;
+    public AudioSource Snd_PlayerB_Name;
     public AudioSource Snd_Versus;
 
     float _timer = 0.0f;
@@ -40,16 +39,14 @@ public class VersusCS : MonoBehaviour
     {
         string name = player.GetCharacterName();
         Sprite portrait = player.GetImagePortrait();
-        AudioClip audioClip = player.GetAudioClip_CharacterName();
-        PlayerA.GetComponent<VersusPortraitCS>().SetVersusPortrait(name, portrait, audioClip);
+        Snd_PlayerA_Name.clip = player.GetAudioClip_CharacterName();
     }
 
     public void SetVersusPortraitPlayerB(PlayerCS player)
     {
         string name = player.GetCharacterName();
         Sprite portrait = player.GetImagePortrait();
-        AudioClip audioClip = player.GetAudioClip_CharacterName();
-        PlayerB.GetComponent<VersusPortraitCS>().SetVersusPortrait(name, portrait, audioClip);
+        Snd_PlayerB_Name.clip = player.GetAudioClip_CharacterName();
     }
 
     public bool isEnd()
@@ -64,7 +61,7 @@ public class VersusCS : MonoBehaviour
         {
             if(VersusState.None == _state)
             {
-                PlayerA.GetComponent<VersusPortraitCS>().PlayAudioName();
+                Snd_PlayerA_Name.Play();
                 _state = VersusState.SpeakPlayerA;
             }
             else if(VersusState.SpeakPlayerA == _state)
@@ -79,7 +76,7 @@ public class VersusCS : MonoBehaviour
             {
                 if(2.5f <=_timer)
                 {
-                    PlayerB.GetComponent<VersusPortraitCS>().PlayAudioName();
+                    Snd_PlayerB_Name.Play();
                     _state = VersusState.SpeakPlayerB;
                 }
             }

@@ -351,14 +351,14 @@ public class GameManagerCS : MonoBehaviour
         {
             CreateEffectAttackHit(attackTypeB, true);
             Image_Bam_A.SetActive(true);        
-            PlayerA_CS.SetDamage(PlayerB_CS.GetStat().GetPower(attackTypeB == attackTypeA));
+            PlayerA_CS.SetDamage(PlayerB_CS.GetPower(attackTypeB == attackTypeA));
         }
 
         if(attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB))
         {
             CreateEffectAttackHit(attackTypeA, false);
             Image_Bam_B.SetActive(true);
-            int damage = PlayerA_CS.GetStat().GetPower(attackTypeA == attackTypeB);
+            int damage = PlayerA_CS.GetPower(attackTypeA == attackTypeB);
             PlayerB_CS.SetDamage(damage);
             
             _recordAttackPoint += damage;
@@ -515,7 +515,7 @@ public class GameManagerCS : MonoBehaviour
                 bool isPlayerA_Win = PlayerB_CS.GetWin() < PlayerA_CS.GetWin();
                 // Result
                 ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
-                bool levelUp = challenegeSceneManager.AddChallengeScore(PlayerB_CS.GetStat()._level, _recordAttackPoint, _recordHP, isPlayerA_Win);
+                challenegeSceneManager.AddChallengeScore(_recordAttackPoint, _recordHP, isPlayerA_Win);
 
                 int maxWinCount = isPlayerA_Win ? PlayerA_CS.GetWin() : PlayerB_CS.GetWin();
                 if (_round < _maxRoundCount && maxWinCount < _winCount)
