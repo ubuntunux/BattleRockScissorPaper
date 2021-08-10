@@ -13,36 +13,18 @@ public enum ChallengeState
 
 public class ChallengeInfo
 {
-    public int _stage = 0;
-    public int _lastChallenegeStage = 0;
+    public int _skinID = Constants.DefaultSkinID;
     public int _score = 0;
-
-    public bool TakeScore(int score)
-    {
-        if(score <= _score)
-        {
-            _score -= score;
-            return true;
-        }
-        return false;
-    }
-
-    public void AddScore(int score)
-    {
-        _score += score;
-    }
 
     public void LoadData()
     {
-        _stage = Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeStageKey));
-        _lastChallenegeStage = Mathf.Max(0, SystemValue.GetInt(SystemValue.LastChallengeStageKey));
-        _score = Mathf.Max(0, SystemValue.GetInt(SystemValue.ChallengeScoreKey));
+        _skinID = SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
+        _score = SystemValue.GetInt(SystemValue.ChallengeScoreKey);
     }
     
     public void SaveData()
     {
-        SystemValue.SetInt(SystemValue.ChallengeStageKey, _stage);
-        SystemValue.SetInt(SystemValue.LastChallengeStageKey, _lastChallenegeStage);
+        SystemValue.SetInt(SystemValue.SkinIDKey, _skinID);
         SystemValue.SetInt(SystemValue.ChallengeScoreKey, _score);
     }
 }
@@ -73,9 +55,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     ChallengeState _challengeState = ChallengeState.None;
 
-    PlayerCS _playerCharacter = null;
-    PlayerCS _selectedChallengePlayer = null;
-
     ChallengeInfo _challengeInfo = new ChallengeInfo();
     int _currentStage = 0;
 
@@ -103,41 +82,42 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         PortraitSelected.GetComponent<ChallengePortraitCS>().Reset();
         PortraitSelected.GetComponent<ChallengePortraitCS>().SetSelected(true);
 
-        _selectedChallengePlayer = null;
         _timer = 0.0f;
         _challengeState = ChallengeState.None;
+
+        // create players
+        playerCreateInfoA._name = "PlayerA";
+        playerCreateInfoA._isPlayer = true;
+        playerCreateInfoA._isLeft = true;
+        playerCreateInfoA._startPosition = new Vector3(-Constants.SelectDistance, Constants.GroundPosition, 0.0f);
+        PlayerA.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoA);
+
+        playerCreateInfoB._name = "PlayerB";
+        playerCreateInfoB._isPlayer = false;
+        playerCreateInfoB._isLeft = false;
+        playerCreateInfoB._startPosition = new Vector3(Constants.SelectDistance, Constants.GroundPosition, 0.0f);
+        PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
 
         // Load challenge info
         _challengeInfo.LoadData();
         SetChallengeInfo(_challengeInfo);
 
-        SelectChallengePlayer(_challengeInfo._lastChallenegeStage, false);
-        SetPlayerCharacter();
-
         // set character skin
-        playerCreateInfoA._name = _playerCharacter.GetCharacterName();
-        playerCreateInfoA._isNPC = false;
-        playerCreateInfoA._isLeft = true;
-        playerCreateInfoA._startPosition = new Vector3(-Constants.SelectDistance, Constants.GroundPosition, 0.0f);
-        playerCreateInfoA._skin = _playerCharacter;
-
-        playerCreateInfoB._name = _selectedChallengePlayer.GetCharacterName();
-        playerCreateInfoB._isNPC = true;
-        playerCreateInfoB._isLeft = false;
-        playerCreateInfoB._startPosition = new Vector3(Constants.SelectDistance, Constants.GroundPosition, 0.0f);
-        playerCreateInfoB._skin = _selectedChallengePlayer;
-        
-        PlayerA.GetComponent<PlayerCS>().Reset(null, null, null, playerCreateInfoA);
-        PlayerB.GetComponent<PlayerCS>().Reset(null, null, null, playerCreateInfoB);
-
-        PlayerA.GetComponent<PlayerCS>().SetSelect();
-        PlayerB.GetComponent<PlayerCS>().SetSelect();
+        SetPlayerCharacterSkin();
+        SelectChallengePlayer(0, false);
     }
 
     public void ClearChallengeInfo()
     {
         _challengeInfo = new ChallengeInfo();
         _challengeInfo.SaveData();
+
+        PlayerStat playerStat = new PlayerStat();
+        bool isPlayer = true;
+        playerStat.InitializePlayerStat(null, isPlayer);
+        playerStat.SavePlayerStat();
+
+        SkinManager.GetComponent<SkinManagerCS>().ClearPlayerStats();
 
         Reset();
     }
@@ -147,36 +127,23 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         Text_Score.GetComponent<TextMeshProUGUI>().text = challengeInfo._score.ToString();
     }
 
-    public void SetLastChallengeStage(int stage)
-    {
-        _challengeInfo._lastChallenegeStage = stage;
-        _challengeInfo.SaveData();
-    }
-
     public void AddChallengeScore(int attackPoint, int hp, bool isWin)
     {
         int score = attackPoint + hp;
 
         _challengeInfo._score += score;
-        
-        // next level
-        if(isWin)
-        {
-            if(_challengeInfo._stage <= _challengeInfo._lastChallenegeStage)
-            {
-                _challengeInfo._stage = _challengeInfo._lastChallenegeStage + 1;
-            }
-        }
 
         // save data
         _challengeInfo.SaveData();
     }
 
-    public void SetPlayerCharacter()
+    public void SetPlayerCharacterSkin()
     {
-        int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
-        _playerCharacter = SkinManager.GetComponent<SkinManagerCS>().GetSkin(skinID);
-        PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(_playerCharacter);
+        int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, _challengeInfo._skinID);
+        PlayerCS playerSkin = SkinManager.GetComponent<SkinManagerCS>().GetSkin(skinID);
+        PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
+        PlayerA.GetComponent<PlayerCS>().SetSelect();
+        PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerA.GetComponent<PlayerCS>());
     }
 
     public void SetChallengePlayerPortraitByStage(GameObject challengePortrait, int stage)
@@ -192,25 +159,12 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         {
             challengePortrait.SetActive(false);
         }
-
-        ChallengePortraitState portraitState = ChallengePortraitState.None;
-        if(PortraitSelected != challengePortrait)
-        {
-            if(stage < _challengeInfo._stage)
-            {
-                portraitState = ChallengePortraitState.Lose;
-            }
-            else if(_challengeInfo._stage < stage)
-            {
-                portraitState = ChallengePortraitState.Lock;
-            }
-        }
-        challengePortrait.GetComponent<ChallengePortraitCS>().SetPortraitState(portraitState);
+        challengePortrait.GetComponent<ChallengePortraitCS>().SetPortraitState(ChallengePortraitState.None);
     }
 
     public void SelectChallengePlayer(int stage, bool playSound = true)
     {
-        int stageLimit = Mathf.Min(ChallengePlayers.Length - 1, _challengeInfo._stage);
+        int stageLimit = ChallengePlayers.Length - 1;
         if(stage < 0)
         {
             stage = 0;
@@ -224,15 +178,12 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         _currentStage = stage;
         
-        SetLastChallengeStage(stage);
-
         SetChallengePlayerPortraitByStage(PortraitSelected, stage);
 
-        _selectedChallengePlayer = ChallengePlayers[stage].GetComponent<PlayerCS>();
-
-        PlayerB_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(_selectedChallengePlayer);
-        PlayerB.GetComponent<PlayerCS>().SetSkin(_selectedChallengePlayer);
+        PlayerCS challengePlayerSkin = ChallengePlayers[stage].GetComponent<PlayerCS>();
+        PlayerB.GetComponent<PlayerCS>().SetSkin(challengePlayerSkin);
         PlayerB.GetComponent<PlayerCS>().SetSelect();
+        PlayerB_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerB.GetComponent<PlayerCS>());
 
         if(playSound)
         {
@@ -254,10 +205,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     {
         LayerPortrait.SetActive(false);
         LayerVersus.SetActive(true);
-        LayerVersus.GetComponent<VersusCS>().ResetVersus(
-            _playerCharacter,
-            _selectedChallengePlayer
-        );
+        LayerVersus.GetComponent<VersusCS>().ResetVersus(PlayerA.GetComponent<PlayerCS>(), PlayerB.GetComponent<PlayerCS>());
         
         _timer = 0.0f;
         _challengeState = ChallengeState.Versus;
@@ -280,13 +228,13 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             {
                 MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
                 
-                playerCreateInfoA._name = _playerCharacter.GetCharacterName();
+                playerCreateInfoA._name = PlayerA.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoA._startPosition = new Vector3(-Constants.IdleDistance, Constants.GroundPosition, 0.0f);
-                playerCreateInfoA._skin = _playerCharacter;
+                playerCreateInfoA._skin = PlayerA.GetComponent<PlayerCS>();
 
-                playerCreateInfoB._name = _selectedChallengePlayer.GetCharacterName();
+                playerCreateInfoB._name = PlayerB.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoB._startPosition = new Vector3(Constants.IdleDistance, Constants.GroundPosition, 0.0f);
-                playerCreateInfoB._skin = _selectedChallengePlayer;
+                playerCreateInfoB._skin = PlayerB.GetComponent<PlayerCS>();
 
                 GameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);
             }

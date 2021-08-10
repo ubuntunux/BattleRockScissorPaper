@@ -18,8 +18,9 @@ public enum GameState
 
 public class GameManagerCS : MonoBehaviour
 {
-    // Properties
+    // Properties    
     float _elapsedTime = 0.0f;
+    float _initialAttackTimerTime = Constants.AttackTimerTime;
     float _attackTimerTime = 0.0f;
     float _attackHitTime = 0.0f;
     float _attackHitTimeDelay = 0.0f;    
@@ -128,8 +129,10 @@ public class GameManagerCS : MonoBehaviour
         AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
         Btn_Exit.SetActive(false);
 
-        PlayerA_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, playerCreateInfoA);
-        PlayerB_CS.Reset(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, playerCreateInfoB);
+        PlayerA_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, playerCreateInfoA);
+        PlayerB_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, playerCreateInfoB);
+
+        _initialAttackTimerTime = Mathf.Min(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
 
         LayerResult.SetActive(false);
         SetReadyToRound();
@@ -441,9 +444,9 @@ public class GameManagerCS : MonoBehaviour
         }
         else if(GameState.ReadyToAttack == _gameState)
         {
-            float attackTimerBar = 1.0f - ((_attackTimerTime % Constants.AttackTimerTime) / Constants.AttackTimerTime);
+            float attackTimerBar = 1.0f - ((_attackTimerTime % _initialAttackTimerTime) / _initialAttackTimerTime);
             AttackTimer_CS.setBar(attackTimerBar);
-            if(Constants.AttackTimerTime <= _attackTimerTime)
+            if(_initialAttackTimerTime <= _attackTimerTime)
             {
                 SetAttackHit();
             }
@@ -513,9 +516,6 @@ public class GameManagerCS : MonoBehaviour
             if(Constants.RoundEndTime <= _roundEndTime)
             {
                 bool isPlayerA_Win = PlayerB_CS.GetWin() < PlayerA_CS.GetWin();
-                // Result
-                ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
-                challenegeSceneManager.AddChallengeScore(_recordAttackPoint, _recordHP, isPlayerA_Win);
 
                 int maxWinCount = isPlayerA_Win ? PlayerA_CS.GetWin() : PlayerB_CS.GetWin();
                 if (_round < _maxRoundCount && maxWinCount < _winCount)
@@ -525,6 +525,22 @@ public class GameManagerCS : MonoBehaviour
                 }
                 else
                 {
+                    // Save
+                    ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
+                    challenegeSceneManager.AddChallengeScore(_recordAttackPoint, _recordHP, isPlayerA_Win);
+                    if(PlayerB_CS.GetWin() < PlayerA_CS.GetWin())
+                    {
+                        PlayerA_CS._playerStat._win += 1;
+                        PlayerB_CS._playerStat._lose += 1;
+                    }
+                    else if(PlayerA_CS.GetWin() < PlayerB_CS.GetWin())
+                    {
+                        PlayerB_CS._playerStat._win += 1;
+                        PlayerA_CS._playerStat._lose += 1;
+                    }
+                    PlayerA_CS.SavePlayerStat();
+                    PlayerB_CS.SavePlayerStat();
+
                     SetGameResult();
                 }
             }

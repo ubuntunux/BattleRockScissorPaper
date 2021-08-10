@@ -720,11 +720,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Macho Man
-  Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
   Age: 25
+  Perfect: 0
+  Win: 1
+  Lose: 1
+  Score: 0
   HP: 3
   Power: 1
+  Speed: 2
   SkinID: 1
+  Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: c7265ba8e32babcff930a9588994daec, type: 3}
   Sprite_PortraitLose: {fileID: 21300000, guid: 3b47a2fea200826cb816ff3956b1ab73, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: fed835608c57675719f3068402ca0150, type: 3}

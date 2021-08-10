@@ -24,10 +24,94 @@ public enum PlayerState
 public class PlayerCreateInfo
 {
     public string _name = "";
-    public bool _isNPC = false;
+    public bool _isPlayer = false;
     public bool _isLeft = true;
     public Vector3 _startPosition = new Vector3(0.0f, 0.0f, 0.0f);
     public PlayerCS _skin = null;
+}
+
+public class PlayerStat
+{
+    public bool _isPlayer = false;    
+    public int _skinID = Constants.DefaultSkinID;
+    public int _perfect = 0;
+    public int _win = 0;
+    public int _lose = 0;
+    public int _score = 0;
+    public int _hp = Constants.DefaultHP;
+    public int _power = Constants.DefaultPower;
+    public float _speed = Constants.AttackTimerTime;
+
+    public void PrintPlayerStat(string title)
+    {
+        Debug.Log("=============================");
+        Debug.Log(title);
+        Debug.Log("_isPlayer: " + _isPlayer.ToString() 
+            + ", _skinID: " + _skinID.ToString()
+            + ", _perfect: " + _perfect.ToString()
+            + ", _win: " + _win.ToString()
+            + ", _lose: " + _lose.ToString()
+            + ", _score: " + _score.ToString()
+            + ", _hp: " + _hp.ToString()
+            + ", _power: " + _power.ToString()
+            + ", _speed: " + _speed.ToString()
+        );
+    }
+
+    public void InitializePlayerStat(PlayerCS player, bool isPlayer)
+    {
+        _isPlayer = isPlayer;
+        if(null != player)
+        {
+            _skinID = player.SkinID;
+            _perfect = isPlayer ? 0 : player.Perfect;
+            _win = isPlayer ? 0 : player.Win;
+            _lose = isPlayer ? 0 : player.Lose;
+            _score = isPlayer ? 0 : player.Score;
+            _hp = player.HP;
+            _power = player.Power;
+            _speed = player.Speed;
+        }
+        else
+        {
+            _skinID = Constants.DefaultSkinID;
+            _perfect = 0;
+            _win = 0;
+            _lose = 0;
+            _score = 0;
+            _hp = Constants.DefaultHP;
+            _power = Constants.DefaultPower;
+            _speed = Constants.AttackTimerTime;
+        }
+    }
+
+    public void LoadPlayerStat()
+    {
+        string skinID = _isPlayer ? "" : _skinID.ToString();
+
+        _perfect = SystemValue.GetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
+        _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
+        _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
+        _score = SystemValue.GetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
+        _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
+        _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
+        _speed = SystemValue.GetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+
+        if(_isPlayer) PrintPlayerStat("LoadPlayerStat");
+    }
+
+    public void SavePlayerStat()
+    {
+        string skinID = _isPlayer ? "" : _skinID.ToString();
+
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
+        SystemValue.SetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+    }
 }
 
 public class PlayerCS : MonoBehaviour
@@ -36,7 +120,7 @@ public class PlayerCS : MonoBehaviour
     public string _characterName;
     string _name;
     bool _pause = false;
-    bool _isNPC = false;
+    bool _isPlayer = false;
     bool _isLeft = false;
     Vector3 _startPosition;
     PlayerState _playerState = PlayerState.None;
@@ -50,8 +134,14 @@ public class PlayerCS : MonoBehaviour
 
     // Stat
     public int Age = 25;
+    public int Perfect = 0;
+    public int Win = 0;
+    public int Lose = 0;
+    public int Score = 0;
     public int HP = 3;
     public int Power = 1;
+    public float Speed = Constants.AttackTimerTime;
+    public PlayerStat _playerStat = new PlayerStat();
 
     // Skin
     public int SkinID;
@@ -107,7 +197,7 @@ public class PlayerCS : MonoBehaviour
 
      public int GetPower(bool isCounter)
     {
-        return isCounter ? Power * 2 : Power;
+        return Power;
     }
 
     public Sprite GetImagePortrait()
@@ -125,25 +215,48 @@ public class PlayerCS : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", sprite.texture);
     }
 
-    public void Reset(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, PlayerCreateInfo playerCreateInfo)
+    public void ResetPlayer(GameManagerCS gameManager, GameObject layer_hp_bar, GameObject layer_attack_timer, PlayerCreateInfo playerCreateInfo)
     {
         _name = playerCreateInfo._name;
-        _isNPC = playerCreateInfo._isNPC;
+        _isPlayer = playerCreateInfo._isPlayer;
         _startPosition = playerCreateInfo._startPosition;
         _isLeft = playerCreateInfo._isLeft;        
-        _elapsedTime = 0.0f;
-        _wins = 0;
+        _elapsedTime = 0.0f;        
         _pause = false;
-
-        _hp = HP;
 
         GameManager = gameManager;
         Layer_AttackTimer = layer_attack_timer;
         Layer_HP_Bar = layer_hp_bar;
         
-        SetSkin(playerCreateInfo._skin);
+        if(null != playerCreateInfo._skin)
+        {
+            SetSkin(playerCreateInfo._skin);
+        }
+        else
+        {
+            LoadPlayerStat();
+        }
+
+        _wins = 0;
+        _hp = _playerStat._hp;
 
         SetReadyToRound();
+    }
+
+    public void InitializePlayerStat()
+    {
+        _playerStat.InitializePlayerStat(this, _isPlayer);
+    }
+
+    public void LoadPlayerStat()
+    {
+        InitializePlayerStat();
+        _playerStat.LoadPlayerStat();
+    }
+
+    public void SavePlayerStat()
+    {
+        _playerStat.SavePlayerStat();
     }
 
     public void SetPause(bool pause)
@@ -154,10 +267,18 @@ public class PlayerCS : MonoBehaviour
     public void SetSkin(PlayerCS skin)
     {
         SkinID = skin.SkinID; 
-        _characterName = skin._characterName;
+
+        // player stat
         Age = skin.Age;
+        Win = skin.Win;
+        Lose = skin.Lose;
+        Score = skin.Score;
+        Perfect = skin.Perfect;
         HP = skin.HP;
-        Power = skin.Power;        
+        Power = skin.Power;
+        Speed = skin.Speed;
+        
+        _characterName = skin._characterName;
         Sprite_Born = skin.Sprite_Born;
         Sprite_Portrait = skin.Sprite_Portrait;
         Sprite_PortraitLose = skin.Sprite_PortraitLose;
@@ -168,17 +289,21 @@ public class PlayerCS : MonoBehaviour
         Sprite_Win = skin.Sprite_Win;
         Sprite_Dead = skin.Sprite_Dead;
         Snd_Name.clip = skin.Snd_Name.clip;
+
+        LoadPlayerStat();
     }
 
     public void SetReadyToRound()
     {
+        _hp = _playerStat._hp;
         _playerState = PlayerState.None;
         _lastAttackType = AttackType.None;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
-        _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
-        _hp = HP;
+        _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);        
         transform.position = _startPosition;
+        
         _shakeObject.reset();
+
         if(null != Layer_HP_Bar)
         {
             Layer_HP_Bar.GetComponent<UIBarCS>().Reset(_name);
@@ -307,7 +432,7 @@ public class PlayerCS : MonoBehaviour
             Snd_AttackHitVoice.Play();
         }
 
-        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / HP);
+        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _playerStat._hp);
         Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackTimerShake(_isLeft);
         _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);        
     }
@@ -363,7 +488,7 @@ public class PlayerCS : MonoBehaviour
             transform.position = _startPosition + new Vector3(_isLeft ? offsetX : -offsetX, offsetY, 0.0f);
 
             // Set NPC random attack
-            if(_isNPC && PlayerState.Idle == _playerState)
+            if(false == _isPlayer && PlayerState.Idle == _playerState)
             {
                 updateNPC();
             }

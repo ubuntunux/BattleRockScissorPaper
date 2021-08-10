@@ -6,12 +6,17 @@ public class SystemValue : MonoBehaviour
 {
     public static string SkinIDKey = "SkinID";
 
+    // player stat
+    public static string PlayerStatPerfectKey = "PlayerStatPerfect";
+    public static string PlayerStatWinKey = "PlayerStatWin";
+    public static string PlayerStatLoseKey = "PlayerStatLose";
+    public static string PlayerStatScoreKey = "PlayerStatScore";    
+    public static string PlayerStatHPKey = "PlayerStatHP";
+    public static string PlayerStatPowerKey = "PlayerStatPower";    
+    public static string PlayerStatSpeedKey = "PlayerStatSpeed";
+
     // challenge
-    public static string ChallengeStageKey = "ChallengeStage";
-    public static string LastChallengeStageKey = "LastChallengeStage";
     public static string ChallengeScoreKey = "ChallengeScore";
-    public static string ChallengeLevelKey = "ChallengeLevel";
-    public static string ChallengeExpKey = "ChallengeExp";
 
     public static bool GetBool(string key, bool defaultValue = false)
     {

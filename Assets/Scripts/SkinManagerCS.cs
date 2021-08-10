@@ -13,16 +13,30 @@ public class SkinManagerCS : MonoBehaviour
     void Start()
     {
         int skinCount = skins.Length;
-        for(int i=0; i<skinCount; ++i)
+        for(int i = 0; i < skinCount; ++i)
         {
-            PlayerCS skin = skins[i].GetComponent<PlayerCS>();
-            skinMap.Add(skin.SkinID, skin);
+            PlayerCS playerSkin = skins[i].GetComponent<PlayerCS>();
+            playerSkin.LoadPlayerStat();
+            skinMap.Add(playerSkin.SkinID, playerSkin);
         }
     }
 
     public PlayerCS GetSkin(int skinID)
     {
-        return skinMap[skinID];
+        PlayerCS skin = skinMap[skinID];
+        skin.LoadPlayerStat();
+        return skin;
+    }
+
+    public void ClearPlayerStats()
+    {
+        int skinCount = skins.Length;
+        for(int i = 0; i < skinCount; ++i)
+        {
+            PlayerCS playerSkin = skins[i].GetComponent<PlayerCS>();
+            playerSkin.InitializePlayerStat();
+            playerSkin.SavePlayerStat();
+        }
     }
 
     // Update is called once per frame
