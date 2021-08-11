@@ -96,8 +96,6 @@ public class PlayerStat
         _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
         _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
         _speed = SystemValue.GetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
-
-        if(_isPlayer) PrintPlayerStat("LoadPlayerStat");
     }
 
     public void SavePlayerStat()
