@@ -39,12 +39,13 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject LayerPortrait;    
     public GameObject LayerVersus;
     public GameObject PortraitSelected;
-    public GameObject LayerMatchCard;
-
-    public GameObject PlayerA;
-    public GameObject PlayerB;
+    
+    // Match Card
+    public GameObject LayerMatchCardManager;
 
     // challenge info
+    public GameObject PlayerA;
+    public GameObject PlayerB;
     public GameObject Text_Score;
     public GameObject PlayerA_Info;
     public GameObject PlayerB_Info;
@@ -79,6 +80,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     {
         LayerPortrait.SetActive(true);
         LayerVersus.SetActive(false);
+
+        LayerMatchCardManager.GetComponent<MatchCardManagerCS>().Reset();
+        LayerMatchCardManager.SetActive(true);
 
         PortraitSelected.GetComponent<ChallengePortraitCS>().Reset();
         PortraitSelected.GetComponent<ChallengePortraitCS>().SetSelected(true);
@@ -194,7 +198,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     public void LayerMatchCardClick()
     {
-        LayerMatchCard.SetActive(false);
+        LayerMatchCardManager.SetActive(false);
     }
 
     public void PortraitLeftOnClick()
