@@ -9,6 +9,8 @@ public enum GameSceneType
     None,
     MainScene,
     ChallenegeScene,
+    TrainingScene,
+    SkinScene,
     FightScene
 }
 
@@ -19,6 +21,8 @@ public class MainSceneManagerCS : MonoBehaviour
     public GameObject MainScene;
     public GameObject FightScene;
     public GameObject ChallenegeScene;
+    public GameObject TrainingScene;
+    public GameObject SkinScene;
 
     GameSceneType _goalGameSceneType = GameSceneType.None;
     GameSceneType _gameSceneType = GameSceneType.None;
@@ -93,9 +97,19 @@ public class MainSceneManagerCS : MonoBehaviour
         FightScene.SetActive(GameSceneType.FightScene == sceneType);
     }
 
-    public void Btn_Challenge_OnClick()
+    public void Btn_League_OnClick()
     {
         SetActivateScene(GameSceneType.ChallenegeScene);
+    }
+
+    public void Btn_Training_OnClick()
+    {
+        SetActivateScene(GameSceneType.TrainingScene);
+    }
+
+    public void Btn_Skin_OnClick()
+    {
+        SetActivateScene(GameSceneType.SkinScene);
     }
 
     // Update is called once per frame
