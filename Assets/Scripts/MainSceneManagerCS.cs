@@ -27,8 +27,6 @@ public class MainSceneManagerCS : MonoBehaviour
     public GameObject Stage;
     public GameObject Gym;
 
-    public AudioSource Snd_click;
-
     GameSceneType _goalGameSceneType = GameSceneType.None;
     GameSceneType _gameSceneType = GameSceneType.None;
     GameSceneType _gameSceneTypePrev = GameSceneType.None;
@@ -101,8 +99,6 @@ public class MainSceneManagerCS : MonoBehaviour
             return;
         }
 
-        Snd_click.Play();
-
         switch(sceneType)
         {
             case GameSceneType.ChallenegeScene:
@@ -117,6 +113,7 @@ public class MainSceneManagerCS : MonoBehaviour
         }
 
         _fadeInOutTimer = Constants.FadeTime;
+
         _gameSceneTypePrev = _gameSceneType;
         _gameSceneType = sceneType;
         
