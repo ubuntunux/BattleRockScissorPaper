@@ -24,6 +24,11 @@ public class MainSceneManagerCS : MonoBehaviour
     public GameObject TrainingScene;
     public GameObject SkinScene;
 
+    public GameObject Stage;
+    public GameObject Gym;
+
+    public AudioSource Snd_click;
+
     GameSceneType _goalGameSceneType = GameSceneType.None;
     GameSceneType _gameSceneType = GameSceneType.None;
     GameSceneType _gameSceneTypePrev = GameSceneType.None;
@@ -71,8 +76,17 @@ public class MainSceneManagerCS : MonoBehaviour
                 return ChallenegeScene;
             case GameSceneType.FightScene:
                 return FightScene;
+            case GameSceneType.SkinScene:
+                return SkinScene;
+            case GameSceneType.TrainingScene:
+                return TrainingScene;
         }
         return null;
+    }
+
+    public GameSceneType GetActivateSceneType()
+    {
+        return _gameSceneType;
     }
 
     public void SetActivateScenePrev()
@@ -87,14 +101,29 @@ public class MainSceneManagerCS : MonoBehaviour
             return;
         }
 
-        _fadeInOutTimer = Constants.FadeTime;
+        Snd_click.Play();
 
+        switch(sceneType)
+        {
+            case GameSceneType.ChallenegeScene:
+            case GameSceneType.FightScene:
+                Gym.SetActive(false);
+                Stage.SetActive(true);
+                break;
+            case GameSceneType.TrainingScene:
+                Gym.SetActive(true);
+                Stage.SetActive(false);
+                break;
+        }
+
+        _fadeInOutTimer = Constants.FadeTime;
         _gameSceneTypePrev = _gameSceneType;
         _gameSceneType = sceneType;
         
         MainScene.SetActive(GameSceneType.MainScene == sceneType);
         ChallenegeScene.SetActive(GameSceneType.ChallenegeScene == sceneType);
         FightScene.SetActive(GameSceneType.FightScene == sceneType);
+        TrainingScene.SetActive(GameSceneType.TrainingScene == sceneType);
     }
 
     public void Btn_League_OnClick()
@@ -115,11 +144,14 @@ public class MainSceneManagerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if(GetActivateSceneType() == GameSceneType.MainScene)
         {
-            if(GameSceneType.MainScene == _gameSceneType)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Application.Quit();
+                if(GameSceneType.MainScene == _gameSceneType)
+                {
+                    Application.Quit();
+                }
             }
         }
 

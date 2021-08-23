@@ -389,19 +389,22 @@ public class GameManagerCS : MonoBehaviour
      // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if(MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType() == GameSceneType.FightScene)
         {
-            if(GameState.GameResult == _gameState)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Exit();
-                return;
-            }
-            else
-            {
-                _pause = !_pause;
-                PlayerA_CS.SetPause(_pause);
-                PlayerB_CS.SetPause(_pause);
-                Btn_Exit.SetActive(_pause);
+                if(GameState.GameResult == _gameState)
+                {
+                    Exit();
+                    return;
+                }
+                else
+                {
+                    _pause = !_pause;
+                    PlayerA_CS.SetPause(_pause);
+                    PlayerB_CS.SetPause(_pause);
+                    Btn_Exit.SetActive(_pause);
+                }
             }
         }
 

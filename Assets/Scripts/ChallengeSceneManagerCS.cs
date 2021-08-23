@@ -34,7 +34,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject MainCamera;
     public GameObject MainSceneManager;
     public GameObject GameManager;
-    public GameObject SkinManager;
+    public GameObject SkinScene;
 
     public GameObject LayerPortrait;    
     public GameObject LayerVersus;
@@ -122,7 +122,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         playerStat.InitializePlayerStat(null, isPlayer);
         playerStat.SavePlayerStat();
 
-        SkinManager.GetComponent<SkinManagerCS>().ClearPlayerStats();
+        SkinScene.GetComponent<SkinManagerCS>().ClearPlayerStats();
 
         Reset();
     }
@@ -145,7 +145,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public void SetPlayerCharacterSkin()
     {
         int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, _challengeInfo._skinID);
-        PlayerCS playerSkin = SkinManager.GetComponent<SkinManagerCS>().GetSkin(skinID);
+        PlayerCS playerSkin = SkinScene.GetComponent<SkinManagerCS>().GetSkin(skinID);
         PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
         PlayerA.GetComponent<PlayerCS>().SetSelect();
         PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerA.GetComponent<PlayerCS>());
@@ -221,14 +221,22 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _challengeState = ChallengeState.Versus;
     }
 
+    public void Btn_Skin_OnClick()
+    {
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.SkinScene);
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if(MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType() == GameSceneType.ChallenegeScene)
         {
-            if(ChallengeState.Versus != _challengeState)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+                if(ChallengeState.Versus != _challengeState)
+                {
+                    MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+                }
             }
         }
 

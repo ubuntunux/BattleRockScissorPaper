@@ -5,6 +5,7 @@ using UnityEngine.Assertions;
 
 public class SkinManagerCS : MonoBehaviour
 {
+    public GameObject MainSceneManager;
     public GameObject[] skins;
 
     Dictionary<int, PlayerCS> skinMap = new Dictionary<int, PlayerCS>();
@@ -39,9 +40,19 @@ public class SkinManagerCS : MonoBehaviour
         }
     }
 
+    public void Reset()
+    {
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
+        if(MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType() == GameSceneType.SkinScene)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
+            }
+        }
     }
 }
