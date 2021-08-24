@@ -52,9 +52,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     public GameObject[] ChallengePlayers;
 
-    PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
-    PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
-
     ChallengeState _challengeState = ChallengeState.None;
 
     ChallengeInfo _challengeInfo = new ChallengeInfo();
@@ -69,14 +66,14 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     void OnEnable()
     {
-        Reset();
+        ResetChallengeScene();
     }
 
     void OnDisable()
-    {        
+    {
     }
 
-    void Reset()
+    void ResetChallengeScene()
     {
         LayerPortrait.SetActive(true);
         LayerVersus.SetActive(false);
@@ -90,19 +87,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _timer = 0.0f;
         _challengeState = ChallengeState.None;
 
-        // create players
-        playerCreateInfoA._name = "PlayerA";
-        playerCreateInfoA._isPlayer = true;
-        playerCreateInfoA._isLeft = true;
-        playerCreateInfoA._startPosition = new Vector3(-Constants.SelectDistance, Constants.GroundPosition, 0.0f);
-        PlayerA.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoA);
-
-        playerCreateInfoB._name = "PlayerB";
-        playerCreateInfoB._isPlayer = false;
-        playerCreateInfoB._isLeft = false;
-        playerCreateInfoB._startPosition = new Vector3(Constants.SelectDistance, Constants.GroundPosition, 0.0f);
-        PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
-
         // Load challenge info
         _challengeInfo.LoadData();
         SetChallengeInfo(_challengeInfo);
@@ -110,6 +94,12 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         // set character skin
         SetPlayerCharacterSkin();
         SelectChallengePlayer(0, false);
+
+        PlayerA.SetActive(true);
+        PlayerA.GetComponent<PlayerCS>().SetStateIdle();
+        
+        PlayerB.SetActive(true);
+        PlayerB.GetComponent<PlayerCS>().SetStateIdle();
     }
 
     public void ClearChallengeInfo()
@@ -122,9 +112,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         playerStat.InitializePlayerStat(null, isPlayer);
         playerStat.SavePlayerStat();
 
-        SkinScene.GetComponent<SkinManagerCS>().ClearPlayerStats();
+        MainSceneManager.GetComponent<MainSceneManagerCS>().ClearPlayerStats();
 
-        Reset();
+        ResetChallengeScene();
     }
 
     public void SetChallengeInfo(ChallengeInfo challengeInfo)
@@ -145,9 +135,8 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public void SetPlayerCharacterSkin()
     {
         int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, _challengeInfo._skinID);
-        PlayerCS playerSkin = SkinScene.GetComponent<SkinManagerCS>().GetSkin(skinID);
+        PlayerCS playerSkin = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkin(skinID);
         PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
-        PlayerA.GetComponent<PlayerCS>().SetSelect();
         PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerA.GetComponent<PlayerCS>());
     }
 
@@ -187,7 +176,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         PlayerCS challengePlayerSkin = ChallengePlayers[stage].GetComponent<PlayerCS>();
         PlayerB.GetComponent<PlayerCS>().SetSkin(challengePlayerSkin);
-        PlayerB.GetComponent<PlayerCS>().SetSelect();
         PlayerB_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerB.GetComponent<PlayerCS>());
 
         if(playSound)
@@ -246,12 +234,16 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             {
                 MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
                 
+                PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
                 playerCreateInfoA._name = PlayerA.GetComponent<PlayerCS>().GetCharacterName();
-                playerCreateInfoA._startPosition = new Vector3(-Constants.IdleDistance, Constants.GroundPosition, 0.0f);
+                playerCreateInfoA._isPlayer = true;
+                playerCreateInfoA._isLeft = true;
                 playerCreateInfoA._skin = PlayerA.GetComponent<PlayerCS>();
 
+                PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
                 playerCreateInfoB._name = PlayerB.GetComponent<PlayerCS>().GetCharacterName();
-                playerCreateInfoB._startPosition = new Vector3(Constants.IdleDistance, Constants.GroundPosition, 0.0f);
+                playerCreateInfoB._isPlayer = false;
+                playerCreateInfoB._isLeft = false;
                 playerCreateInfoB._skin = PlayerB.GetComponent<PlayerCS>();
 
                 GameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);

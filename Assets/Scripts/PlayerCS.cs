@@ -13,8 +13,9 @@ public enum AttackType
 public enum PlayerState
 {
     None,
-    Select,
     Idle,
+    ReadyToRound,
+    AttackIdle,
     AttackMotion,
     AttackHit,
     Win,
@@ -26,7 +27,6 @@ public class PlayerCreateInfo
     public string _name = "";
     public bool _isPlayer = false;
     public bool _isLeft = true;
-    public Vector3 _startPosition = new Vector3(0.0f, 0.0f, 0.0f);
     public PlayerCS _skin = null;
 }
 
@@ -120,7 +120,6 @@ public class PlayerCS : MonoBehaviour
     bool _pause = false;
     bool _isPlayer = false;
     bool _isLeft = false;
-    Vector3 _startPosition;
     PlayerState _playerState = PlayerState.None;
     AttackType _lastAttackType = AttackType.None;
     float _elapsedTime = 0.0f;
@@ -173,6 +172,14 @@ public class PlayerCS : MonoBehaviour
     {
     }
 
+    void OnEnable()
+    {
+    }
+
+    void OnDisable()
+    {
+    }
+
     public AudioClip GetAudioClip_CharacterName()
     {
         return Snd_Name.clip;
@@ -217,9 +224,9 @@ public class PlayerCS : MonoBehaviour
     {
         _name = playerCreateInfo._name;
         _isPlayer = playerCreateInfo._isPlayer;
-        _startPosition = playerCreateInfo._startPosition;
-        _isLeft = playerCreateInfo._isLeft;        
-        _elapsedTime = 0.0f;        
+        _isLeft = playerCreateInfo._isLeft;
+        _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
+        _elapsedTime = 0.0f;
         _pause = false;
 
         GameManager = gameManager;
@@ -238,7 +245,7 @@ public class PlayerCS : MonoBehaviour
         _wins = 0;
         _hp = _playerStat._hp;
 
-        SetReadyToRound();
+        SetStateIdle();
     }
 
     public void InitializePlayerStat()
@@ -289,16 +296,16 @@ public class PlayerCS : MonoBehaviour
         Snd_Name.clip = skin.Snd_Name.clip;
 
         LoadPlayerStat();
+
+        SetTexture(Sprite_Idle);
     }
 
     public void SetReadyToRound()
     {
         _hp = _playerStat._hp;
-        _playerState = PlayerState.None;
+        _playerState = PlayerState.ReadyToRound;
         _lastAttackType = AttackType.None;
-        _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
-        _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);        
-        transform.position = _startPosition;
+        _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
         
         _shakeObject.reset();
 
@@ -306,25 +313,26 @@ public class PlayerCS : MonoBehaviour
         {
             Layer_HP_Bar.GetComponent<UIBarCS>().Reset(_name);
         }
+
         SetTexture(Sprite_Idle);
     }
 
-    public void SetSelect()
+    public void SetStateIdle()
     {
-        SetTexture(Sprite_Idle);        
-        _playerState = PlayerState.Select;
+        SetTexture(Sprite_Idle);
+        _playerState = PlayerState.Idle;
     }
 
-    public void SetIdle()
+    public void SetAttackIdle()
     {
-        SetTexture(Sprite_Idle);        
-        _playerState = PlayerState.Idle;
+        SetTexture(Sprite_Idle);
+        _playerState = PlayerState.AttackIdle;
     }
 
     public void SetReadyToAttack()
     {
         _lastAttackType = AttackType.None;
-        SetIdle();
+        SetAttackIdle();
     }
 
     public bool isAlive()
@@ -376,7 +384,7 @@ public class PlayerCS : MonoBehaviour
                 SetTexture(Sprite_AttackPaper);
                 break;
             default:
-                SetIdle();
+                SetAttackIdle();
                 break;
         }
 
@@ -471,22 +479,33 @@ public class PlayerCS : MonoBehaviour
         {
             // Nothing
         }
-        else if(PlayerState.Select == _playerState)
+        else if(PlayerState.Idle == _playerState)
         {
             float speed = _elapsedTime * _idleMotionSpeed;
-            float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
-            transform.position = _startPosition + new Vector3(_isLeft ? 1.0f : -1.0f, offsetY, -1.0f);
+            float offsetX = _isLeft ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
+            float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
+            transform.position = new Vector3(offsetX, offsetY, -1.0f);
         }
-        else if(PlayerState.None == _playerState || PlayerState.Idle == _playerState)
+        else if(PlayerState.ReadyToRound == _playerState || PlayerState.AttackIdle == _playerState)
         {
-            // update Idle
+            // update AttackIdle
             float speed = _elapsedTime * _idleMotionSpeed;
             float offsetX = Mathf.Sin(speed) * 0.4f;
-            float offsetY = Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
-            transform.position = _startPosition + new Vector3(_isLeft ? offsetX : -offsetX, offsetY, 0.0f);
+            float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
+
+            if(_isLeft)
+            {
+                offsetX = offsetX - Constants.IdleDistance;
+            }
+            else
+            {
+                offsetX = -offsetX + Constants.IdleDistance;
+            }
+
+            transform.position = new Vector3(offsetX, offsetY, 0.0f);
 
             // Set NPC random attack
-            if(false == _isPlayer && PlayerState.Idle == _playerState)
+            if(false == _isPlayer && PlayerState.AttackIdle == _playerState)
             {
                 updateNPC();
             }
@@ -498,7 +517,7 @@ public class PlayerCS : MonoBehaviour
             {
                 if (Constants.AttackMotionTime <= _attackMotionTime)
                 {
-                    SetIdle();
+                    SetAttackIdle();
                 }
             }
             else if(PlayerState.AttackHit == _playerState)

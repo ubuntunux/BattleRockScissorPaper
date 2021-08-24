@@ -18,14 +18,24 @@ public class MainSceneManagerCS : MonoBehaviour
 {
     public GameObject MainCamera;
     public GameObject FadePanel;
+
+    // GameScenes
     public GameObject MainScene;
     public GameObject FightScene;
     public GameObject ChallenegeScene;
     public GameObject TrainingScene;
     public GameObject SkinScene;
 
+    public GameObject PlayerA;
+    public GameObject PlayerB;
+
     public GameObject Stage;
     public GameObject Gym;
+
+    public GameObject[] skins;
+    Dictionary<int, PlayerCS> skinMap = new Dictionary<int, PlayerCS>();
+
+    List<GameObject> _gameSceneList = new List<GameObject>();
 
     GameSceneType _goalGameSceneType = GameSceneType.None;
     GameSceneType _gameSceneType = GameSceneType.None;
@@ -36,21 +46,67 @@ public class MainSceneManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Reset();
+        _gameSceneList.Add(MainScene);
+        _gameSceneList.Add(FightScene);
+        _gameSceneList.Add(ChallenegeScene);
+        _gameSceneList.Add(TrainingScene);
+        _gameSceneList.Add(SkinScene);
+
+        int skinCount = skins.Length;
+        for(int i = 0; i < skinCount; ++i)
+        {
+            PlayerCS playerSkin = skins[i].GetComponent<PlayerCS>();
+            playerSkin.LoadPlayerStat();
+            skinMap.Add(playerSkin.SkinID, playerSkin);
+        }
+
+        // create players
+        PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
+        playerCreateInfoA._name = "PlayerA";
+        playerCreateInfoA._isPlayer = true;
+        playerCreateInfoA._isLeft = true;
+        PlayerA.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoA);
+
+        PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
+        playerCreateInfoB._name = "PlayerB";
+        playerCreateInfoB._isPlayer = false;
+        playerCreateInfoB._isLeft = false;
+        PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
+
+        SetActivateScene(GameSceneType.MainScene);
     }
 
     void OnEnable()
-    {   
-        Reset();
+    {
+        ResetMainScene();
     }
 
     void OnDisable()
     {
     }
 
-    public void Reset()
+    public void ResetMainScene()
     {
-        SetActivateScene(GameSceneType.MainScene);
+        PlayerA.SetActive(false);
+        PlayerB.SetActive(false);
+    }
+
+    public PlayerCS GetSkin(int skinID)
+    {
+        PlayerCS skin = skinMap[skinID];
+        skin.LoadPlayerStat();
+        return skin;
+    }
+
+    public void ClearPlayerStats()
+    {
+        int skinCount = skins.Length;
+        for(int i = 0; i < skinCount; ++i)
+        {
+            PlayerCS playerSkin = skins[i].GetComponent<PlayerCS>();
+            playerSkin.InitializePlayerStat();
+            playerSkin.SavePlayerStat();
+        }
     }
 
     public void SetBackGroundToSolidColor(Color color)
@@ -64,7 +120,7 @@ public class MainSceneManagerCS : MonoBehaviour
         MainCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
     }
 
-    public GameObject SetSceneObject(GameSceneType sceneType)
+    public GameObject GetSceneObject(GameSceneType sceneType)
     {
         switch(sceneType)
         {
@@ -116,11 +172,16 @@ public class MainSceneManagerCS : MonoBehaviour
 
         _gameSceneTypePrev = _gameSceneType;
         _gameSceneType = sceneType;
-        
-        MainScene.SetActive(GameSceneType.MainScene == sceneType);
-        ChallenegeScene.SetActive(GameSceneType.ChallenegeScene == sceneType);
-        FightScene.SetActive(GameSceneType.FightScene == sceneType);
-        TrainingScene.SetActive(GameSceneType.TrainingScene == sceneType);
+
+        GameObject currentGameScene = GetSceneObject(sceneType);
+        foreach(GameObject gameScene in _gameSceneList)
+        {
+            if(gameScene != currentGameScene)
+            {
+                gameScene.SetActive(false);
+            }
+        }
+        currentGameScene.SetActive(true);
     }
 
     public void Btn_League_OnClick()

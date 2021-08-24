@@ -104,7 +104,7 @@ public class GameManagerCS : MonoBehaviour
 
     public void Exit()
     {   
-        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();     
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
     }
 
     public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
@@ -553,7 +553,7 @@ public class GameManagerCS : MonoBehaviour
         {
             if(Constants.GameResultTime <= _gameResultTime)
             {
-                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
+                Exit();
             }
             _gameResultTime += Time.deltaTime;
         }

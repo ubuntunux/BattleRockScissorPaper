@@ -5,16 +5,29 @@ using UnityEngine;
 public class TrainingSceneManagerCS : MonoBehaviour
 {
     public GameObject MainSceneManager;
+    public GameObject PlayerA;
+    public GameObject PlayerB;
 
     // Start is called before the first frame update
     void Start()
     {
-        Reset();
     }
 
-    void Reset()
+    void OnEnable()
     {
+        ResetTrainingScene();
+    }
 
+    void OnDisable()
+    {
+    }
+
+    void ResetTrainingScene()
+    {
+        PlayerA.SetActive(true);
+        PlayerA.GetComponent<PlayerCS>().SetStateIdle();
+        
+        PlayerB.SetActive(false);
     }
 
     // Update is called once per frame
