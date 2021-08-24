@@ -91,8 +91,8 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _challengeInfo.LoadData();
         SetChallengeInfo(_challengeInfo);
 
-        // set character skin
-        SetPlayerCharacterSkin();
+        // set character info
+        SetPlayerCharacterInfo();
         SelectChallengePlayer(0, false);
 
         PlayerA.SetActive(true);
@@ -132,11 +132,8 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _challengeInfo.SaveData();
     }
 
-    public void SetPlayerCharacterSkin()
+    public void SetPlayerCharacterInfo()
     {
-        int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, _challengeInfo._skinID);
-        PlayerCS playerSkin = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkin(skinID);
-        PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
         PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerA.GetComponent<PlayerCS>());
     }
 

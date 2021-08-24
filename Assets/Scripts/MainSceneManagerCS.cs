@@ -73,22 +73,29 @@ public class MainSceneManagerCS : MonoBehaviour
         playerCreateInfoB._isLeft = false;
         PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
 
+        SetPlayerCharacterInfo();
+
         SetActivateScene(GameSceneType.MainScene);
     }
 
     void OnEnable()
     {
-        ResetMainScene();
+        ResetMainSceneManager();
     }
 
     void OnDisable()
     {
     }
 
-    public void ResetMainScene()
+    public void ResetMainSceneManager()
     {
-        PlayerA.SetActive(false);
-        PlayerB.SetActive(false);
+    }
+
+    public void SetPlayerCharacterInfo()
+    {
+        int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
+        PlayerCS playerSkin = GetSkin(skinID);
+        PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
     }
 
     public PlayerCS GetSkin(int skinID)
