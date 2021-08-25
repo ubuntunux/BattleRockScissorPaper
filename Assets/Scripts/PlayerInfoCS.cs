@@ -30,7 +30,7 @@ public class PlayerInfoCS : MonoBehaviour
         Text_HP.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._hp.ToString();
         Text_Power.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._power.ToString();
         Text_Speed.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._speed.ToString();
-        Image_Born.GetComponent<Image>().sprite = playerSkin.Sprite_Born;
+        Image_Born.GetComponent<Image>().sprite = playerSkin.GetImageBorn();
     }
 
     // Update is called once per frame

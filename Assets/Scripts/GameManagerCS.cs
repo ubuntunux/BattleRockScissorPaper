@@ -104,12 +104,12 @@ public class GameManagerCS : MonoBehaviour
 
     public void Exit()
     {   
+        SetPause(false);
         MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
     }
 
     public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
     {
-        _pause = false;
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
         _round = 1;
@@ -136,6 +136,7 @@ public class GameManagerCS : MonoBehaviour
 
         LayerResult.SetActive(false);
         SetReadyToRound();
+        SetPause(false);
     }
 
     public float GetAttackTimerTime()
@@ -386,6 +387,14 @@ public class GameManagerCS : MonoBehaviour
         MainCamera.GetComponent<CameraCS>().setShake();
 	}
 
+    void SetPause(bool pause)
+    {
+        _pause = pause;
+        PlayerA_CS.SetPause(pause);
+        PlayerB_CS.SetPause(pause);
+        Btn_Exit.SetActive(pause);
+    }
+
      // Update is called once per frame
     void Update()
     {
@@ -400,10 +409,7 @@ public class GameManagerCS : MonoBehaviour
                 }
                 else
                 {
-                    _pause = !_pause;
-                    PlayerA_CS.SetPause(_pause);
-                    PlayerB_CS.SetPause(_pause);
-                    Btn_Exit.SetActive(_pause);
+                    SetPause(!_pause);
                 }
             }
         }

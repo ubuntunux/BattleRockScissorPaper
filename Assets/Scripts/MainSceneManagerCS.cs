@@ -66,12 +66,14 @@ public class MainSceneManagerCS : MonoBehaviour
         playerCreateInfoA._isPlayer = true;
         playerCreateInfoA._isLeft = true;
         PlayerA.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoA);
+        PlayerA.SetActive(false);
 
         PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
         playerCreateInfoB._name = "PlayerB";
         playerCreateInfoB._isPlayer = false;
         playerCreateInfoB._isLeft = false;
         PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
+        PlayerB.SetActive(false);
 
         SetPlayerCharacterInfo();
 
@@ -98,9 +100,21 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
     }
 
+    public int GetSkinCount()
+    {
+        return skins.Length;
+    }
+
     public PlayerCS GetSkin(int skinID)
     {
         PlayerCS skin = skinMap[skinID];
+        skin.LoadPlayerStat();
+        return skin;
+    }
+
+    public PlayerCS GetSkinByIndex(int index)
+    {
+        PlayerCS skin = skins[index].GetComponent<PlayerCS>();
         skin.LoadPlayerStat();
         return skin;
     }

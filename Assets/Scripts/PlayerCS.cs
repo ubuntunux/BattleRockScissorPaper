@@ -215,6 +215,11 @@ public class PlayerCS : MonoBehaviour
         return Sprite_PortraitLose;
     }
 
+    public Sprite GetImageBorn()
+    {
+        return Sprite_Born;
+    }
+
     public void SetTexture(Sprite sprite)
     {
         GetComponent<Renderer>().material.SetTexture("_MainTex", sprite.texture);

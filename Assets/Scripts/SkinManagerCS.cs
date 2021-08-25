@@ -9,9 +9,13 @@ public class SkinManagerCS : MonoBehaviour
     public GameObject PlayerA;
     public GameObject PlayerB;
 
+    public GameObject SkinCardPrefab;
+    public GameObject LayerSkinCard;
+
     // Start is called before the first frame update
     void Start()
     {
+        AddSkinCards();
     }
 
     void OnEnable()
@@ -29,6 +33,42 @@ public class SkinManagerCS : MonoBehaviour
         PlayerA.GetComponent<PlayerCS>().SetStateIdle();
         
         PlayerB.SetActive(false);
+    }
+
+    public void AddSkinCards()
+    {
+        int skinIndex = 0;
+        int skinCount = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinCount();
+        int heightCount = 1024;
+        int widthCount = 4;
+        float cardSize = 160.0f;
+        for(int y = 0; y < heightCount; ++y)
+        {
+            for(int x = 0; x < widthCount; ++x)
+            {
+                PlayerCS skin = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinByIndex(skinIndex++);
+                GameObject SkinCardEntry = (GameObject)GameObject.Instantiate(SkinCardPrefab);
+                SkinCardEntry.transform.SetParent(LayerSkinCard.transform);
+                SkinCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(x * cardSize, y * -cardSize, 0.0f);
+                SkinCardEntry.GetComponent<SkinCardCS>().SetSkinCard(GetComponent<SkinManagerCS>(), skin);
+
+                if(skinCount <= skinIndex)
+                {
+                    break;
+                }
+            }
+            
+            if(skinCount <= skinIndex)
+            {
+                break;
+            }
+        }
+    }
+
+    public void SetPlayerSkin(PlayerCS skin)
+    {
+        PlayerA.GetComponent<PlayerCS>().SetSkin(skin);
+        PlayerA.GetComponent<PlayerCS>().PlayCharacterName();
     }
 
     // Update is called once per frame
