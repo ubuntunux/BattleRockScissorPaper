@@ -7,15 +7,17 @@ public class MatchCardManagerCS : MonoBehaviour
     public GameObject LayerMatchCardContents;    
     public GameObject LayerMatchCardPrefab;
 
+    List<GameObject> _matchCards = new List<GameObject>();
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    public void Reset()
+    public void ResetMatchCardManager()
     {
-        //RemoveAllMatchCards();
+        RemoveAllMatchCards();
 
         AddMatchCardEntry();
         AddMatchCardEntry();
@@ -27,16 +29,20 @@ public class MatchCardManagerCS : MonoBehaviour
     {
         GameObject LayerMatchCardEntry = (GameObject)GameObject.Instantiate(LayerMatchCardPrefab);
         LayerMatchCardEntry.transform.SetParent(LayerMatchCardContents.transform);
-        float posY = 50.0f - LayerMatchCardContents.transform.childCount * 100.0f;
+        LayerMatchCardEntry.transform.localScale = new Vector3(1, 1, 1);
+        float posY = -50.0f - _matchCards.Count * 100.0f;
         LayerMatchCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0.0f, posY, 0.0f);
+
+        _matchCards.Add(LayerMatchCardEntry);
     }
 
     public void RemoveAllMatchCards()
     {
-        foreach(Transform child in LayerMatchCardContents.transform)
+        foreach(GameObject child in _matchCards)
         {
-            Destroy(child.gameObject);
+            Destroy(child);
         }
+        _matchCards.Clear();
     }
 
     // Update is called once per frame

@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public enum GameSceneType
 {
@@ -18,6 +20,8 @@ public class MainSceneManagerCS : MonoBehaviour
 {
     public GameObject MainCamera;
     public GameObject FadePanel;
+    public GameObject Image_Score;
+    public GameObject Text_Score;
 
     // GameScenes
     public GameObject MainScene;
@@ -51,6 +55,11 @@ public class MainSceneManagerCS : MonoBehaviour
         _gameSceneList.Add(ChallenegeScene);
         _gameSceneList.Add(TrainingScene);
         _gameSceneList.Add(SkinScene);
+
+        foreach(GameObject gameScene in _gameSceneList)
+        {
+            gameScene.SetActive(false);
+        }
 
         int skinCount = skins.Length;
         for(int i = 0; i < skinCount; ++i)
@@ -93,11 +102,19 @@ public class MainSceneManagerCS : MonoBehaviour
     {
     }
 
+    public void SetScore(int score)
+    {
+        Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
+    }
+
     public void SetPlayerCharacterInfo()
     {
         int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
         PlayerCS playerSkin = GetSkin(skinID);
         PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
+
+        int score = PlayerA.GetComponent<PlayerCS>()._playerStat._score;
+        SetScore(score);
     }
 
     public int GetSkinCount()
@@ -178,14 +195,30 @@ public class MainSceneManagerCS : MonoBehaviour
 
         switch(sceneType)
         {
+            case GameSceneType.None:
+            case GameSceneType.MainScene:
+                Image_Score.SetActive(false);
+                break;
             case GameSceneType.ChallenegeScene:
-            case GameSceneType.FightScene:
+                Image_Score.SetActive(true);
                 Gym.SetActive(false);
                 Stage.SetActive(true);
                 break;
             case GameSceneType.TrainingScene:
+                Image_Score.SetActive(true);
                 Gym.SetActive(true);
                 Stage.SetActive(false);
+                break;
+            case GameSceneType.SkinScene:
+                Image_Score.SetActive(true);
+                break;
+            case GameSceneType.FightScene:
+                Image_Score.SetActive(false);
+                Gym.SetActive(false);
+                Stage.SetActive(true);
+                break;
+            default:
+                Assert.IsTrue(true);
                 break;
         }
 

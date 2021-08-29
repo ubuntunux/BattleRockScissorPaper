@@ -105,7 +105,7 @@ public class GameManagerCS : MonoBehaviour
     public void Exit()
     {   
         SetPause(false);
-        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
     }
 
     public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
@@ -216,15 +216,15 @@ public class GameManagerCS : MonoBehaviour
         }
     }
 
-    void Btn_Rock_OnClick() {
+    public void Btn_Rock_OnClick() {
         Attack(AttackType.Rock);
 	}
 
-    void Btn_Scissor_OnClick() {
+    public void Btn_Scissor_OnClick() {
         Attack(AttackType.Scissor);
 	}
 
-    void Btn_Paper_OnClick() {
+    public void Btn_Paper_OnClick() {
         Attack(AttackType.Paper);
 	}
 

@@ -22,6 +22,16 @@ public class TrainingSceneManagerCS : MonoBehaviour
     {
     }
 
+    public void Exit()
+    {
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+    }
+
+    public void Btn_Skin_OnClick()
+    {
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.SkinScene);
+    }
+
     void ResetTrainingScene()
     {
         PlayerA.SetActive(true);
@@ -37,7 +47,7 @@ public class TrainingSceneManagerCS : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+                Exit();
             }
         }
     }

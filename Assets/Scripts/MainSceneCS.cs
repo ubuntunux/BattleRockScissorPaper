@@ -11,7 +11,6 @@ public class MainSceneCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     void OnEnable()
@@ -25,7 +24,9 @@ public class MainSceneCS : MonoBehaviour
 
     public void ResetMainScene()
     {
-        PlayerA.SetActive(false);
+        PlayerA.SetActive(true);
+        PlayerA.GetComponent<PlayerCS>().SetStateIdle();
+
         PlayerB.SetActive(false);
     }
 

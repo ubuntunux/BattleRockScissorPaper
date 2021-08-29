@@ -11,24 +11,6 @@ public enum ChallengeState
     Versus,
 }
 
-public class ChallengeInfo
-{
-    public int _skinID = Constants.DefaultSkinID;
-    public int _score = 0;
-
-    public void LoadData()
-    {
-        _skinID = SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
-        _score = SystemValue.GetInt(SystemValue.ChallengeScoreKey);
-    }
-    
-    public void SaveData()
-    {
-        SystemValue.SetInt(SystemValue.SkinIDKey, _skinID);
-        SystemValue.SetInt(SystemValue.ChallengeScoreKey, _score);
-    }
-}
-
 public class ChallengeSceneManagerCS : MonoBehaviour
 {
     public GameObject MainCamera;
@@ -46,8 +28,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     // challenge info
     public GameObject PlayerA;
-    public GameObject PlayerB;
-    public GameObject Text_Score;
+    public GameObject PlayerB;    
     public GameObject PlayerA_Info;
     public GameObject PlayerB_Info;
 
@@ -55,7 +36,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     ChallengeState _challengeState = ChallengeState.None;
 
-    ChallengeInfo _challengeInfo = new ChallengeInfo();
     int _currentStage = 0;
 
     float _timer = 0.0f;
@@ -79,7 +59,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         LayerPortrait.SetActive(true);
         LayerVersus.SetActive(false);
 
-        LayerMatchCardManager.GetComponent<MatchCardManagerCS>().Reset();
+        LayerMatchCardManager.GetComponent<MatchCardManagerCS>().ResetMatchCardManager();
         LayerMatchCardManager.SetActive(true);
 
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().Reset();
@@ -87,10 +67,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         _timer = 0.0f;
         _challengeState = ChallengeState.None;
-
-        // Load challenge info
-        _challengeInfo.LoadData();
-        SetChallengeInfo(_challengeInfo);
 
         // set character info
         SetPlayerCharacterInfo();
@@ -105,32 +81,20 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     public void ClearChallengeInfo()
     {
-        _challengeInfo = new ChallengeInfo();
-        _challengeInfo.SaveData();
-
-        PlayerStat playerStat = new PlayerStat();
-        bool isPlayer = true;
-        playerStat.InitializePlayerStat(null, isPlayer);
-        playerStat.SavePlayerStat();
-
+        PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
         MainSceneManager.GetComponent<MainSceneManagerCS>().ClearPlayerStats();
-
         ResetChallengeScene();
-    }
-
-    public void SetChallengeInfo(ChallengeInfo challengeInfo)
-    {
-        Text_Score.GetComponent<TextMeshProUGUI>().text = challengeInfo._score.ToString();
     }
 
     public void AddChallengeScore(int attackPoint, int hp, bool isWin)
     {
         int score = attackPoint + hp;
-
-        _challengeInfo._score += score;
-
+        
         // save data
-        _challengeInfo.SaveData();
+        PlayerA.GetComponent<PlayerCS>()._playerStat._score += score;
+        PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
+
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetScore(PlayerA.GetComponent<PlayerCS>()._playerStat._score);
     }
 
     public void SetPlayerCharacterInfo()

@@ -27,6 +27,11 @@ public class SkinManagerCS : MonoBehaviour
     {
     }
 
+    public void Exit()
+    {
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
+    }
+
     public void ResetSkinScene()
     {
         PlayerA.SetActive(true);
@@ -55,8 +60,6 @@ public class SkinManagerCS : MonoBehaviour
                 SkinCardEntry.transform.localScale = new Vector3(1, 1, 1);
                 SkinCardEntry.GetComponent<SkinCardCS>().SetSkinCard(GetComponent<SkinManagerCS>(), skin);
 
-                skinIndex %= skinCount;
-
                 if(skinCount <= skinIndex)
                 {
                     break;
@@ -83,7 +86,7 @@ public class SkinManagerCS : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScenePrev();
+                Exit();
             }
         }
     }
