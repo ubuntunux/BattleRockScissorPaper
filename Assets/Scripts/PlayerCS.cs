@@ -36,6 +36,7 @@ public class PlayerStat
     public int _skinID = Constants.DefaultSkinID;
     public int _perfect = 0;
     public int _win = 0;
+    public int _draw = 0;
     public int _lose = 0;
     public int _score = 0;
     public int _hp = Constants.DefaultHP;
@@ -50,6 +51,7 @@ public class PlayerStat
             + ", _skinID: " + _skinID.ToString()
             + ", _perfect: " + _perfect.ToString()
             + ", _win: " + _win.ToString()
+            + ", _draw: " + _draw.ToString()
             + ", _lose: " + _lose.ToString()
             + ", _score: " + _score.ToString()
             + ", _hp: " + _hp.ToString()
@@ -66,6 +68,7 @@ public class PlayerStat
             _skinID = player.SkinID;
             _perfect = isPlayer ? 0 : player.Perfect;
             _win = isPlayer ? 0 : player.Win;
+            _draw = isPlayer ? 0 : player.Draw;
             _lose = isPlayer ? 0 : player.Lose;
             _score = isPlayer ? 0 : player.Score;
             _hp = player.HP;
@@ -77,6 +80,7 @@ public class PlayerStat
             _skinID = Constants.DefaultSkinID;
             _perfect = 0;
             _win = 0;
+            _draw = 0;
             _lose = 0;
             _score = 0;
             _hp = Constants.DefaultHP;
@@ -91,6 +95,7 @@ public class PlayerStat
 
         _perfect = SystemValue.GetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
+        _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         _score = SystemValue.GetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
         _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
@@ -104,6 +109,7 @@ public class PlayerStat
 
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
@@ -133,6 +139,7 @@ public class PlayerCS : MonoBehaviour
     public int Age = 25;
     public int Perfect = 0;
     public int Win = 0;
+    public int Draw = 0;
     public int Lose = 0;
     public int Score = 0;
     public int HP = 3;
@@ -281,6 +288,7 @@ public class PlayerCS : MonoBehaviour
         // player stat
         Age = skin.Age;
         Win = skin.Win;
+        Draw = skin.Draw;
         Lose = skin.Lose;
         Score = skin.Score;
         Perfect = skin.Perfect;

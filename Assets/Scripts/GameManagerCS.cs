@@ -547,6 +547,11 @@ public class GameManagerCS : MonoBehaviour
                         PlayerB_CS._playerStat._win += 1;
                         PlayerA_CS._playerStat._lose += 1;
                     }
+                    else
+                    {
+                        PlayerA_CS._playerStat._draw += 1;
+                        PlayerB_CS._playerStat._draw += 1;
+                    }
                     PlayerA_CS.SavePlayerStat();
                     PlayerB_CS.SavePlayerStat();
 

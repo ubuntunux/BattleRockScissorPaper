@@ -6,9 +6,9 @@ using TMPro;
 
 public class PlayerInfoCS : MonoBehaviour
 {
-    public GameObject Image_Born;
-    public GameObject Text_Age;    
+    public GameObject Image_Born;    
     public GameObject Text_Win;
+    public GameObject Text_Draw;
     public GameObject Text_Lose;
     public GameObject Text_HP;
     public GameObject Text_Power;
@@ -23,9 +23,9 @@ public class PlayerInfoCS : MonoBehaviour
 
     public void SetPlayerInfo(PlayerCS playerSkin)
     {
-        Text_Name.GetComponent<TextMeshProUGUI>().text = playerSkin.GetCharacterName();
-        Text_Age.GetComponent<TextMeshProUGUI>().text = playerSkin.Age.ToString();        
+        Text_Name.GetComponent<TextMeshProUGUI>().text = playerSkin.GetCharacterName();        
         Text_Win.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._win.ToString();
+        Text_Draw.GetComponent<TextMeshProUGUI>().text = playerSkin.Draw.ToString();        
         Text_Lose.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._lose.ToString();
         Text_HP.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._hp.ToString();
         Text_Power.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._power.ToString();

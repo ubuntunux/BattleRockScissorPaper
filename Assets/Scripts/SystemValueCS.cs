@@ -9,6 +9,7 @@ public class SystemValue : MonoBehaviour
     // player stat
     public static string PlayerStatPerfectKey = "PlayerStatPerfect";
     public static string PlayerStatWinKey = "PlayerStatWin";
+    public static string PlayerStatDrawKey = "PlayerStatDraw";
     public static string PlayerStatLoseKey = "PlayerStatLose";
     public static string PlayerStatScoreKey = "PlayerStatScore";    
     public static string PlayerStatHPKey = "PlayerStatHP";
