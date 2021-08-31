@@ -64,7 +64,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         LayerVersus.SetActive(false);
 
         LayerMatchCardManager.SetActive(false);
-        // LayerMatchCardManager.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, ChallengePlayers);
+        LayerMatchCardManager.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, ChallengePlayers);
 
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().Reset();
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().SetSelected(true);
@@ -135,6 +135,8 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     public void Btn_Fight_OnClick()
     {
+        MainSceneManager.GetComponent<MainSceneManagerCS>().ShowScoreAndSkinButton(false);
+
         LayerPortrait.SetActive(false);
         LayerVersus.SetActive(true);
         LayerVersus.GetComponent<VersusCS>().ResetVersus(PlayerA.GetComponent<PlayerCS>(), PlayerB.GetComponent<PlayerCS>());

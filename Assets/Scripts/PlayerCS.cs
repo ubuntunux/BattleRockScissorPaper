@@ -39,6 +39,7 @@ public class PlayerStat
     public int _draw = 0;
     public int _lose = 0;
     public int _score = 0;
+    public int _rank = 0;
     public int _hp = Constants.DefaultHP;
     public int _power = Constants.DefaultPower;
     public float _speed = Constants.AttackTimerTime;
@@ -54,6 +55,7 @@ public class PlayerStat
             + ", _draw: " + _draw.ToString()
             + ", _lose: " + _lose.ToString()
             + ", _score: " + _score.ToString()
+            + ", _rank: " + _rank.ToString()
             + ", _hp: " + _hp.ToString()
             + ", _power: " + _power.ToString()
             + ", _speed: " + _speed.ToString()
@@ -63,30 +65,16 @@ public class PlayerStat
     public void InitializePlayerStat(PlayerCS player, bool isPlayer)
     {
         _isPlayer = isPlayer;
-        if(null != player)
-        {
-            _skinID = player.SkinID;
-            _perfect = isPlayer ? 0 : player.Perfect;
-            _win = isPlayer ? 0 : player.Win;
-            _draw = isPlayer ? 0 : player.Draw;
-            _lose = isPlayer ? 0 : player.Lose;
-            _score = isPlayer ? 0 : player.Score;
-            _hp = player.HP;
-            _power = player.Power;
-            _speed = player.Speed;
-        }
-        else
-        {
-            _skinID = Constants.DefaultSkinID;
-            _perfect = 0;
-            _win = 0;
-            _draw = 0;
-            _lose = 0;
-            _score = 0;
-            _hp = Constants.DefaultHP;
-            _power = Constants.DefaultPower;
-            _speed = Constants.AttackTimerTime;
-        }
+        _skinID = player.SkinID;
+        _perfect = isPlayer ? 0 : player.Perfect;
+        _win = isPlayer ? 0 : player.Win;
+        _draw = isPlayer ? 0 : player.Draw;
+        _lose = isPlayer ? 0 : player.Lose;
+        _score = isPlayer ? 0 : player.Score;
+        _rank = 0;
+        _hp = player.HP;
+        _power = player.Power;
+        _speed = player.Speed;
     }
 
     public void LoadPlayerStat()
@@ -97,6 +85,7 @@ public class PlayerStat
         _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
+        _rank = SystemValue.GetInt(skinID + SystemValue.PlayerStatLevelKey, _rank);
         _score = SystemValue.GetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
         _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
         _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
@@ -112,6 +101,7 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatLevelKey, _rank);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
         SystemValue.SetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
@@ -144,6 +134,7 @@ public class PlayerCS : MonoBehaviour
     public int Score = 0;
     public int HP = 3;
     public int Power = 1;
+    public int Level = 1;
     public float Speed = Constants.AttackTimerTime;
     public PlayerStat _playerStat = new PlayerStat();
 
@@ -225,6 +216,11 @@ public class PlayerCS : MonoBehaviour
     public Sprite GetImageBorn()
     {
         return Sprite_Born;
+    }
+
+    public void SetRank(int rank)
+    {
+        _playerStat._rank = rank;
     }
 
     public void SetTexture(Sprite sprite)

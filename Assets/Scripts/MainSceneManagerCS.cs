@@ -9,6 +9,7 @@ using TMPro;
 public enum GameSceneType
 {
     None,
+    TitleScene,
     MainScene,
     ChallenegeScene,
     TrainingScene,
@@ -22,8 +23,10 @@ public class MainSceneManagerCS : MonoBehaviour
     public GameObject FadePanel;
     public GameObject Image_Score;
     public GameObject Text_Score;
+    public GameObject Btn_Skin;
 
     // GameScenes
+    public GameObject TitleScene;
     public GameObject MainScene;
     public GameObject FightScene;
     public GameObject ChallenegeScene;
@@ -50,6 +53,7 @@ public class MainSceneManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _gameSceneList.Add(TitleScene);
         _gameSceneList.Add(MainScene);
         _gameSceneList.Add(FightScene);
         _gameSceneList.Add(ChallenegeScene);
@@ -64,7 +68,7 @@ public class MainSceneManagerCS : MonoBehaviour
         int skinCount = skins.Length;
         for(int i = 0; i < skinCount; ++i)
         {
-            PlayerCS playerSkin = skins[i].GetComponent<PlayerCS>();
+            PlayerCS playerSkin = skins[i].GetComponent<PlayerCS>();            
             playerSkin.LoadPlayerStat();
             skinMap.Add(playerSkin.SkinID, playerSkin);
         }
@@ -86,7 +90,7 @@ public class MainSceneManagerCS : MonoBehaviour
 
         SetPlayerCharacterInfo();
 
-        SetActivateScene(GameSceneType.MainScene);
+        SetActivateScene(GameSceneType.TitleScene);
     }
 
     void OnEnable()
@@ -162,6 +166,8 @@ public class MainSceneManagerCS : MonoBehaviour
     {
         switch(sceneType)
         {
+            case GameSceneType.TitleScene:
+                return TitleScene;
             case GameSceneType.MainScene:
                 return MainScene;
             case GameSceneType.ChallenegeScene:
@@ -172,6 +178,9 @@ public class MainSceneManagerCS : MonoBehaviour
                 return SkinScene;
             case GameSceneType.TrainingScene:
                 return TrainingScene;
+            default:
+                Assert.IsTrue(false);
+                break;
         }
         return null;
     }
@@ -186,6 +195,12 @@ public class MainSceneManagerCS : MonoBehaviour
         SetActivateScene(_gameSceneTypePrev);
     }
 
+    public void ShowScoreAndSkinButton(bool show)
+    {
+        Image_Score.SetActive(show);
+        Btn_Skin.SetActive(show);
+    }
+
     public void SetActivateScene(GameSceneType sceneType)
     {
         if(sceneType == _gameSceneType)
@@ -196,29 +211,33 @@ public class MainSceneManagerCS : MonoBehaviour
         switch(sceneType)
         {
             case GameSceneType.None:
+            case GameSceneType.TitleScene:
+                ShowScoreAndSkinButton(false);
+                break;
             case GameSceneType.MainScene:
-                Image_Score.SetActive(false);
+                ShowScoreAndSkinButton(true);
                 break;
             case GameSceneType.ChallenegeScene:
-                Image_Score.SetActive(true);
+                ShowScoreAndSkinButton(true);
                 Gym.SetActive(false);
                 Stage.SetActive(true);
                 break;
             case GameSceneType.TrainingScene:
-                Image_Score.SetActive(true);
+                ShowScoreAndSkinButton(true);
                 Gym.SetActive(true);
                 Stage.SetActive(false);
                 break;
             case GameSceneType.SkinScene:
                 Image_Score.SetActive(true);
+                Btn_Skin.SetActive(false);
                 break;
             case GameSceneType.FightScene:
-                Image_Score.SetActive(false);
+                ShowScoreAndSkinButton(false);
                 Gym.SetActive(false);
                 Stage.SetActive(true);
                 break;
             default:
-                Assert.IsTrue(true);
+                Assert.IsTrue(false);
                 break;
         }
 
@@ -236,6 +255,11 @@ public class MainSceneManagerCS : MonoBehaviour
             }
         }
         currentGameScene.SetActive(true);
+    }
+
+    public void Btn_TitleScene_OnClick()
+    {
+        SetActivateScene(GameSceneType.MainScene);
     }
 
     public void Btn_League_OnClick()

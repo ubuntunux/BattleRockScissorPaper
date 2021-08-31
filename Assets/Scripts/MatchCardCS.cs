@@ -6,7 +6,7 @@ using TMPro;
 
 public class MatchCardCS : MonoBehaviour
 {
-    public GameObject Text_EventName;
+    public GameObject Text_Rank;
     public GameObject Text_Price;
     public GameObject Image_Born;
     public GameObject Image_Portrait;
@@ -42,7 +42,7 @@ public class MatchCardCS : MonoBehaviour
         _challengeSceneManager = challengeSceneManager;
         _stageIndex = stageIndex;
 
-        Text_EventName.GetComponent<TextMeshProUGUI>().text = "Main-Event";
+        Text_Rank.GetComponent<TextMeshProUGUI>().text = "Rank: " + stageIndex.ToString();
         Text_Price.GetComponent<TextMeshProUGUI>().text = "Price: $10,000";
         Image_Born.GetComponent<Image>().sprite = player.GetImageBorn();
         Image_Portrait.GetComponent<Image>().sprite = player.GetImagePortrait();

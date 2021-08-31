@@ -359,7 +359,7 @@ GameObject:
   - component: {fileID: 5059821608077699315}
   - component: {fileID: 5059821608077699316}
   m_Layer: 5
-  m_Name: Text_EventName
+  m_Name: Text_Rank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -649,7 +649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50f0b9fd32d1ec6628cbddf2f72eb3d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text_EventName: {fileID: 5059821608077699318}
+  Text_Rank: {fileID: 5059821608077699318}
   Text_Price: {fileID: 5059821607902194374}
   Image_Born: {fileID: 5059821608114557607}
   Image_Portrait: {fileID: 5059821608250409881}
