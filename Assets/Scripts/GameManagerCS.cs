@@ -105,7 +105,7 @@ public class GameManagerCS : MonoBehaviour
     public void Exit()
     {   
         SetPause(false);
-        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.ChallenegeScene);
     }
 
     public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
@@ -216,21 +216,38 @@ public class GameManagerCS : MonoBehaviour
         }
     }
 
-    public void Btn_Rock_OnClick() {
-        Attack(AttackType.Rock);
-	}
-
-    public void Btn_Scissor_OnClick() {
-        Attack(AttackType.Scissor);
-	}
-
-    public void Btn_Paper_OnClick() {
-        Attack(AttackType.Paper);
-	}
-
-    void Attack(AttackType attackType)
+    public void Btn_Back_OnClick()
     {
-        PlayerA_CS.SetAttack(attackType);
+        SetPause(!_pause);
+    }
+
+    public void Btn_PlayerA_Rock_OnClick() {
+        Attack(PlayerA_CS, AttackType.Rock);
+	}
+
+    public void Btn_PlayerA_Scissor_OnClick() {
+        Attack(PlayerA_CS, AttackType.Scissor);
+	}
+
+    public void Btn_PlayerA_Paper_OnClick() {
+        Attack(PlayerA_CS, AttackType.Paper);
+	}
+
+    public void Btn_PlayerB_Rock_OnClick() {
+        Attack(PlayerB_CS, AttackType.Rock);
+	}
+
+    public void Btn_PlayerB_Scissor_OnClick() {
+        Attack(PlayerB_CS, AttackType.Scissor);
+	}
+
+    public void Btn_PlayerB_Paper_OnClick() {
+        Attack(PlayerB_CS, AttackType.Paper);
+	}
+
+    void Attack(PlayerCS Player, AttackType attackType)
+    {
+        Player.SetAttack(attackType);
 	}
 
     bool checkLose(AttackType lhs, AttackType rhs)
@@ -389,6 +406,11 @@ public class GameManagerCS : MonoBehaviour
 
     void SetPause(bool pause)
     {
+        if(GameState.RoundEnd == _gameState && false == _pause)
+        {
+            return;
+        }
+
         _pause = pause;
         PlayerA_CS.SetPause(pause);
         PlayerB_CS.SetPause(pause);

@@ -17,6 +17,8 @@ public class SystemValue : MonoBehaviour
     public static string PlayerStatSpeedKey = "PlayerStatSpeed";
     public static string PlayerStatLevelKey = "PlayerStatLevel";
 
+    public static string PlayerLastStageKey = "PlayerLastStage";
+
     public static bool GetBool(string key, bool defaultValue = false)
     {
         return (0 != PlayerPrefs.GetInt(key, defaultValue ? 1 : 0));

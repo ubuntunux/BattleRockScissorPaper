@@ -22,6 +22,14 @@ public class MainSceneCS : MonoBehaviour
     {
     }
 
+    public void Exit()
+    {
+        MainSceneManager.GetComponent<MainSceneManagerCS>().ApplicationQuit();
+    }
+
+    public void Btn_Back_Toggle()
+    {}
+
     public void ResetMainScene()
     {
         PlayerA.SetActive(true);
@@ -33,6 +41,5 @@ public class MainSceneCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

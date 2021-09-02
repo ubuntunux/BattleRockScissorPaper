@@ -23,6 +23,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject VersusPortraitPlayerA;
     public GameObject VersusPortraitPlayerB;
     public AudioSource Snd_MatchCardSelect;
+    public GameObject Btn_Back;
     
     // Match Card
     public GameObject LayerMatchCardManager;
@@ -36,8 +37,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject[] ChallengePlayers;
 
     ChallengeState _challengeState = ChallengeState.None;
-
-    int _currentStage = 0;
 
     float _timer = 0.0f;
 
@@ -62,21 +61,21 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         LayerPortrait.SetActive(true);
         LayerVersus.SetActive(false);
+        Btn_Back.SetActive(true);
 
-        LayerMatchCardManager.SetActive(false);
+        LayerMatchCardManager.SetActive(true);
         LayerMatchCardManager.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, ChallengePlayers);
 
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().Reset();
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().SetSelected(true);
 
+        int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, -1);
+
         // set character info
         SetPlayerCharacterInfo();
-        SelectChallengePlayer(_currentStage, false);
+        SelectChallengePlayer(currentStage, false);
 
-        PlayerA.SetActive(true);
         PlayerA.GetComponent<PlayerCS>().SetStateIdle();
-        
-        PlayerB.SetActive(true);
         PlayerB.GetComponent<PlayerCS>().SetStateIdle();
     }
 
@@ -108,7 +107,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         int stageLimit = ChallengePlayers.Length - 1;
         if(stage < 0)
         {
-            stage = 0;
+            PlayerB.SetActive(false);
+            PlayerB_Info.SetActive(false);
+            return;
         }
         else if(stageLimit <= stage)
         {
@@ -116,7 +117,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         }
 
         PlayerCS challengePlayerSkin = ChallengePlayers[stage].GetComponent<PlayerCS>();
+        PlayerB.SetActive(true);
         PlayerB.GetComponent<PlayerCS>().SetSkin(challengePlayerSkin);
+        PlayerB_Info.SetActive(true);
         PlayerB_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerB.GetComponent<PlayerCS>());
 
         if(playSound)
@@ -124,19 +127,25 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             PlayerB.GetComponent<PlayerCS>().PlayCharacterName();
         }
 
-        _currentStage = stage;
+        SystemValue.SetInt(SystemValue.PlayerLastStageKey, stage);
     }
 
     public void LayerMatchCardClick()
     {
         Snd_MatchCardSelect.Play();
-        LayerMatchCardManager.SetActive(false);
     }
 
     public void Btn_Fight_OnClick()
     {
+        if(false == PlayerB.activeInHierarchy)
+        {
+            return;
+        }
+
         MainSceneManager.GetComponent<MainSceneManagerCS>().ShowScoreAndSkinButton(false);
 
+        Btn_Back.SetActive(false);
+        LayerMatchCardManager.SetActive(false);
         LayerPortrait.SetActive(false);
         LayerVersus.SetActive(true);
         LayerVersus.GetComponent<VersusCS>().ResetVersus(PlayerA.GetComponent<PlayerCS>(), PlayerB.GetComponent<PlayerCS>());
@@ -153,10 +162,12 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.SkinScene);
     }
 
-    public void Btn_ChangeMatch_OnClick()
+    public void Exit()
     {
-        LayerMatchCardManager.SetActive(true);
-        LayerMatchCardManager.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, ChallengePlayers);
+        if(ChallengeState.Versus != _challengeState)
+        {
+            MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
+        }
     }
 
     // Update is called once per frame
@@ -166,10 +177,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if(ChallengeState.Versus != _challengeState)
-                {
-                    MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.MainScene);
-                }
+                Exit();
             }
         }
 

@@ -102,6 +102,11 @@ public class MainSceneManagerCS : MonoBehaviour
     {
     }
 
+    public void ApplicationQuit()
+    {
+        Application.Quit();
+    }
+
     public void ResetMainSceneManager()
     {
     }
@@ -149,6 +154,7 @@ public class MainSceneManagerCS : MonoBehaviour
             playerSkin.InitializePlayerStat();
             playerSkin.SavePlayerStat();
         }
+        SystemValue.SetInt(SystemValue.PlayerLastStageKey, -1);
     }
 
     public void SetBackGroundToSolidColor(Color color)
@@ -198,7 +204,7 @@ public class MainSceneManagerCS : MonoBehaviour
     public void ShowScoreAndSkinButton(bool show)
     {
         Image_Score.SetActive(show);
-        Btn_Skin.SetActive(show);
+        //Btn_Skin.SetActive(show);
     }
 
     public void SetActivateScene(GameSceneType sceneType)
@@ -229,7 +235,7 @@ public class MainSceneManagerCS : MonoBehaviour
                 break;
             case GameSceneType.SkinScene:
                 Image_Score.SetActive(true);
-                Btn_Skin.SetActive(false);
+                //Btn_Skin.SetActive(false);
                 break;
             case GameSceneType.FightScene:
                 ShowScoreAndSkinButton(false);
@@ -280,17 +286,6 @@ public class MainSceneManagerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GetActivateSceneType() == GameSceneType.MainScene)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if(GameSceneType.MainScene == _gameSceneType)
-                {
-                    Application.Quit();
-                }
-            }
-        }
-
         // if(0.0f != _fadeInOutTimer)
         // {
         //     float fadeInOutTimer = 1.0f - Mathf.Abs((_fadeInOutTimer / Constants.FadeTime) * 2.0f - 1.0f);
