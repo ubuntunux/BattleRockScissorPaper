@@ -299,12 +299,12 @@ public class MainSceneManagerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if(0.0f != _fadeInOutTimer)
-        // {
-        //     float fadeInOutTimer = 1.0f - Mathf.Abs((_fadeInOutTimer / Constants.FadeTime) * 2.0f - 1.0f);
-        //     FadePanel.GetComponent<Image>().color = new Color(0,0,0, fadeInOutTimer * 0.5f);
-
-        //     _fadeInOutTimer -= Time.deltaTime;
-        // }
+       if(GetActivateSceneType() == GameSceneType.MainScene)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Toggle_Popup_Exit();
+            }
+        }
     }
 }

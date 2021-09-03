@@ -28,7 +28,9 @@ public class MainSceneCS : MonoBehaviour
     }
 
     public void Btn_Back_Toggle()
-    {}
+    {
+
+    }
 
     public void ResetMainScene()
     {
