@@ -71,7 +71,7 @@ public class GameManagerCS : MonoBehaviour
 
     // UI
     public GameObject LayerResult;
-    public GameObject Btn_Exit;
+    public GameObject Image_Exit;
     public GameObject Layer_AttackButtons;
     public GameObject Btn_Rock;
     public GameObject Btn_Scissor;
@@ -127,7 +127,7 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS = PlayerA.GetComponent<PlayerCS>();
         PlayerB_CS = PlayerB.GetComponent<PlayerCS>();
         AttackTimer_CS = Layer_AttackTimer.GetComponent<FightTimerCS>();
-        Btn_Exit.SetActive(false);
+        Image_Exit.SetActive(false);
 
         PlayerA_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, playerCreateInfoA);
         PlayerB_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, playerCreateInfoB);
@@ -414,7 +414,7 @@ public class GameManagerCS : MonoBehaviour
         _pause = pause;
         PlayerA_CS.SetPause(pause);
         PlayerB_CS.SetPause(pause);
-        Btn_Exit.SetActive(pause);
+        Image_Exit.SetActive(pause);
     }
 
      // Update is called once per frame

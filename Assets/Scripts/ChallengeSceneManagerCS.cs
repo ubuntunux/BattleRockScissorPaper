@@ -69,7 +69,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().Reset();
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().SetSelected(true);
 
-        int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, -1);
+        int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, 0);
 
         // set character info
         SetPlayerCharacterInfo();

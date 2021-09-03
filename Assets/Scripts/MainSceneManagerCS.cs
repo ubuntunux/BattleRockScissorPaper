@@ -24,6 +24,7 @@ public class MainSceneManagerCS : MonoBehaviour
     public GameObject Image_Score;
     public GameObject Text_Score;
     public GameObject Btn_Skin;
+    public GameObject Popup_Exit;
 
     // GameScenes
     public GameObject TitleScene;
@@ -59,6 +60,8 @@ public class MainSceneManagerCS : MonoBehaviour
         _gameSceneList.Add(ChallenegeScene);
         _gameSceneList.Add(TrainingScene);
         _gameSceneList.Add(SkinScene);
+
+        Popup_Exit.SetActive(false);
 
         foreach(GameObject gameScene in _gameSceneList)
         {
@@ -281,6 +284,16 @@ public class MainSceneManagerCS : MonoBehaviour
     public void Btn_Skin_OnClick()
     {
         SetActivateScene(GameSceneType.SkinScene);
+    }
+
+    public void Btn_Exit_Cancle_OnClick()
+    {
+        Popup_Exit.SetActive(false);
+    }
+
+    public void Toggle_Popup_Exit()
+    {
+        Popup_Exit.SetActive(!Popup_Exit.activeInHierarchy);
     }
 
     // Update is called once per frame
