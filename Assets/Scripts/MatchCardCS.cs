@@ -9,6 +9,7 @@ public class MatchCardCS : MonoBehaviour
     public GameObject Image_Portrait;
 
     ChallengeSceneManagerCS _challengeSceneManager = null;
+    GameObject _player;
     int _stageIndex = 0;
 
     // Start is called before the first frame update
@@ -24,15 +25,17 @@ public class MatchCardCS : MonoBehaviour
 
     public void OnClick()
     {
-        _challengeSceneManager.SelectChallengePlayer(_stageIndex);
+        _challengeSceneManager.SelectChallengePlayer(_stageIndex, _player);
         _challengeSceneManager.LayerMatchCardClick();
     }
 
-    public void SetMatchCard(ChallengeSceneManagerCS challengeSceneManager, int stageIndex, PlayerCS player)
+    public void SetMatchCard(ChallengeSceneManagerCS challengeSceneManager, int stageIndex, PlayerCS skin, GameObject player)
     {
         _challengeSceneManager = challengeSceneManager;
         _stageIndex = stageIndex;
-        Image_Portrait.GetComponent<Image>().sprite = player.GetImagePortrait();
+        _player = player;
+        Image_Portrait.GetComponent<Image>().sprite = skin.GetImagePortrait();
+
     }
 
     // Update is called once per frame

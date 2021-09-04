@@ -34,8 +34,8 @@ public class MainSceneCS : MonoBehaviour
 
     public void ResetMainScene()
     {
-        PlayerA.SetActive(true);
-        PlayerA.GetComponent<PlayerCS>().SetStateIdle();
+        PlayerA.SetActive(false);
+        //PlayerA.GetComponent<PlayerCS>().SetStateIdle();
 
         PlayerB.SetActive(false);
     }

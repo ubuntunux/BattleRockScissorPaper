@@ -16,18 +16,18 @@ public class MatchCardManagerCS : MonoBehaviour
         
     }
 
-    public void ResetMatchCardManager(ChallengeSceneManagerCS challengeSceneManager, GameObject[] challengePlayers)
+    public void ResetMatchCardManager(ChallengeSceneManagerCS challengeSceneManager, GameObject[] challengePlayers, GameObject player)
     {
         RemoveAllMatchCards();
 
         int count = challengePlayers.Length;
         for(int i = 0; i < count; ++i)
         {
-            AddMatchCardEntry(challengeSceneManager, count, i % 3, challengePlayers[i % 3].GetComponent<PlayerCS>());
+            AddMatchCardEntry(challengeSceneManager, count, i % 3, challengePlayers[i % 3].GetComponent<PlayerCS>(), player);
         }
     }
 
-    public void AddMatchCardEntry(ChallengeSceneManagerCS challengeSceneManager, int totalCount, int stageIndex, PlayerCS player)
+    public void AddMatchCardEntry(ChallengeSceneManagerCS challengeSceneManager, int totalCount, int stageIndex, PlayerCS skin, GameObject player)
     {
         float width = 100.0f;
         float layerWidth = (_matchCards.Count + 1) * width;
@@ -39,7 +39,7 @@ public class MatchCardManagerCS : MonoBehaviour
         LayerMatchCardEntry.transform.SetParent(LayerMatchCardContents.transform);
         LayerMatchCardEntry.transform.localScale = new Vector3(1, 1, 1);        
         LayerMatchCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(posX, 0.0f, 0.0f);
-        LayerMatchCardEntry.GetComponent<MatchCardCS>().SetMatchCard(challengeSceneManager, stageIndex, player);
+        LayerMatchCardEntry.GetComponent<MatchCardCS>().SetMatchCard(challengeSceneManager, stageIndex, skin, player);
 
         _matchCards.Add(LayerMatchCardEntry);
     }
