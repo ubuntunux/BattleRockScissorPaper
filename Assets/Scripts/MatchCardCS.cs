@@ -8,14 +8,35 @@ public class MatchCardCS : MonoBehaviour
 {
     public GameObject Image_Portrait;
 
-    ChallengeSceneManagerCS _challengeSceneManager = null;
+    MatchCardManagerCS _matchCardManager = null;
+    
     GameObject _player;
     int _stageIndex = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        SetDisabledColor();
+    }
+
+    public int getStageIndex()
+    {
+        return _stageIndex;
+    }
+
+    public GameObject getPlayer()
+    {
+        return _player;
+    }
+
+    public void SetSelectedColor()
+    {
+        GetComponent<Image>().color = new Color(1, 1, 1, 1);
+    }
+
+    public void SetDisabledColor()
+    {
+        GetComponent<Image>().color = new Color(0, 0, 0, 1);
     }
 
     void Awake()
@@ -25,17 +46,15 @@ public class MatchCardCS : MonoBehaviour
 
     public void OnClick()
     {
-        _challengeSceneManager.SelectChallengePlayer(_stageIndex, _player);
-        _challengeSceneManager.LayerMatchCardClick();
+        _matchCardManager.MatchCardOnClick(this);
     }
 
-    public void SetMatchCard(ChallengeSceneManagerCS challengeSceneManager, int stageIndex, PlayerCS skin, GameObject player)
+    public void SetMatchCard(MatchCardManagerCS matchCardManager, int stageIndex, PlayerCS skin, GameObject player)
     {
-        _challengeSceneManager = challengeSceneManager;
+        _matchCardManager = matchCardManager;        
         _stageIndex = stageIndex;
         _player = player;
         Image_Portrait.GetComponent<Image>().sprite = skin.GetImagePortrait();
-
     }
 
     // Update is called once per frame

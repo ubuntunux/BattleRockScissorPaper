@@ -8,7 +8,10 @@ public class MatchCardManagerCS : MonoBehaviour
     public GameObject LayerMatchCardContents;    
     public GameObject LayerMatchCardPrefab;
 
+    ChallengeSceneManagerCS _challengeSceneManager = null;
+
     List<GameObject> _matchCards = new List<GameObject>();
+    MatchCardCS _lastSelectedMatchCard = null;
 
     // Start is called before the first frame update
     void Start()
@@ -18,16 +21,18 @@ public class MatchCardManagerCS : MonoBehaviour
 
     public void ResetMatchCardManager(ChallengeSceneManagerCS challengeSceneManager, GameObject[] challengePlayers, GameObject player)
     {
+        _challengeSceneManager = challengeSceneManager;
+        
         RemoveAllMatchCards();
 
         int count = challengePlayers.Length;
         for(int i = 0; i < count; ++i)
         {
-            AddMatchCardEntry(challengeSceneManager, count, i % 3, challengePlayers[i % 3].GetComponent<PlayerCS>(), player);
+            AddMatchCardEntry(count, i % 3, challengePlayers[i % 3].GetComponent<PlayerCS>(), player);
         }
     }
 
-    public void AddMatchCardEntry(ChallengeSceneManagerCS challengeSceneManager, int totalCount, int stageIndex, PlayerCS skin, GameObject player)
+    public void AddMatchCardEntry(int totalCount, int stageIndex, PlayerCS skin, GameObject player)
     {
         float width = 100.0f;
         float layerWidth = (_matchCards.Count + 1) * width;
@@ -39,7 +44,7 @@ public class MatchCardManagerCS : MonoBehaviour
         LayerMatchCardEntry.transform.SetParent(LayerMatchCardContents.transform);
         LayerMatchCardEntry.transform.localScale = new Vector3(1, 1, 1);        
         LayerMatchCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(posX, 0.0f, 0.0f);
-        LayerMatchCardEntry.GetComponent<MatchCardCS>().SetMatchCard(challengeSceneManager, stageIndex, skin, player);
+        LayerMatchCardEntry.GetComponent<MatchCardCS>().SetMatchCard(this, stageIndex, skin, player);
 
         _matchCards.Add(LayerMatchCardEntry);
     }
@@ -51,6 +56,21 @@ public class MatchCardManagerCS : MonoBehaviour
             Destroy(child);
         }
         _matchCards.Clear();
+    }
+
+    public void MatchCardOnClick(MatchCardCS matchCard)
+    {
+        if(matchCard == _lastSelectedMatchCard)
+        {
+            return;
+        }
+
+        _lastSelectedMatchCard.SetDisabledColor();
+        _lastSelectedMatchCard = matchCard;
+        matchCard.SetSelectedColor();
+        
+        _challengeSceneManager.SelectChallengePlayer(matchCard.getStageIndex(), matchCard.getPlayer());
+        _challengeSceneManager.LayerMatchCardClick();
     }
 
     // Update is called once per frame
