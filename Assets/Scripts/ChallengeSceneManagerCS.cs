@@ -64,25 +64,27 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         LayerVersus.SetActive(false);
         Btn_Back.SetActive(true);
 
+        GameObject[] playerSkins = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkins();
+        LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, playerSkins, PlayerA);
         LayerSelectPlayerA.SetActive(true);
-        LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, ChallengePlayers, PlayerA);
 
-        LayerSelectPlayerB.SetActive(true);
         LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, ChallengePlayers, PlayerB);
+        LayerSelectPlayerB.SetActive(true);
 
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().Reset();
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().SetSelected(true);
-
-        // set character info
-        SetPlayerCharacterInfo();
-        int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, 0);
-        SelectChallengePlayer(currentStage, PlayerB, false);
 
         PlayerA.SetActive(true);
         PlayerA.GetComponent<PlayerCS>().SetStateIdle();
 
         PlayerB.SetActive(true);
         PlayerB.GetComponent<PlayerCS>().SetStateIdle();
+
+        // 
+        SetPlayerCharacter();
+        
+        int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, 0);
+        LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().SelectMatchCardByIndex(currentStage, false);
     }
 
     public void ClearChallengeInfo()
@@ -103,44 +105,38 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         MainSceneManager.GetComponent<MainSceneManagerCS>().SetScore(PlayerA.GetComponent<PlayerCS>()._playerStat._score);
     }
 
-    public void SetPlayerCharacterInfo()
+    void SetPlayerCharacter()
     {
+        int skinID = SystemValue.GetInt(SystemValue.PlayerSkinIDKey, Constants.DefaultSkinID);
+        LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().SelectMatchCardBySkinID(skinID, false);
         PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerA.GetComponent<PlayerCS>());
     }
 
-    public void SelectChallengePlayer(int stage, GameObject player, bool playSound = true)
+    public void SelectChallengePlayer(GameObject player, PlayerCS playerSkin, int matchCardIndex, bool playSound = true)
     {
-        GameObject playerInfo = (PlayerA == player) ? PlayerA_Info : PlayerB_Info;
+        bool isPlayerA = PlayerA == player;
+        GameObject playerInfo = isPlayerA ? PlayerA_Info : PlayerB_Info;
 
-        int stageLimit = ChallengePlayers.Length - 1;
-        if(stage < 0)
-        {
-            player.SetActive(false);
-            playerInfo.SetActive(false);
-            return;
-        }
-        else if(stageLimit <= stage)
-        {
-            stage = stageLimit;
-        }
-
-        PlayerCS challengePlayerSkin = ChallengePlayers[stage].GetComponent<PlayerCS>();
         player.SetActive(true);
-        player.GetComponent<PlayerCS>().SetSkin(challengePlayerSkin);
+        player.GetComponent<PlayerCS>().SetSkin(playerSkin);
         playerInfo.SetActive(true);
         playerInfo.GetComponent<PlayerInfoCS>().SetPlayerInfo(player.GetComponent<PlayerCS>());
 
         if(playSound)
         {
+            Snd_MatchCardSelect.Play();
             player.GetComponent<PlayerCS>().PlayCharacterName();
         }
 
-        SystemValue.SetInt(SystemValue.PlayerLastStageKey, stage);
-    }
-
-    public void LayerMatchCardClick()
-    {
-        Snd_MatchCardSelect.Play();
+        if(isPlayerA)
+        {
+            int skinID = player.GetComponent<PlayerCS>()._playerStat._skinID;
+            SystemValue.SetInt(SystemValue.PlayerSkinIDKey, skinID);
+        }
+        else
+        {
+            SystemValue.SetInt(SystemValue.PlayerLastStageKey, matchCardIndex);
+        }
     }
 
     public void Btn_Fight_OnClick()

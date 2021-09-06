@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class SystemValue : MonoBehaviour
 {
-    public static string SkinIDKey = "SkinID";
-
     // player stat
+    public static string PlayerSkinIDKey = "PlayerSkinID";
     public static string PlayerStatPerfectKey = "PlayerStatPerfect";
     public static string PlayerStatWinKey = "PlayerStatWin";
     public static string PlayerStatDrawKey = "PlayerStatDraw";

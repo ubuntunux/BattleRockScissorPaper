@@ -9,6 +9,7 @@ public class MatchCardManagerCS : MonoBehaviour
     public GameObject LayerMatchCardPrefab;
 
     ChallengeSceneManagerCS _challengeSceneManager = null;
+    GameObject[] _playerList;
 
     List<GameObject> _matchCards = new List<GameObject>();
     MatchCardCS _lastSelectedMatchCard = null;
@@ -19,16 +20,17 @@ public class MatchCardManagerCS : MonoBehaviour
         
     }
 
-    public void ResetMatchCardManager(ChallengeSceneManagerCS challengeSceneManager, GameObject[] challengePlayers, GameObject player)
+    public void ResetMatchCardManager(ChallengeSceneManagerCS challengeSceneManager, GameObject[] playerList, GameObject player)
     {
         _challengeSceneManager = challengeSceneManager;
+        _playerList = playerList;
         
         RemoveAllMatchCards();
 
-        int count = challengePlayers.Length;
+        int count = _playerList.Length;
         for(int i = 0; i < count; ++i)
         {
-            AddMatchCardEntry(count, i % 3, challengePlayers[i % 3].GetComponent<PlayerCS>(), player);
+            AddMatchCardEntry(count, i, _playerList[i].GetComponent<PlayerCS>(), player);
         }
     }
 
@@ -58,19 +60,41 @@ public class MatchCardManagerCS : MonoBehaviour
         _matchCards.Clear();
     }
 
-    public void MatchCardOnClick(MatchCardCS matchCard)
+    public void SelectMatchCardBySkinID(int skinID, bool playSound)
+    {
+        int count = _matchCards.Count;
+        for(int i = 0; i < count; ++i)
+        {
+            if(skinID == _matchCards[i].GetComponent<MatchCardCS>().GetSkinID())
+            {
+                SelectMatchCard(_matchCards[i].GetComponent<MatchCardCS>(), playSound);
+                return;
+            }
+        }
+    }
+
+    public void SelectMatchCardByIndex(int index, bool playSound)
+    {
+        index = index < _matchCards.Count ? index : 0; 
+        SelectMatchCard(_matchCards[index].GetComponent<MatchCardCS>(), playSound);
+    }
+
+    public void SelectMatchCard(MatchCardCS matchCard, bool playSound = true)
     {
         if(matchCard == _lastSelectedMatchCard)
         {
             return;
         }
 
-        _lastSelectedMatchCard.SetDisabledColor();
+        if(null != _lastSelectedMatchCard)
+        {
+            _lastSelectedMatchCard.SetSelected(false);
+        }
+
         _lastSelectedMatchCard = matchCard;
-        matchCard.SetSelectedColor();
-        
-        _challengeSceneManager.SelectChallengePlayer(matchCard.getStageIndex(), matchCard.getPlayer());
-        _challengeSceneManager.LayerMatchCardClick();
+        matchCard.SetSelected(true);
+
+        _challengeSceneManager.SelectChallengePlayer(matchCard.GetPlayer(), matchCard.GetSkin(), matchCard.GetStageIndex(), playSound);
     }
 
     // Update is called once per frame

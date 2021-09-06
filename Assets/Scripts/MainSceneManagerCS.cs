@@ -91,7 +91,7 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
         PlayerB.SetActive(false);
 
-        SetPlayerCharacterInfo();
+        LoadPlayerCharacterInfo();
 
         SetActivateScene(GameSceneType.TitleScene);
     }
@@ -119,9 +119,9 @@ public class MainSceneManagerCS : MonoBehaviour
         Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
     }
 
-    public void SetPlayerCharacterInfo()
+    public void LoadPlayerCharacterInfo()
     {
-        int skinID = SystemValue.GetInt(SystemValue.SkinIDKey, Constants.DefaultSkinID);
+        int skinID = SystemValue.GetInt(SystemValue.PlayerSkinIDKey, Constants.DefaultSkinID);
         PlayerCS playerSkin = GetSkin(skinID);
         PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
 
@@ -132,6 +132,11 @@ public class MainSceneManagerCS : MonoBehaviour
     public int GetSkinCount()
     {
         return skins.Length;
+    }
+
+    public GameObject[] GetSkins()
+    {
+        return skins;
     }
 
     public PlayerCS GetSkin(int skinID)
