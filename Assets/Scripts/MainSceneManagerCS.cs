@@ -5,6 +5,7 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using GoogleMobileAds.Api;
 
 public enum GameSceneType
 {
@@ -49,11 +50,30 @@ public class MainSceneManagerCS : MonoBehaviour
     GameSceneType _gameSceneType = GameSceneType.None;
     GameSceneType _gameSceneTypePrev = GameSceneType.None;
 
+    BannerView bannerView;
+
     float _fadeInOutTimer = 0.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+         MobileAds.Initialize(initStatus => { });
+        // Create a 320x50 banner at the top of the screen.
+        #if UNITY_ANDROID
+            string adUnitId = "ca-app-pub-3940256099942544/6300978111";
+        #elif UNITY_IPHONE
+            string adUnitId = "ca-app-pub-3940256099942544/2934735716";
+        #else
+            string adUnitId = "unexpected_platform";
+        #endif
+
+        // Create a 320x50 banner at the top of the screen.
+        bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
+        // Create an empty ad request.
+        AdRequest request = new AdRequest.Builder().Build();
+        // Load the banner with the request.
+        bannerView.LoadAd(request);
+
         _gameSceneList.Add(TitleScene);
         _gameSceneList.Add(MainScene);
         _gameSceneList.Add(FightScene);

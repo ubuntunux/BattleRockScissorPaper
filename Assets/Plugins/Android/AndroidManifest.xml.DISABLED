@@ -13,5 +13,8 @@
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
         </activity>
+        <uses-library android:required="false" android:name="org.apache.http.legacy" />
+        <meta-data android:name="com.google.android.gms.ads.AD_MANAGER_APP" android:value="true" />
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-4445763933433178/4618879317" />
     </application>
 </manifest>
