@@ -66,7 +66,7 @@ public class MatchCardCS : MonoBehaviour
 
     public void SetMatchCard(MatchCardManagerCS matchCardManager, int stageIndex, PlayerCS skin, GameObject player)
     {
-        _matchCardManager = matchCardManager;        
+        _matchCardManager = matchCardManager;
         _stageIndex = stageIndex;
         _player = player;
         _skin = skin;

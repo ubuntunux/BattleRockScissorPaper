@@ -44,7 +44,7 @@ public class PlayerStat
     public int _power = Constants.DefaultPower;
     public float _speed = Constants.AttackTimerTime;
 
-    public void PrintPlayerStat(string title)
+    public void PrintPlayerStat(string title = "")
     {
         Debug.Log("=============================");
         Debug.Log(title);
@@ -72,9 +72,9 @@ public class PlayerStat
         _lose = isPlayer ? 0 : player.Lose;
         _score = isPlayer ? 0 : player.Score;
         _rank = 0;
-        _hp = player.HP;
-        _power = player.Power;
-        _speed = player.Speed;
+        _hp = isPlayer ? Constants.DefaultHP : player.HP;
+        _power = isPlayer ? Constants.DefaultPower : player.Power;
+        _speed = isPlayer ? Constants.AttackTimerTime : player.Speed;
     }
 
     public void LoadPlayerStat()

@@ -75,7 +75,7 @@ public class MatchCardManagerCS : MonoBehaviour
 
     public void SelectMatchCardByIndex(int index, bool playSound)
     {
-        index = index < _matchCards.Count ? index : 0; 
+        index = Mathf.Max(0, Mathf.Min(_matchCards.Count - 1, index));
         SelectMatchCard(_matchCards[index].GetComponent<MatchCardCS>(), playSound);
     }
 
