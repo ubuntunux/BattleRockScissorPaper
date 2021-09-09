@@ -26,7 +26,7 @@ public class PlayerCreateInfo
 {
     public string _name = "";
     public bool _isPlayer = false;
-    public bool _isLeft = true;
+    public bool _isPlayerA = true;
     public PlayerCS _skin = null;
 }
 
@@ -115,7 +115,7 @@ public class PlayerCS : MonoBehaviour
     string _name;
     bool _pause = false;
     bool _isPlayer = false;
-    bool _isLeft = false;
+    bool _isPlayerA = false;
     PlayerState _playerState = PlayerState.None;
     AttackType _lastAttackType = AttackType.None;
     float _elapsedTime = 0.0f;
@@ -132,8 +132,8 @@ public class PlayerCS : MonoBehaviour
     public int Draw = 0;
     public int Lose = 0;
     public int Score = 0;
-    public int HP = 3;
-    public int Power = 1;
+    public int HP = 30;
+    public int Power = 10;
     public int Level = 1;
     public float Speed = Constants.AttackTimerTime;
     public PlayerStat _playerStat = new PlayerStat();
@@ -198,9 +198,25 @@ public class PlayerCS : MonoBehaviour
         return _characterName;
     }
 
-     public int GetPower(bool isCounter)
+    public bool IsCriticalAttack()
     {
-        return Power;
+        return Constants.CriticalPowerGuage <= GetPowerGuage();
+    }
+
+    public float GetPowerGuage()
+    {
+        return Layer_AttackTimer.GetComponent<FightTimerCS>().GetPowerGuage(_isPlayerA);
+    }
+
+    public int GetPowerWithGuage()
+    {
+        float powerGuage = GetPowerGuage();
+        int damage = Mathf.Max(1, (int)Mathf.Ceil((float)_playerStat._power * powerGuage));
+        if(Constants.CriticalPowerGuage <= powerGuage)
+        {
+            damage *= 2;
+        }
+        return damage;
     }
 
     public Sprite GetImagePortrait()
@@ -232,7 +248,7 @@ public class PlayerCS : MonoBehaviour
     {
         _name = playerCreateInfo._name;
         _isPlayer = playerCreateInfo._isPlayer;
-        _isLeft = playerCreateInfo._isLeft;
+        _isPlayerA = playerCreateInfo._isPlayerA;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         _elapsedTime = 0.0f;
         _pause = false;
@@ -397,7 +413,7 @@ public class PlayerCS : MonoBehaviour
                 break;
         }
 
-        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _isLeft);
+        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _isPlayerA);
 
         if(isAttackHit)
         {
@@ -448,7 +464,7 @@ public class PlayerCS : MonoBehaviour
         }
 
         Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _playerStat._hp);
-        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackTimerShake(_isLeft);
+        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackTimerShake(_isPlayerA);
         _shakeObject.setShake(Constants.AttackHitTime, 0.5f, 0.01f);        
     }
 
@@ -491,7 +507,7 @@ public class PlayerCS : MonoBehaviour
         else if(PlayerState.Idle == _playerState)
         {
             float speed = _elapsedTime * _idleMotionSpeed;
-            float offsetX = _isLeft ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
+            float offsetX = _isPlayerA ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
             float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
             transform.position = new Vector3(offsetX, offsetY, -1.0f);
         }
@@ -502,7 +518,7 @@ public class PlayerCS : MonoBehaviour
             float offsetX = Mathf.Sin(speed) * 0.4f;
             float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
 
-            if(_isLeft)
+            if(_isPlayerA)
             {
                 offsetX = offsetX - Constants.IdleDistance;
             }
@@ -534,7 +550,7 @@ public class PlayerCS : MonoBehaviour
                 Vector3 shakeOffset = new Vector3(0.0f, 0.0f, 0.0f);
                 _shakeObject.updateShakeObject(ref shakeOffset);
 
-                transform.position = new Vector3(_isLeft ? -Constants.AttackDistance : Constants.AttackDistance, Constants.GroundPosition, 0.0f);
+                transform.position = new Vector3(_isPlayerA ? -Constants.AttackDistance : Constants.AttackDistance, Constants.GroundPosition, 0.0f);
                 transform.position += shakeOffset;
             }
             _attackMotionTime += Time.deltaTime;

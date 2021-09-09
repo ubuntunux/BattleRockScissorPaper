@@ -88,14 +88,14 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
         playerCreateInfoA._name = "PlayerA";
         playerCreateInfoA._isPlayer = true;
-        playerCreateInfoA._isLeft = true;
+        playerCreateInfoA._isPlayerA = true;
         PlayerA.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoA);
         PlayerA.SetActive(false);
 
         PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
         playerCreateInfoB._name = "PlayerB";
         playerCreateInfoB._isPlayer = false;
-        playerCreateInfoB._isLeft = false;
+        playerCreateInfoB._isPlayerA = false;
         PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
         PlayerB.SetActive(false);
 

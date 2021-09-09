@@ -850,10 +850,12 @@ MonoBehaviour:
   Age: 666
   Perfect: 1
   Win: 3
+  Draw: 0
   Lose: 2
   Score: 0
-  HP: 5
-  Power: 2
+  HP: 50
+  Power: 20
+  Level: 1
   Speed: 1.8
   SkinID: 3
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}

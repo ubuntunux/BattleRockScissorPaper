@@ -195,13 +195,13 @@ public class ChallengeSceneManagerCS : MonoBehaviour
                 PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
                 playerCreateInfoA._name = PlayerA.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoA._isPlayer = true;
-                playerCreateInfoA._isLeft = true;
+                playerCreateInfoA._isPlayerA = true;
                 playerCreateInfoA._skin = PlayerA.GetComponent<PlayerCS>();
                 
                 PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
                 playerCreateInfoB._name = PlayerB.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoB._isPlayer = false;
-                playerCreateInfoB._isLeft = false;
+                playerCreateInfoB._isPlayerA = false;
                 playerCreateInfoB._skin = PlayerB.GetComponent<PlayerCS>();
 
                 GameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);

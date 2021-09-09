@@ -5,8 +5,8 @@ using UnityEngine;
 public class Constants : MonoBehaviour
 {
     static public int DefaultSkinID = 1;
-    static public int DefaultHP = 3;
-    static public int DefaultPower = 1;
+    static public int DefaultHP = 30;
+    static public int DefaultPower = 10;
 
     static public float FadeTime = 0.25f;
     static public float AttackRandomTermMin = 0.1f;
@@ -25,4 +25,5 @@ public class Constants : MonoBehaviour
     static public float CameraShakeDuration = 0.2f;
     static public float CameraShakeRandomTerm = 0.01f;
     static public float CameraShakeIntensity = 1.0f;
+    static public float CriticalPowerGuage = 0.95f;
 }

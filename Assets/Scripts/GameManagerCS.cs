@@ -54,6 +54,8 @@ public class GameManagerCS : MonoBehaviour
     GameObject _effect_AttackHitB;
     public GameObject Image_Bam_A;
     public GameObject Image_Bam_B;
+    public GameObject Image_Critical_A;
+    public GameObject Image_Critical_B;
 
     // Sounds
     public AudioSource Snd_Round1;
@@ -164,9 +166,9 @@ public class GameManagerCS : MonoBehaviour
         obj.GetComponent<Image>().sprite = sprite;
     }
 
-	public void CreateEffectAttackHit(AttackType attackType, bool isLeft)
+	public void CreateEffectAttackHit(AttackType attackType, bool isPlayerA)
     {
-        DestroyEffectAttackHit(isLeft);
+        DestroyEffectAttackHit(isPlayerA);
 
         float offsetY = Constants.GroundPosition;
         if(AttackType.Rock == attackType)
@@ -182,11 +184,11 @@ public class GameManagerCS : MonoBehaviour
             offsetY = 3.0f;
         }
 
-        Vector3 pos = new Vector3(isLeft ? -Constants.AttackDistance : Constants.AttackDistance, offsetY, 0.0f);
-        Quaternion rot = Quaternion.Euler(-90.0f, isLeft ? 180.0f : 0.0f, 0.0f);
+        Vector3 pos = new Vector3(isPlayerA ? -Constants.AttackDistance : Constants.AttackDistance, offsetY, 0.0f);
+        Quaternion rot = Quaternion.Euler(-90.0f, isPlayerA ? 180.0f : 0.0f, 0.0f);
 		GameObject effect_AttackHit = (GameObject)GameObject.Instantiate(Effect_AttackHit, pos, rot);
 
-        if(isLeft)
+        if(isPlayerA)
         {
             _effect_AttackHitA = effect_AttackHit;
         }
@@ -196,9 +198,9 @@ public class GameManagerCS : MonoBehaviour
         }
 	}
 
-    public void DestroyEffectAttackHit(bool isLeft)
+    public void DestroyEffectAttackHit(bool isPlayerA)
     {
-        if(isLeft)
+        if(isPlayerA)
         {
             if(null != _effect_AttackHitA) 
             {
@@ -299,7 +301,7 @@ public class GameManagerCS : MonoBehaviour
         DestroyEffectAttackHit(false);
 
         Layer_AttackTimer.SetActive(false);
-        AttackTimer_CS.Reset();
+        AttackTimer_CS.ResetFightTimer();
         Text_Result.SetActive(false);
         Image_Bam_A.SetActive(false);
         Image_Bam_B.SetActive(false);
@@ -349,7 +351,7 @@ public class GameManagerCS : MonoBehaviour
         _ko_sprite_flicker = false;
         SetSprite(Image_KO, Sprite_Ko);
         Layer_AttackTimer.SetActive(true);
-        AttackTimer_CS.Reset();
+        AttackTimer_CS.ResetFightTimer();
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
         _attackTimerTime = 0.0f;
@@ -371,15 +373,20 @@ public class GameManagerCS : MonoBehaviour
         if(attackTypeB == attackTypeA || checkLose(attackTypeB, attackTypeA))
         {
             CreateEffectAttackHit(attackTypeB, true);
-            Image_Bam_A.SetActive(true);        
-            PlayerA_CS.SetDamage(PlayerB_CS.GetPower(attackTypeB == attackTypeA));
+            Image_Bam_A.SetActive(true);
+            bool isCritical = PlayerB_CS.IsCriticalAttack();
+            Image_Critical_A.SetActive(isCritical);
+            int damage = PlayerB_CS.GetPowerWithGuage();
+            PlayerA_CS.SetDamage(damage);
         }
 
         if(attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB))
         {
             CreateEffectAttackHit(attackTypeA, false);
             Image_Bam_B.SetActive(true);
-            int damage = PlayerA_CS.GetPower(attackTypeA == attackTypeB);
+            bool isCritical = PlayerA_CS.IsCriticalAttack();
+            Image_Critical_B.SetActive(isCritical);
+            int damage = PlayerA_CS.GetPowerWithGuage();
             PlayerB_CS.SetDamage(damage);
             
             _recordAttackPoint += damage;
@@ -390,7 +397,7 @@ public class GameManagerCS : MonoBehaviour
         {
             _ko_sprite_flicker = true;
 
-            const int flickerHP = 2;
+            int flickerHP = (int)Mathf.Ceil((float)(PlayerA_CS.GetHP() / 3.0f));
 
             if(PlayerA_CS.GetHP() <= flickerHP)
             {

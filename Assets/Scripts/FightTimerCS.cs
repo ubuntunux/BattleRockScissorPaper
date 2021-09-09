@@ -9,6 +9,9 @@ public class FightTimerCS : MonoBehaviour
     public GameObject AttackTypeA;
     public GameObject AttackTypeB;
 
+    public GameObject LayerPowerGuageA;
+    public GameObject LayerPowerGuageB;
+
     public Sprite Sprite_AttackNone;
     public Sprite Sprite_Rock;
     public Sprite Sprite_Scissor;
@@ -27,7 +30,7 @@ public class FightTimerCS : MonoBehaviour
         
     }
 
-    public void Reset()
+    public void ResetFightTimer()
     {
         SetAttackType(AttackType.None, true);
         SetAttackType(AttackType.None, false);
@@ -36,11 +39,16 @@ public class FightTimerCS : MonoBehaviour
 
         _shakeObjectRed.reset();
         _shakeObjectBlue.reset();
+
+        LayerPowerGuageA.GetComponent<PowerGaugeCS>().ResetPowerGauge();
+        LayerPowerGuageB.GetComponent<PowerGaugeCS>().ResetPowerGauge();
     }
 
-    public void SetAttackType(AttackType attackType, bool isLeft)
+    public void SetAttackType(AttackType attackType, bool isPlayerA)
     {
-        GameObject obj = isLeft ? AttackTypeA : AttackTypeB;
+        GameObject obj = isPlayerA ? AttackTypeA : AttackTypeB;
+        GameObject layerPowerGuage = isPlayerA ? LayerPowerGuageA : LayerPowerGuageB;
+
         if(AttackType.Rock == attackType)
         {
             obj.GetComponent<Image>().sprite = Sprite_Rock;
@@ -57,13 +65,24 @@ public class FightTimerCS : MonoBehaviour
         {
             obj.GetComponent<Image>().sprite = Sprite_AttackNone;
         }
+
+        if(false == isPlayerA)
+        {
+            layerPowerGuage.GetComponent<PowerGaugeCS>().SetPowerGauage(Random.value);
+        }
+        layerPowerGuage.GetComponent<PowerGaugeCS>().SetPause();
     }
 
-    public void SetAttackTimerShake(bool isLeft)
+    public void SetAttackTimerShake(bool isPlayerA)
     {
         float shakeIntensity = 15.0f;
-        ShakeObject obj = isLeft ? _shakeObjectRed : _shakeObjectBlue;
+        ShakeObject obj = isPlayerA ? _shakeObjectRed : _shakeObjectBlue;
         obj.setShake(Constants.AttackHitTime, shakeIntensity, Constants.CameraShakeRandomTerm);
+    }
+
+    public float GetPowerGuage(bool isPlayerA)
+    {
+        return (isPlayerA ? LayerPowerGuageA : LayerPowerGuageB).GetComponent<PowerGaugeCS>().GetPowerGuage();
     }
 
     public void setBar(float ratio)
@@ -75,6 +94,10 @@ public class FightTimerCS : MonoBehaviour
 
         _positionRed = new Vector3(Mathf.Lerp(-25.0f, -125.0f, ratio), 1.0f, 1.0f);
         _positionBlue = new Vector3(Mathf.Lerp(25.0f, 125.0f, ratio), 1.0f, 1.0f);
+
+        float gaugeRatio = (ratio * 2.0f) % 1.0f;
+        LayerPowerGuageA.GetComponent<PowerGaugeCS>().SetPowerGauage(gaugeRatio);
+        LayerPowerGuageB.GetComponent<PowerGaugeCS>().SetPowerGauage(gaugeRatio);
     }
 
     // Update is called once per frame

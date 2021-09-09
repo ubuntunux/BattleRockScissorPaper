@@ -596,10 +596,12 @@ MonoBehaviour:
   Age: 25
   Perfect: 0
   Win: 0
+  Draw: 0
   Lose: 0
   Score: 0
-  HP: 3
-  Power: 1
+  HP: 30
+  Power: 10
+  Level: 1
   Speed: 2
   SkinID: 0
   Sprite_Born: {fileID: 21300000, guid: 13dac12ae9de62eae92edf3e8e144969, type: 3}
