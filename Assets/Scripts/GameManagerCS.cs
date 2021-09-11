@@ -305,6 +305,8 @@ public class GameManagerCS : MonoBehaviour
         Text_Result.SetActive(false);
         Image_Bam_A.SetActive(false);
         Image_Bam_B.SetActive(false);
+        Image_Critical_A.SetActive(false);
+        Image_Critical_B.SetActive(false);
     }
 
     void SetReadyToRound()
@@ -344,6 +346,7 @@ public class GameManagerCS : MonoBehaviour
         LayerResult.GetComponent<ResultCS>().Reset(PlayerA_CS, PlayerA_CS.GetWin(), PlayerB_CS, PlayerB_CS.GetWin());
         _gameResultTime = 0.0f;
         _gameState = GameState.GameResult;
+        MainSceneManager.GetComponent<MainSceneManagerCS>().RequestInterstitial();
     }
 
     void SetReadyToAttack()
@@ -373,8 +376,8 @@ public class GameManagerCS : MonoBehaviour
         if(attackTypeB == attackTypeA || checkLose(attackTypeB, attackTypeA))
         {
             CreateEffectAttackHit(attackTypeB, true);
-            Image_Bam_A.SetActive(true);
             bool isCritical = PlayerB_CS.IsCriticalAttack();
+            Image_Bam_A.SetActive(!isCritical);
             Image_Critical_A.SetActive(isCritical);
             int damage = PlayerB_CS.GetPowerWithGuage();
             PlayerA_CS.SetDamage(damage);
@@ -383,12 +386,12 @@ public class GameManagerCS : MonoBehaviour
         if(attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB))
         {
             CreateEffectAttackHit(attackTypeA, false);
-            Image_Bam_B.SetActive(true);
             bool isCritical = PlayerA_CS.IsCriticalAttack();
+            Image_Bam_B.SetActive(!isCritical);
             Image_Critical_B.SetActive(isCritical);
             int damage = PlayerA_CS.GetPowerWithGuage();
             PlayerB_CS.SetDamage(damage);
-            
+
             _recordAttackPoint += damage;
         }
 
@@ -496,6 +499,8 @@ public class GameManagerCS : MonoBehaviour
             {
                 Image_Bam_A.SetActive(false);
                 Image_Bam_B.SetActive(false);
+                Image_Critical_A.SetActive(false);
+                Image_Critical_B.SetActive(false);
 
                 bool isAliveA = PlayerA_CS.isAlive();
                 bool isAliveB = PlayerB_CS.isAlive();

@@ -413,7 +413,7 @@ public class PlayerCS : MonoBehaviour
                 break;
         }
 
-        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _isPlayerA);
+        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _playerStat._power, _isPlayerA);
 
         if(isAttackHit)
         {

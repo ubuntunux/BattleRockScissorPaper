@@ -59,7 +59,7 @@ public class MainSceneManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        MobileAds.Initialize(initStatus => { });
+        InitializeMobileAds();
         RequestBanner();
 
         _gameSceneList.Add(TitleScene);
@@ -118,8 +118,9 @@ public class MainSceneManagerCS : MonoBehaviour
         Application.Quit();
     }
 
-    void RequestBanner()
+    void InitializeMobileAds()
     {
+        MobileAds.Initialize(initStatus => { });
         // Create a 320x50 banner at the top of the screen.
         {
             #if UNITY_ANDROID
@@ -129,10 +130,7 @@ public class MainSceneManagerCS : MonoBehaviour
             #else
                 string adUnitId = "unexpected_platform";
             #endif
-
             bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
-            AdRequest request = new AdRequest.Builder().Build();
-            bannerView.LoadAd(request);
         }
 
         {
@@ -143,11 +141,20 @@ public class MainSceneManagerCS : MonoBehaviour
             #else
                 string adUnitId = "unexpected_platform";
             #endif
-
             interstitial = new InterstitialAd(adUnitId);
-            AdRequest request = new AdRequest.Builder().Build();
-            interstitial.LoadAd(request);
         }
+    }
+
+    void RequestBanner()
+    {
+        AdRequest request = new AdRequest.Builder().Build();
+        bannerView.LoadAd(request);
+    }
+
+    public void RequestInterstitial()
+    {
+        AdRequest request = new AdRequest.Builder().Build();
+        interstitial.LoadAd(request);
     }
 
     public void ResetMainSceneManager()
@@ -355,10 +362,10 @@ public class MainSceneManagerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if(interstitial.IsLoaded())
-        // {
-        //     interstitial.Show();
-        // }
+        if(interstitial.IsLoaded())
+        {
+            interstitial.Show();
+        }
 
         //bannerView.SetPosition(0, (int)_posY);
 

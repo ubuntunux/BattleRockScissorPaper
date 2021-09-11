@@ -7,7 +7,6 @@ public class PowerGaugeCS : MonoBehaviour
 {
     public GameObject PowerGauage;
 
-    float _guageTime = 0.0f;
     float _powerRatio = 0.0f;
     float _speed = 1.0f;
     bool _pause = false;
@@ -82,7 +81,7 @@ public class PowerGaugeCS : MonoBehaviour
     {
         if(null != PowerGauage && false == _pause)
         {
-            _powerRatio = Mathf.Pow(1.0f - Mathf.Abs(ratio * 2.0f - 1.0f), 1.5f);
+            _powerRatio = ratio;
 
             PowerGauage.transform.localScale = new Vector3(_powerRatio, _powerRatio, 1.0f);
             float hue = Mathf.Lerp(0.6666666f, 0.1666666f, _powerRatio);

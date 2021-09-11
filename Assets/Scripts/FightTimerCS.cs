@@ -32,8 +32,8 @@ public class FightTimerCS : MonoBehaviour
 
     public void ResetFightTimer()
     {
-        SetAttackType(AttackType.None, true);
-        SetAttackType(AttackType.None, false);
+        SetAttackType(AttackType.None, 0, true);
+        SetAttackType(AttackType.None, 0, false);
 
         setBar(1.0f);
 
@@ -44,7 +44,7 @@ public class FightTimerCS : MonoBehaviour
         LayerPowerGuageB.GetComponent<PowerGaugeCS>().ResetPowerGauge();
     }
 
-    public void SetAttackType(AttackType attackType, bool isPlayerA)
+    public void SetAttackType(AttackType attackType, int power, bool isPlayerA)
     {
         GameObject obj = isPlayerA ? AttackTypeA : AttackTypeB;
         GameObject layerPowerGuage = isPlayerA ? LayerPowerGuageA : LayerPowerGuageB;
@@ -68,7 +68,9 @@ public class FightTimerCS : MonoBehaviour
 
         if(false == isPlayerA)
         {
-            layerPowerGuage.GetComponent<PowerGaugeCS>().SetPowerGauage(Random.value);
+            // Random Power Guage
+            float powerGuage = 1.0f - Mathf.Pow(Random.value, 2.0f);
+            layerPowerGuage.GetComponent<PowerGaugeCS>().SetPowerGauage(powerGuage);
         }
         layerPowerGuage.GetComponent<PowerGaugeCS>().SetPause();
     }
@@ -95,7 +97,10 @@ public class FightTimerCS : MonoBehaviour
         _positionRed = new Vector3(Mathf.Lerp(-25.0f, -125.0f, ratio), 1.0f, 1.0f);
         _positionBlue = new Vector3(Mathf.Lerp(25.0f, 125.0f, ratio), 1.0f, 1.0f);
 
-        float gaugeRatio = (ratio * 2.0f) % 1.0f;
+        // update power guage
+        float guageSpeed = 2.0f;
+        float gaugeRatio = (ratio * guageSpeed) % 1.0f;
+        gaugeRatio = Mathf.Pow(1.0f - Mathf.Abs(gaugeRatio * 2.0f - 1.0f), 1.5f);
         LayerPowerGuageA.GetComponent<PowerGaugeCS>().SetPowerGauage(gaugeRatio);
         LayerPowerGuageB.GetComponent<PowerGaugeCS>().SetPowerGauage(gaugeRatio);
     }
