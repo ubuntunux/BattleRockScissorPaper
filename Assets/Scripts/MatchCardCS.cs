@@ -7,12 +7,14 @@ using TMPro;
 public class MatchCardCS : MonoBehaviour
 {
     public GameObject Image_Portrait;
-    static float BlendTime = 1.0f;
+    public GameObject Image_Lock;
 
     MatchCardManagerCS _matchCardManager = null;
     
     GameObject _player;
     PlayerCS _skin;
+
+    static float BlendTime = 1.0f;
     int _stageIndex = 0;
     bool _selected = false;
     float _colorTime = 0.0f;
@@ -61,7 +63,10 @@ public class MatchCardCS : MonoBehaviour
 
     public void OnClick()
     {
-        _matchCardManager.SelectMatchCard(this);
+        if(false == _player.GetComponent<PlayerCS>().GetIsPlayer() || _skin._playerStat._purchased)
+        {
+            _matchCardManager.SelectMatchCard(this);
+        }
     }
 
     public void SetMatchCard(MatchCardManagerCS matchCardManager, int stageIndex, PlayerCS skin, GameObject player)
@@ -71,6 +76,9 @@ public class MatchCardCS : MonoBehaviour
         _player = player;
         _skin = skin;
         Image_Portrait.GetComponent<Image>().sprite = skin.GetImagePortrait();
+
+        bool unlocked = skin._playerStat._purchased || false == player.GetComponent<PlayerCS>().GetIsPlayer();
+        Image_Lock.SetActive(!unlocked);
     }
 
     // Update is called once per frame
@@ -81,13 +89,13 @@ public class MatchCardCS : MonoBehaviour
             _colorTime -= Time.deltaTime;
             float ratio = Mathf.Max(0.0f, _colorTime / BlendTime);
 
-            Color golaColor = GetColor(_selected);
+            Color goalColor = GetColor(_selected);
             Color color = GetComponent<Image>().color;
             
-            color.r = Mathf.Lerp(golaColor.r, color.r, ratio);
-            color.g = Mathf.Lerp(golaColor.g, color.g, ratio);
-            color.b = Mathf.Lerp(golaColor.b, color.b, ratio);
-            color.a = Mathf.Lerp(golaColor.a, color.a, ratio);
+            color.r = Mathf.Lerp(goalColor.r, color.r, ratio);
+            color.g = Mathf.Lerp(goalColor.g, color.g, ratio);
+            color.b = Mathf.Lerp(goalColor.b, color.b, ratio);
+            color.a = Mathf.Lerp(goalColor.a, color.a, ratio);
 
             GetComponent<Image>().color = color;
         }

@@ -858,6 +858,9 @@ MonoBehaviour:
   Level: 1
   Speed: 1.8
   SkinID: 3
+  Advertisement: 3
+  Accounts: 1000
+  Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: 1a92106f67e5ac05e8115b3b03f0af73, type: 3}
   Sprite_PortraitLose: {fileID: 21300000, guid: f446948cedaa27acfb9e251daaff6363, type: 3}

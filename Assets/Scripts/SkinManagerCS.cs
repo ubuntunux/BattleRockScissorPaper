@@ -46,9 +46,9 @@ public class SkinManagerCS : MonoBehaviour
         int skinCount = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinCount();
         int heightCount = 4;
         int widthCount = 4;
-        float cardSize = 160.0f;
+        float cardSize = 170.0f;
         float offsetX = -240;
-        float offsetY = 340;
+        float offsetY = 320;
         for(int y = 0; y < heightCount; ++y)
         {
             for(int x = 0; x < widthCount; ++x)

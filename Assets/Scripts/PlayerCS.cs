@@ -34,12 +34,15 @@ public class PlayerStat
 {
     public bool _isPlayer = false;    
     public int _skinID = Constants.DefaultSkinID;
+    public int _advertisement = 0;
+    public int _accounts = 0;
+    public bool _purchased = false;
     public int _perfect = 0;
     public int _win = 0;
     public int _draw = 0;
     public int _lose = 0;
     public int _score = 0;
-    public int _rank = 0;
+    public int _rank = 0;    
     public int _hp = Constants.DefaultHP;
     public int _power = Constants.DefaultPower;
     public float _speed = Constants.AttackTimerTime;
@@ -50,6 +53,9 @@ public class PlayerStat
         Debug.Log(title);
         Debug.Log("_isPlayer: " + _isPlayer.ToString() 
             + ", _skinID: " + _skinID.ToString()
+            + ", _advertisement: " + _advertisement.ToString()
+            + ", _accounts: " + _accounts.ToString()
+            + ", _purchased: " + _purchased.ToString()
             + ", _perfect: " + _perfect.ToString()
             + ", _win: " + _win.ToString()
             + ", _draw: " + _draw.ToString()
@@ -66,6 +72,9 @@ public class PlayerStat
     {
         _isPlayer = isPlayer;
         _skinID = player.SkinID;
+        _advertisement = 0;
+        _accounts = player.Accounts;
+        _purchased = player.Purchased;
         _perfect = isPlayer ? 0 : player.Perfect;
         _win = isPlayer ? 0 : player.Win;
         _draw = isPlayer ? 0 : player.Draw;
@@ -81,6 +90,9 @@ public class PlayerStat
     {
         string skinID = _isPlayer ? "" : _skinID.ToString();
 
+        _advertisement = SystemValue.GetInt(skinID + SystemValue.PlayerAdvertisementKey, _advertisement);
+        _accounts = SystemValue.GetInt(skinID + SystemValue.PlayerAccountsKey, _accounts);
+        _purchased = SystemValue.GetBool(skinID + SystemValue.PlayerPurchasedKey, _purchased);
         _perfect = SystemValue.GetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
@@ -96,6 +108,9 @@ public class PlayerStat
     {
         string skinID = _isPlayer ? "" : _skinID.ToString();
 
+        SystemValue.SetInt(skinID + SystemValue.PlayerAdvertisementKey, _advertisement);
+        SystemValue.SetInt(skinID + SystemValue.PlayerAccountsKey, _accounts);
+        SystemValue.SetBool(skinID + SystemValue.PlayerPurchasedKey, _purchased);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
@@ -139,7 +154,10 @@ public class PlayerCS : MonoBehaviour
     public PlayerStat _playerStat = new PlayerStat();
 
     // Skin
-    public int SkinID;
+    public int SkinID = 0;
+    public int Advertisement = 3;
+    public int Accounts = 1000;
+    public bool Purchased = false;
     public Sprite Sprite_Born;
     public Sprite Sprite_Portrait;
     public Sprite Sprite_PortraitLose;
@@ -291,6 +309,16 @@ public class PlayerCS : MonoBehaviour
     public void SetPause(bool pause)
     {
         _pause = pause;
+    }
+
+    public bool GetIsPlayer()
+    {
+        return _isPlayer;
+    }
+
+    public bool GetIsPlayerA()
+    {
+        return _isPlayerA;
     }
 
     public void SetSkin(PlayerCS skin)
