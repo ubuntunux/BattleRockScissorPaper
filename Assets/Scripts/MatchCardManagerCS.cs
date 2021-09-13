@@ -42,11 +42,22 @@ public class MatchCardManagerCS : MonoBehaviour
 
         LayerMatchCardContents.GetComponent<RectTransform>().sizeDelta = new Vector2(layerWidth, 80.0f);
 
+        bool unlocked = false;
+        if(player.GetComponent<PlayerCS>().GetIsPlayer())
+        {
+            unlocked = skin._playerStat._purchased;
+        }
+        else
+        {
+            int stage = SystemValue.GetInt(SystemValue.PlayerStatStageKey, 0);
+            unlocked = stageIndex <= stage;
+        }
+
         GameObject LayerMatchCardEntry = (GameObject)GameObject.Instantiate(LayerMatchCardPrefab);
         LayerMatchCardEntry.transform.SetParent(LayerMatchCardContents.transform);
         LayerMatchCardEntry.transform.localScale = new Vector3(1, 1, 1);        
         LayerMatchCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(posX, 0.0f, 0.0f);
-        LayerMatchCardEntry.GetComponent<MatchCardCS>().SetMatchCard(this, stageIndex, skin, player);
+        LayerMatchCardEntry.GetComponent<MatchCardCS>().SetMatchCard(this, stageIndex, unlocked, skin, player);
 
         _matchCards.Add(LayerMatchCardEntry);
     }
@@ -95,6 +106,14 @@ public class MatchCardManagerCS : MonoBehaviour
         matchCard.SetSelected(true);
 
         _challengeSceneManager.SelectChallengePlayer(matchCard.GetPlayer(), matchCard.GetSkin(), matchCard.GetStageIndex(), playSound);
+    }
+
+    public void UnlockMatchCard(MatchCardCS matchCard)
+    {
+        if(matchCard.GetPlayer().GetComponent<PlayerCS>().GetIsPlayer())
+        {
+            _challengeSceneManager.Btn_Skin_OnClick();
+        }
     }
 
     // Update is called once per frame

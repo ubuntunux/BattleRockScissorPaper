@@ -16,6 +16,7 @@ public class MatchCardCS : MonoBehaviour
 
     static float BlendTime = 1.0f;
     int _stageIndex = 0;
+    bool _unlocked = false;
     bool _selected = false;
     float _colorTime = 0.0f;
 
@@ -63,21 +64,24 @@ public class MatchCardCS : MonoBehaviour
 
     public void OnClick()
     {
-        if(false == _player.GetComponent<PlayerCS>().GetIsPlayer() || _skin._playerStat._purchased)
+        if(_unlocked)
         {
             _matchCardManager.SelectMatchCard(this);
         }
+        else
+        {
+            _matchCardManager.UnlockMatchCard(this);
+        }
     }
 
-    public void SetMatchCard(MatchCardManagerCS matchCardManager, int stageIndex, PlayerCS skin, GameObject player)
+    public void SetMatchCard(MatchCardManagerCS matchCardManager, int stageIndex, bool unlocked, PlayerCS skin, GameObject player)
     {
         _matchCardManager = matchCardManager;
         _stageIndex = stageIndex;
         _player = player;
         _skin = skin;
+        _unlocked = unlocked;
         Image_Portrait.GetComponent<Image>().sprite = skin.GetImagePortrait();
-
-        bool unlocked = skin._playerStat._purchased || false == player.GetComponent<PlayerCS>().GetIsPlayer();
         Image_Lock.SetActive(!unlocked);
     }
 

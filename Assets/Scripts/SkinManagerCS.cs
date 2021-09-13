@@ -79,6 +79,37 @@ public class SkinManagerCS : MonoBehaviour
         PlayerA.GetComponent<PlayerCS>().PlayCharacterName();
     }
 
+    public void PurchaseSkinByAccounts(SkinCardCS skinCard)
+    {
+        PlayerCS skin = skinCard.GetSkin();
+        int score = PlayerA.GetComponent<PlayerCS>()._playerStat._score - skin._playerStat._accounts;
+        if(0 <= score)
+        {
+            MainSceneManager.GetComponent<MainSceneManagerCS>().SetScore(score);
+            PlayerA.GetComponent<PlayerCS>()._playerStat._score = score;
+            skinCard.PurchaseSkinCard();
+        }
+    }
+
+    public void PurchaseSkinByAdvertisement(SkinCardCS skinCard)
+    {
+        PlayerCS skin = skinCard.GetSkin();
+        if(0 < skin._playerStat._advertisement)
+        {
+            MainSceneManager.GetComponent<MainSceneManagerCS>().RequestInterstitial();
+
+            skin._playerStat._advertisement = skin._playerStat._advertisement - 1;
+            if(0 == skin._playerStat._advertisement)
+            {
+                skinCard.PurchaseSkinCard();
+            }
+            else
+            {
+                skinCard.ResetSkinCard();
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {

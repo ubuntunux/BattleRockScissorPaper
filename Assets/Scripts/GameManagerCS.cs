@@ -74,10 +74,8 @@ public class GameManagerCS : MonoBehaviour
     // UI
     public GameObject LayerResult;
     public GameObject Image_Exit;
-    public GameObject Layer_AttackButtons;
-    public GameObject Btn_Rock;
-    public GameObject Btn_Scissor;
-    public GameObject Btn_Paper;
+    public GameObject Layer_AttackButtonsA;
+    public GameObject Layer_AttackButtonsB;
     public GameObject Layer_AttackTimer;
     FightTimerCS AttackTimer_CS;
     public GameObject Layer_HP_Bar_A;
@@ -136,7 +134,9 @@ public class GameManagerCS : MonoBehaviour
 
         _initialAttackTimerTime = Mathf.Min(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
 
+        Layer_AttackButtonsB.SetActive(playerCreateInfoB._isPlayer);
         LayerResult.SetActive(false);
+
         SetReadyToRound();
         SetPause(false);
     }
@@ -575,6 +575,14 @@ public class GameManagerCS : MonoBehaviour
                     {
                         PlayerA_CS._playerStat._win += 1;
                         PlayerB_CS._playerStat._lose += 1;
+
+                        // next stage
+                        if(false == PlayerB_CS.GetIsPlayer())
+                        {
+                            int nextStage = PlayerA_CS._playerStat._stage + 1;
+                            PlayerA_CS._playerStat._stage = nextStage;
+                            SystemValue.SetInt(SystemValue.PlayerLastStageKey, nextStage);
+                        }
                     }
                     else if(PlayerA_CS.GetWin() < PlayerB_CS.GetWin())
                     {
@@ -586,6 +594,7 @@ public class GameManagerCS : MonoBehaviour
                         PlayerA_CS._playerStat._draw += 1;
                         PlayerB_CS._playerStat._draw += 1;
                     }
+
                     PlayerA_CS.SavePlayerStat();
                     PlayerB_CS.SavePlayerStat();
 

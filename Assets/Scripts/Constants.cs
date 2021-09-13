@@ -5,6 +5,8 @@ using UnityEngine;
 public class Constants : MonoBehaviour
 {
     static public int DefaultSkinID = 1;
+    static public int DefaultAdvertiseNum = 3;
+    static public int DefaultAccounts = 1000;
     static public int DefaultHP = 30;
     static public int DefaultPower = 10;
 

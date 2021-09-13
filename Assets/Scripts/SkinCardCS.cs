@@ -37,9 +37,55 @@ public class SkinCardCS : MonoBehaviour
         }
     }
 
+    public void OnClickAccounts()
+    {
+        if(false == _skin._playerStat._purchased)
+        {
+            _skinManager.PurchaseSkinByAccounts(this);
+        }
+    }
+
+    public void OnClickAdvertisement()
+    {
+        if(false == _skin._playerStat._purchased)
+        {
+            _skinManager.PurchaseSkinByAdvertisement(this);
+        }
+    }
+
     public PlayerCS GetSkin()
     {
         return _skin;
+    }
+
+    void SetAccountsText()
+    {
+        Text_Accounts.GetComponent<TextMeshProUGUI>().text = string.Format("{0: #,###; -#,###;0}", _skin.Accounts);
+    }
+
+    void SetAdvertisementText()
+    {
+        int advertisement = _skin._playerStat._advertisement;
+        int maxAdvertisement = _skin.Advertisement;
+        Text_Advertisement.GetComponent<TextMeshProUGUI>().text = "(" + advertisement.ToString() + "/" + maxAdvertisement.ToString() + ")";
+    }
+
+    public void PurchaseSkinCard()
+    {
+        _skin._playerStat._purchased = true;
+
+        ResetSkinCard();
+    }
+
+    public void ResetSkinCard()
+    {
+        bool locked = !_skin._playerStat._purchased;
+        Btn_Accounts.SetActive(locked);
+        Btn_Advertisement.SetActive(locked);
+        Image_Lock.SetActive(locked);
+
+        SetAccountsText();
+        SetAdvertisementText();
     }
 
     public void SetSkinCard(SkinManagerCS skinManager, PlayerCS skin)
@@ -51,25 +97,7 @@ public class SkinCardCS : MonoBehaviour
         Image_Portrait.GetComponent<Image>().sprite = _skin.GetImagePortrait();
         Image_Born.GetComponent<Image>().sprite = _skin.GetImageBorn();
 
-        bool purchased =_skin._playerStat._purchased;
-        if(purchased)
-        {
-            Btn_Accounts.SetActive(false);
-            Btn_Advertisement.SetActive(false);
-            Image_Lock.SetActive(false);
-        }
-        else
-        {
-            Btn_Accounts.SetActive(true);
-            Btn_Advertisement.SetActive(true);
-            Image_Lock.SetActive(true);
-
-            Text_Accounts.GetComponent<TextMeshProUGUI>().text = string.Format("{0: #,###; -#,###;0}",_skin.Accounts);
-        
-            int advertisement = _skin._playerStat._advertisement;
-            int maxAdvertisement = _skin.Advertisement;
-            Text_Advertisement.GetComponent<TextMeshProUGUI>().text = "(" + advertisement.ToString() + "/" + maxAdvertisement.ToString() + ")";
-        }
+        ResetSkinCard();
     }
 
     // Update is called once per frame

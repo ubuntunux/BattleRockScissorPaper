@@ -1034,6 +1034,7 @@ RectTransform:
   - {fileID: 886308037}
   - {fileID: 691229696}
   - {fileID: 695352631}
+  - {fileID: 1703085610}
   m_Father: {fileID: 1061397221}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8886,10 +8887,8 @@ MonoBehaviour:
   Snd_Bell_3: {fileID: 1283417937}
   LayerResult: {fileID: 276451774}
   Image_Exit: {fileID: 393570246}
-  Layer_AttackButtons: {fileID: 1510602227}
-  Btn_Rock: {fileID: 119053495}
-  Btn_Scissor: {fileID: 1679456833}
-  Btn_Paper: {fileID: 745824706}
+  Layer_AttackButtonsA: {fileID: 1510602227}
+  Layer_AttackButtonsB: {fileID: 1133028248}
   Layer_AttackTimer: {fileID: 1876061807}
   Layer_HP_Bar_A: {fileID: 1945104578}
   Layer_HP_Bar_B: {fileID: 739466949}
@@ -9735,7 +9734,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 928862571}
-  - {fileID: 1703085610}
   - {fileID: 1850994262}
   m_Father: {fileID: 509641793}
   m_RootOrder: 3
@@ -12461,7 +12459,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 385770203}
           m_TargetAssemblyTypeName: GameManagerCS, Assembly-CSharp
-          m_MethodName: Btn_PlayerA_Scissor_OnClick
+          m_MethodName: Btn_PlayerB_Scissor_OnClick
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -15049,7 +15047,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1066878083}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: beb4d3d9ca08378e5a2cdcf66ace9930, type: 3}
   m_Name: 
@@ -22714,17 +22712,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703085609}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 949087682}
-  m_Father: {fileID: 456271811}
-  m_RootOrder: 1
+  m_Father: {fileID: 70200195}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -415.72, y: 234.9}
+  m_AnchoredPosition: {x: -420, y: 240}
   m_SizeDelta: {x: 160, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1703085611
@@ -23629,7 +23627,7 @@ RectTransform:
   m_Children:
   - {fileID: 1820054587}
   m_Father: {fileID: 456271811}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -24903,7 +24901,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1984049278}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: beb4d3d9ca08378e5a2cdcf66ace9930, type: 3}
   m_Name: 
