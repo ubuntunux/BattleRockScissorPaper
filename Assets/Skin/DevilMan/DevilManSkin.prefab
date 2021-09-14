@@ -865,9 +865,12 @@ MonoBehaviour:
   Sprite_Portrait: {fileID: 21300000, guid: 1a92106f67e5ac05e8115b3b03f0af73, type: 3}
   Sprite_PortraitLose: {fileID: 21300000, guid: f446948cedaa27acfb9e251daaff6363, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: 12f86ab1e1065e00dafb4b435c4b3bec, type: 3}
+  Sprite_Groggy: {fileID: 21300000, guid: baef8e69b4a303973b584848c4a7ee03, type: 3}
   Sprite_AttackRock: {fileID: 21300000, guid: f3e8ed5b006e5aaeab1f8fca0e082bd2, type: 3}
   Sprite_AttackScissor: {fileID: 21300000, guid: f1c5c5c62722c09a8856412ca28481b7, type: 3}
   Sprite_AttackPaper: {fileID: 21300000, guid: 5b5f341e31c9d8ac8b9175b5b4b91180, type: 3}
+  Sprite_HitRock: {fileID: 21300000, guid: 1169c798b0de8aa16bae97384bd9c9d4, type: 3}
+  Sprite_HitPaper: {fileID: 21300000, guid: 3ba1295a81def2ce4ac6922d1a44e0cb, type: 3}
   Sprite_Win: {fileID: 21300000, guid: 2ff5a25f79cedfd3582f0ac53a8b045e, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: bf39bd1cffc4f31e59217fc8e408ff60, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}

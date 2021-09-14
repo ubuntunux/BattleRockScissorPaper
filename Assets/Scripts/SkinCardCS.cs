@@ -72,7 +72,7 @@ public class SkinCardCS : MonoBehaviour
 
     public void PurchaseSkinCard()
     {
-        _skin._playerStat._purchased = true;
+        _skin._playerStat.SetPurchased(true);
 
         ResetSkinCard();
     }

@@ -5,7 +5,6 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
-using GoogleMobileAds.Api;
 
 public enum GameSceneType
 {
@@ -50,8 +49,7 @@ public class MainSceneManagerCS : MonoBehaviour
     GameSceneType _gameSceneType = GameSceneType.None;
     GameSceneType _gameSceneTypePrev = GameSceneType.None;
 
-    BannerView bannerView;
-    InterstitialAd interstitial;
+    AdvertisementCS _advertisementManager = new AdvertisementCS();
 
     float _fadeInOutTimer = 0.0f;
     float _posY = 0.0f;
@@ -59,8 +57,7 @@ public class MainSceneManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InitializeMobileAds();
-        RequestBanner();
+        _advertisementManager.InitializeMobileAds();
 
         _gameSceneList.Add(TitleScene);
         _gameSceneList.Add(MainScene);
@@ -118,52 +115,32 @@ public class MainSceneManagerCS : MonoBehaviour
         Application.Quit();
     }
 
-    void InitializeMobileAds()
-    {
-        MobileAds.Initialize(initStatus => { });
-        // Create a 320x50 banner at the top of the screen.
-        {
-            #if UNITY_ANDROID
-                string adUnitId = "ca-app-pub-3940256099942544/6300978111";
-            #elif UNITY_IPHONE
-                string adUnitId = "ca-app-pub-3940256099942544/2934735716";
-            #else
-                string adUnitId = "unexpected_platform";
-            #endif
-            bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
-        }
-
-        {
-            #if UNITY_ANDROID
-                string adUnitId = "ca-app-pub-3940256099942544/1033173712";
-            #elif UNITY_IPHONE
-                string adUnitId = "ca-app-pub-3940256099942544/4411468910";
-            #else
-                string adUnitId = "unexpected_platform";
-            #endif
-            interstitial = new InterstitialAd(adUnitId);
-        }
-    }
-
-    void RequestBanner()
-    {
-        AdRequest request = new AdRequest.Builder().Build();
-        bannerView.LoadAd(request);
-    }
-
-    public void RequestInterstitial()
-    {
-        AdRequest request = new AdRequest.Builder().Build();
-        interstitial.LoadAd(request);
-    }
-
     public void ResetMainSceneManager()
     {
     }
 
+    // Advertisement
+    public void RequestBanner()
+    {
+        _advertisementManager.RequestBanner();
+    }
+
+    public void RequestInterstitial()
+    {
+        _advertisementManager.RequestInterstitial();
+    }
+
+    public void RequestRewardedAd()
+    {
+        _advertisementManager.RequestRewardedAd();
+    }
+    //
+
     public void SetScore(int score)
     {
         Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
+        PlayerA.GetComponent<PlayerCS>()._playerStat._score = score;
+        PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
     }
 
     public void LoadPlayerCharacterInfo()
@@ -362,13 +339,6 @@ public class MainSceneManagerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(interstitial.IsLoaded())
-        {
-            interstitial.Show();
-        }
-
-        //bannerView.SetPosition(0, (int)_posY);
-
        if(GetActivateSceneType() == GameSceneType.MainScene)
         {
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -376,5 +346,7 @@ public class MainSceneManagerCS : MonoBehaviour
                 Toggle_Popup_Exit();
             }
         }
+
+        _advertisementManager.Update();
     }
 }

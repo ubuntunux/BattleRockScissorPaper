@@ -18,6 +18,7 @@ public enum PlayerState
     AttackIdle,
     AttackMotion,
     AttackHit,
+    Groggy,
     Win,
     Dead
 }
@@ -34,8 +35,7 @@ public class PlayerStat
 {
     public bool _isPlayer = false;    
     public int _skinID = Constants.DefaultSkinID;
-    public int _advertisement = Constants.DefaultAdvertiseNum;
-    public int _accounts = Constants.DefaultAccounts;
+    public int _advertisement = 0;
     public bool _purchased = false;
     public int _perfect = 0;
     public int _win = 0;
@@ -54,7 +54,6 @@ public class PlayerStat
         Debug.Log("_isPlayer: " + _isPlayer.ToString() 
             + ", _skinID: " + _skinID.ToString()
             + ", _advertisement: " + _advertisement.ToString()
-            + ", _accounts: " + _accounts.ToString()
             + ", _purchased: " + _purchased.ToString()
             + ", _perfect: " + _perfect.ToString()
             + ", _win: " + _win.ToString()
@@ -75,8 +74,7 @@ public class PlayerStat
 
         _isPlayer = isPlayer;
         _skinID = player.SkinID;
-        _advertisement = player.Advertisement;
-        _accounts = player.Accounts;
+        _advertisement = 0;
         _purchased = player.Purchased;
         _perfect = isPlayer ? 0 : player.Perfect;
         _win = isPlayer ? 0 : player.Win;
@@ -89,12 +87,16 @@ public class PlayerStat
         _speed = isPlayer ? Constants.AttackTimerTime : player.Speed;
     }
 
+    public string GetSkinIDString()
+    {
+        return _isPlayer ? "" : _skinID.ToString();
+    }
+
     public void LoadPlayerStat()
     {
-        string skinID = _isPlayer ? "" : _skinID.ToString();
+        string skinID = GetSkinIDString();
 
         _advertisement = SystemValue.GetInt(skinID + SystemValue.PlayerAdvertisementKey, _advertisement);
-        _accounts = SystemValue.GetInt(skinID + SystemValue.PlayerAccountsKey, _accounts);
         _purchased = SystemValue.GetBool(skinID + SystemValue.PlayerPurchasedKey, _purchased);
         _perfect = SystemValue.GetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
@@ -109,10 +111,9 @@ public class PlayerStat
 
     public void SavePlayerStat()
     {
-        string skinID = _isPlayer ? "" : _skinID.ToString();
+        string skinID = GetSkinIDString();
 
         SystemValue.SetInt(skinID + SystemValue.PlayerAdvertisementKey, _advertisement);
-        SystemValue.SetInt(skinID + SystemValue.PlayerAccountsKey, _accounts);
         SystemValue.SetBool(skinID + SystemValue.PlayerPurchasedKey, _purchased);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
@@ -123,6 +124,18 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
         SystemValue.SetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+    }
+
+    public void SetAdvertisement(int advertisement)
+    {
+        _advertisement = advertisement;
+        SystemValue.SetInt(GetSkinIDString() + SystemValue.PlayerAdvertisementKey, advertisement);
+    }
+
+    public void SetPurchased(bool purchased)
+    {
+        _purchased = purchased;
+        SystemValue.SetBool(GetSkinIDString() + SystemValue.PlayerPurchasedKey, purchased);
     }
 }
 
@@ -158,16 +171,19 @@ public class PlayerCS : MonoBehaviour
 
     // Skin
     public int SkinID = 0;
-    public int Advertisement = 3;
-    public int Accounts = 1000;
+    public int Accounts = Constants.DefaultAccounts;
+    public int Advertisement = Constants.DefaultAdvertiseNum;
     public bool Purchased = false;
     public Sprite Sprite_Born;
     public Sprite Sprite_Portrait;
     public Sprite Sprite_PortraitLose;
     public Sprite Sprite_Idle;
+    public Sprite Sprite_Groggy;
     public Sprite Sprite_AttackRock;
     public Sprite Sprite_AttackScissor;
     public Sprite Sprite_AttackPaper;
+    public Sprite Sprite_HitRock;
+    public Sprite Sprite_HitPaper;
     public Sprite Sprite_Win;
     public Sprite Sprite_Dead;
 
@@ -393,7 +409,12 @@ public class PlayerCS : MonoBehaviour
 
     public bool isAlive()
     {
-        return (0 < _hp);
+        return 0 < _hp;
+    }
+
+    public bool isGroggy()
+    {
+        return _hp <= 0;
     }
 
     public int GetHP()

@@ -346,6 +346,7 @@ public class GameManagerCS : MonoBehaviour
         LayerResult.GetComponent<ResultCS>().Reset(PlayerA_CS, PlayerA_CS.GetWin(), PlayerB_CS, PlayerB_CS.GetWin());
         _gameResultTime = 0.0f;
         _gameState = GameState.GameResult;
+        
         MainSceneManager.GetComponent<MainSceneManagerCS>().RequestInterstitial();
     }
 

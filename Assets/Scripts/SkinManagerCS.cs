@@ -82,11 +82,10 @@ public class SkinManagerCS : MonoBehaviour
     public void PurchaseSkinByAccounts(SkinCardCS skinCard)
     {
         PlayerCS skin = skinCard.GetSkin();
-        int score = PlayerA.GetComponent<PlayerCS>()._playerStat._score - skin._playerStat._accounts;
+        int score = PlayerA.GetComponent<PlayerCS>()._playerStat._score - skin.Accounts;
         if(0 <= score)
         {
             MainSceneManager.GetComponent<MainSceneManagerCS>().SetScore(score);
-            PlayerA.GetComponent<PlayerCS>()._playerStat._score = score;
             skinCard.PurchaseSkinCard();
         }
     }
@@ -94,12 +93,12 @@ public class SkinManagerCS : MonoBehaviour
     public void PurchaseSkinByAdvertisement(SkinCardCS skinCard)
     {
         PlayerCS skin = skinCard.GetSkin();
-        if(0 < skin._playerStat._advertisement)
+        if(skin._playerStat._advertisement < skin.Advertisement)
         {
-            MainSceneManager.GetComponent<MainSceneManagerCS>().RequestInterstitial();
-
-            skin._playerStat._advertisement = skin._playerStat._advertisement - 1;
-            if(0 == skin._playerStat._advertisement)
+            MainSceneManager.GetComponent<MainSceneManagerCS>().RequestRewardedAd();
+            
+            skin._playerStat.SetAdvertisement(skin._playerStat._advertisement + 1);
+            if(skin.Advertisement <= skin._playerStat._advertisement)
             {
                 skinCard.PurchaseSkinCard();
             }
