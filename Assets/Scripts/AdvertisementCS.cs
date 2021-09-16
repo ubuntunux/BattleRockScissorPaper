@@ -11,8 +11,14 @@ using GoogleMobileAds.Common;
 public class AdvertisementCS : MonoBehaviour
 {
     BannerView _bannerView = null;
+
     InterstitialAd _interstitial = null;
+    bool _showInterstitial = false;
+
+    SkinCardCS _rewardSkinCard = null;
     RewardedAd _rewardedAd = null;
+    RewardedAd _rewardedAdNext = null;
+    bool _showRewardedAd = false;
 
     // Start is called before the first frame update
     void Start()
@@ -26,10 +32,10 @@ public class AdvertisementCS : MonoBehaviour
 
         _bannerView = CreateBannerView();
         _interstitial = CreateInterstitial();
-        _rewardedAd = CreateRewardedAd();
 
-        // TEST CODE
         RequestBanner();
+        RequestInterstitial();
+        CreateAndRequestRewardedAd();
     }
 
     public BannerView CreateBannerView()
@@ -42,7 +48,10 @@ public class AdvertisementCS : MonoBehaviour
         #else
             string adUnitId = "unexpected_platform";
         #endif
+
         BannerView bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
+        bannerView.OnAdFailedToLoad += HandleOnBannerAdFailedToLoad;
+
         return bannerView;
     }
 
@@ -57,29 +66,40 @@ public class AdvertisementCS : MonoBehaviour
         #endif
 
         InterstitialAd interstitialAd = new InterstitialAd(adUnitId);
+
+        interstitialAd.OnAdFailedToLoad += HandleOnAdFailedToLoad;
+        interstitialAd.OnAdClosed += HandleOnAdClosed;
+
         return interstitialAd;
     }
 
-    public RewardedAd CreateRewardedAd()
+    // Show Ad
+    public bool GetShowInterstitial()
     {
-        #if UNITY_ANDROID
-            string adUnitId = "ca-app-pub-3940256099942544/5224354917";
-        #elif UNITY_IPHONE
-            string adUnitId = "ca-app-pub-3940256099942544/1712485313";
-        #else
-            string adUnitId = "unexpected_platform";
-        #endif
+        return _showInterstitial;
+    }
 
-        RewardedAd rewardedAd = new RewardedAd(adUnitId);
+    public void ShowInterstitial()
+    {
+        _showInterstitial = true;
+    }
 
-        rewardedAd.OnAdLoaded += HandleRewardedAdLoaded;
-        rewardedAd.OnAdFailedToLoad += HandleRewardedAdFailedToLoad;
-        rewardedAd.OnAdOpening += HandleRewardedAdOpening;
-        rewardedAd.OnAdFailedToShow += HandleRewardedAdFailedToShow;
-        rewardedAd.OnUserEarnedReward += HandleUserEarnedReward;
-        rewardedAd.OnAdClosed += HandleRewardedAdClosed;
+    public bool GetShowRewardedAd()
+    {
+        return _showRewardedAd;
+    }
 
-        return rewardedAd;
+    public void ShowRewardedAd(SkinCardCS rewardedSkinCard)
+    {
+        _showRewardedAd = true;
+
+        if(null == _rewardedAd && null != _rewardedAdNext)
+        {
+            _rewardSkinCard = rewardedSkinCard;
+            _rewardedAd = _rewardedAdNext;
+            _rewardedAdNext = null;
+        }
+        CreateAndRequestRewardedAd();
     }
 
     // Request
@@ -95,56 +115,95 @@ public class AdvertisementCS : MonoBehaviour
         _interstitial.LoadAd(request);
     }
 
-    public void RequestRewardedAd()
+    public void CreateAndRequestRewardedAd()
     {
-        AdRequest request = new AdRequest.Builder().Build();
-        _rewardedAd.LoadAd(request);
+        if(null == _rewardedAdNext)
+        {
+            #if UNITY_ANDROID
+                string adUnitId = "ca-app-pub-3940256099942544/5224354917";
+            #elif UNITY_IPHONE
+                string adUnitId = "ca-app-pub-3940256099942544/1712485313";
+            #else
+                string adUnitId = "unexpected_platform";
+            #endif
+
+            _rewardedAdNext = new RewardedAd(adUnitId);
+
+            _rewardedAdNext.OnAdFailedToLoad += HandleRewardedAdFailedToLoad;
+            _rewardedAdNext.OnAdFailedToShow += HandleRewardedAdFailedToShow;
+            _rewardedAdNext.OnUserEarnedReward += HandleUserEarnedReward;
+            _rewardedAdNext.OnAdClosed += HandleRewardedAdClosed;
+
+            AdRequest request = new AdRequest.Builder().Build();
+            _rewardedAdNext.LoadAd(request);
+        }
+    }
+
+    // Banner Callback
+    public void HandleOnBannerAdFailedToLoad(object sender, EventArgs args)
+    {
+        RequestBanner();
+    }
+
+    // Interstitial Callback
+    public void HandleOnAdFailedToLoad(object sender, EventArgs args)
+    {
+        HandleOnAdClosed(sender, args);
+    }
+
+    public void HandleOnAdClosed(object sender, EventArgs args)
+    {
+        _showInterstitial = false;
+        RequestInterstitial();
     }
 
     // RewardedAD Callback
-    public void HandleRewardedAdLoaded(object sender, EventArgs args)
-    {
-        Debug.Log("HandleRewardedAdLoaded event received");
-    }
-
     public void HandleRewardedAdFailedToLoad(object sender, EventArgs args)
     {
-        Debug.Log("HandleRewardedAdFailedToLoad event received.");
-    }
-
-    public void HandleRewardedAdOpening(object sender, EventArgs args)
-    {
-        Debug.Log("HandleRewardedAdOpening event received");
+        HandleRewardedAdClosed(sender, args);
     }
 
     public void HandleRewardedAdFailedToShow(object sender, AdErrorEventArgs args)
     {
-        Debug.Log("HandleRewardedAdFailedToShow event received with message: " + args.Message);
+        HandleRewardedAdClosed(sender, args);
     }
 
     public void HandleRewardedAdClosed(object sender, EventArgs args)
     {
-        Debug.Log("HandleRewardedAdClosed event received");
+        _showRewardedAd = false;
+        _rewardSkinCard = null;
+        _rewardedAd = null;
     }
 
     public void HandleUserEarnedReward(object sender, Reward args)
     {
-        string type = args.Type;
-        double amount = args.Amount;
-        Debug.Log("HandleRewardedAdRewarded event received for " + amount.ToString() + " " + type);
+        if(null != _rewardSkinCard)
+        {
+            _rewardSkinCard.CallbackPurchaseSkinByAdvertisement();
+            _rewardSkinCard = null;
+        }
+        // string type = args.Type;
+        // double amount = args.Amount;
+        // Debug.Log("HandleRewardedAdRewarded event received for " + amount.ToString() + " " + type);
     }
 
     // Update is called once per frame
     public void Update()
     {
-        if(_interstitial.IsLoaded())
+        if(_showInterstitial)
         {
-            _interstitial.Show();
+            if(_interstitial.IsLoaded())
+            {
+                _interstitial.Show();
+            }
         }
 
-        if(_rewardedAd.IsLoaded())
+        if(_showRewardedAd)
         {
-            _rewardedAd.Show();
+            if(null != _rewardedAd && _rewardedAd.IsLoaded())
+            {
+                _rewardedAd.Show();
+            }
         }
     }
 }

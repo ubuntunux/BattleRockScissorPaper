@@ -53,6 +53,23 @@ public class SkinCardCS : MonoBehaviour
         }
     }
 
+    public void CallbackPurchaseSkinByAdvertisement()
+    {
+        PlayerCS skin = GetSkin();
+        if(skin._playerStat._advertisement < skin.Advertisement)
+        {   
+            skin._playerStat.SetAdvertisement(skin._playerStat._advertisement + 1);
+            if(skin.Advertisement <= skin._playerStat._advertisement)
+            {
+                PurchaseSkinCard();
+            }
+            else
+            {
+                ResetSkinCard();
+            }
+        }
+    }
+
     public PlayerCS GetSkin()
     {
         return _skin;

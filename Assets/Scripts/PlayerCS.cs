@@ -69,8 +69,9 @@ public class PlayerStat
 
     public void InitializePlayerStat(PlayerCS player, bool isPlayer)
     {
+        // TEST CODE
         int defaultPlayerScore = 10000;//0;
-        int defaultPlayerPower = 1000;//Constants.DefaultPower;
+        int defaultPlayerPower = 10;//Constants.DefaultPower;
 
         _isPlayer = isPlayer;
         _skinID = player.SkinID;
@@ -124,6 +125,21 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
         SystemValue.SetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+    }
+
+    public void SaveBool(string key, bool value)
+    {
+        SystemValue.SetBool(GetSkinIDString() + key, value);
+    }
+
+    public void SaveInt(string key, int value)
+    {
+        SystemValue.SetInt(GetSkinIDString() + key, value);
+    }
+
+    public void SaveFloat(string key, float value)
+    {
+        SystemValue.SetFloat(GetSkinIDString() + key, value);
     }
 
     public void SetAdvertisement(int advertisement)
@@ -392,7 +408,20 @@ public class PlayerCS : MonoBehaviour
     public void SetStateIdle()
     {
         SetTexture(Sprite_Idle);
+        _lastAttackType = AttackType.None;
         _playerState = PlayerState.Idle;
+    }
+
+    public void SetGroggyState()
+    {
+        SetTexture(Sprite_Groggy);
+        _lastAttackType = AttackType.None;
+        _playerState = PlayerState.Groggy;
+    }
+
+    public bool CheckPlayerState(PlayerState checkState)
+    {
+        return _playerState == checkState;
     }
 
     public void SetAttackIdle()
@@ -407,19 +436,36 @@ public class PlayerCS : MonoBehaviour
         SetAttackIdle();
     }
 
+    public void SetLastAttackNoneIdle()
+    {
+        _lastAttackType = AttackType.None;
+        _playerState = PlayerState.Idle;
+    }
+
     public bool isAlive()
     {
         return 0 < _hp;
     }
 
-    public bool isGroggy()
+    public bool isGroggyHP()
     {
-        return _hp <= 0;
+        return (0 < _hp) && (_hp <= (_playerStat._hp / Constants.GroggyHPDivide));
     }
 
     public int GetHP()
     {
         return _hp;
+    }
+
+    public void SetHP(int hp)
+    {
+        _hp = hp;
+        Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _playerStat._hp);
+    }
+
+    public int GetMaxHP()
+    {
+        return _playerStat._hp;
     }
 
     public int GetWin()
@@ -437,6 +483,8 @@ public class PlayerCS : MonoBehaviour
     public void SetDead()
     {
         SetTexture(Sprite_Dead);
+        _hp = 0;
+        _lastAttackType = AttackType.None;
         _playerState = PlayerState.Dead;
     }
 
@@ -447,6 +495,14 @@ public class PlayerCS : MonoBehaviour
 
     public void SetAttackInner(AttackType attackType, bool isAttackHit)
     {
+        if (false == isAlive() || 
+            PlayerState.AttackHit == _playerState || 
+            PlayerState.Groggy == _playerState || 
+            AttackType.None == attackType)
+        {
+            return;
+        }
+        
         _attackMotionTime = 0.0f;
 
         switch(attackType)
@@ -461,7 +517,6 @@ public class PlayerCS : MonoBehaviour
                 SetTexture(Sprite_AttackPaper);
                 break;
             default:
-                SetAttackIdle();
                 break;
         }
 
@@ -476,32 +531,23 @@ public class PlayerCS : MonoBehaviour
         else
         {
             Snd_Attack.Play();
-            _lastAttackType = attackType;
             _playerState = PlayerState.AttackMotion;
         }
+
+        _lastAttackType = attackType;
     }
 
     public void SetAttack(AttackType attackType)
     {
-        if (false == isAlive() || PlayerState.AttackHit == _playerState)
-        {
-            return;
-        }
-
         SetAttackInner(attackType, false);
     }
 
-    public void SetAttackHit()
+    public void SetAttackHit(AttackType attackType = AttackType.None)
     {
-        if (false == isAlive() || PlayerState.AttackHit == _playerState)
-        {
-            return;
-        }
-
-        SetAttackInner(_lastAttackType, true);
+        SetAttackInner((AttackType.None == attackType) ? _lastAttackType : attackType, true);
     }
 
-    public void SetDamage(int damage)
+    public void SetDamage(int damage, AttackType hitType)
     {
         _hp -= damage;
 
@@ -513,6 +559,12 @@ public class PlayerCS : MonoBehaviour
         else
         {
             Snd_AttackHitVoice.Play();
+        }
+
+        // hit texture
+        if(AttackType.None == _lastAttackType)
+        {
+            SetTexture((AttackType.Paper == hitType) ? Sprite_HitPaper : Sprite_HitRock);
         }
 
         Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _playerStat._hp);
@@ -533,7 +585,14 @@ public class PlayerCS : MonoBehaviour
                 attackType = (AttackType)(Random.Range(0, 3) + 1);
             }
 
-            SetAttack(attackType);
+            if(GameManager.CheckGameState(GameState.Groggy))
+            {
+                SetAttackHit(attackType);
+            }
+            else
+            {
+                SetAttack(attackType);
+            }
 
             _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
         }
@@ -548,13 +607,14 @@ public class PlayerCS : MonoBehaviour
             return;
         }
 
-        if(PlayerState.Dead == _playerState)
+        if(PlayerState.Dead == _playerState || PlayerState.Win == _playerState)
         {
             // Nothing
         }
-        else if(PlayerState.Win == _playerState)
+        else if(PlayerState.Groggy == _playerState)
         {
-            // Nothing
+            float speed = Mathf.Cos(_elapsedTime * 0.5f) * 0.25f;            
+            transform.localRotation = Quaternion.Euler(speed, 0.0f, 0.0f);
         }
         else if(PlayerState.Idle == _playerState)
         {

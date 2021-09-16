@@ -32,6 +32,30 @@ public class TrainingSceneManagerCS : MonoBehaviour
         MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.SkinScene);
     }
 
+    public void Btn_OnClick_PowerTraning()
+    {
+        int power = PlayerA.GetComponent<PlayerCS>()._playerStat._power + 1;
+        PlayerA.GetComponent<PlayerCS>()._playerStat._power = power;
+        PlayerA.GetComponent<PlayerCS>()._playerStat.SaveInt(SystemValue.PlayerStatPowerKey, power);
+        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(-1000);
+    }
+
+    public void Btn_OnClick_HealthTraning()
+    {
+        int hp = PlayerA.GetComponent<PlayerCS>()._playerStat._hp + 1;
+        PlayerA.GetComponent<PlayerCS>()._playerStat._hp = hp;
+        PlayerA.GetComponent<PlayerCS>()._playerStat.SaveInt(SystemValue.PlayerStatHPKey, hp);
+        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(-1000);
+    }
+
+    public void Btn_OnClick_SpeedTraning()
+    {
+        float speed = PlayerA.GetComponent<PlayerCS>()._playerStat._speed + 1.0f;
+        PlayerA.GetComponent<PlayerCS>()._playerStat._speed = speed;
+        PlayerA.GetComponent<PlayerCS>()._playerStat.SaveFloat(SystemValue.PlayerStatSpeedKey, speed);
+        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(-1000);
+    }
+
     void ResetTrainingScene()
     {
         PlayerA.SetActive(true);

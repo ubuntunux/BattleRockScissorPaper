@@ -77,6 +77,7 @@ public class SkinManagerCS : MonoBehaviour
     {
         PlayerA.GetComponent<PlayerCS>().SetSkin(skin);
         PlayerA.GetComponent<PlayerCS>().PlayCharacterName();
+        SystemValue.SetInt(SystemValue.PlayerSkinIDKey, skin._playerStat._skinID);
     }
 
     public void PurchaseSkinByAccounts(SkinCardCS skinCard)
@@ -95,17 +96,8 @@ public class SkinManagerCS : MonoBehaviour
         PlayerCS skin = skinCard.GetSkin();
         if(skin._playerStat._advertisement < skin.Advertisement)
         {
-            MainSceneManager.GetComponent<MainSceneManagerCS>().RequestRewardedAd();
-            
-            skin._playerStat.SetAdvertisement(skin._playerStat._advertisement + 1);
-            if(skin.Advertisement <= skin._playerStat._advertisement)
-            {
-                skinCard.PurchaseSkinCard();
-            }
-            else
-            {
-                skinCard.ResetSkinCard();
-            }
+            // will callback - CallbackPurchaseSkinByAdvertisement
+            MainSceneManager.GetComponent<MainSceneManagerCS>().ShowRewardedAd(skinCard);
         }
     }
 

@@ -120,19 +120,14 @@ public class MainSceneManagerCS : MonoBehaviour
     }
 
     // Advertisement
-    public void RequestBanner()
+    public void ShowInterstitial()
     {
-        _advertisementManager.RequestBanner();
+        _advertisementManager.ShowInterstitial();
     }
 
-    public void RequestInterstitial()
+    public void ShowRewardedAd(SkinCardCS rewardedSkinCard)
     {
-        _advertisementManager.RequestInterstitial();
-    }
-
-    public void RequestRewardedAd()
-    {
-        _advertisementManager.RequestRewardedAd();
+        _advertisementManager.ShowRewardedAd(rewardedSkinCard);
     }
     //
 
@@ -141,6 +136,12 @@ public class MainSceneManagerCS : MonoBehaviour
         Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
         PlayerA.GetComponent<PlayerCS>()._playerStat._score = score;
         PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
+    }
+
+    public void AddScore(int score)
+    {
+        score += PlayerA.GetComponent<PlayerCS>()._playerStat._score;
+        SetScore(Mathf.Max(0, score));
     }
 
     public void LoadPlayerCharacterInfo()

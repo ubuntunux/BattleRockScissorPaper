@@ -21,6 +21,7 @@ public class Constants : MonoBehaviour
     static public float RoundEndTime = 3.0f;
     static public float GameResultTime = 4.0f;
     static public float GroundPosition = 3.2f;
+    static public float GroggyHitTime = 3.0f;
     static public float AttackDistance = 1.5f;
     static public float IdleDistance = 2.0f; 
     static public float SelectDistance = 4.0f;
@@ -28,4 +29,6 @@ public class Constants : MonoBehaviour
     static public float CameraShakeRandomTerm = 0.01f;
     static public float CameraShakeIntensity = 1.0f;
     static public float CriticalPowerGuage = 0.95f;
+    static public int WarningHPDivide = 3;
+    static public int GroggyHPDivide = 2;
 }
