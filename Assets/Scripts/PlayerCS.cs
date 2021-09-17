@@ -613,8 +613,11 @@ public class PlayerCS : MonoBehaviour
         }
         else if(PlayerState.Groggy == _playerState)
         {
-            float speed = Mathf.Cos(_elapsedTime * 0.5f) * 0.25f;            
-            transform.localRotation = Quaternion.Euler(speed, 0.0f, 0.0f);
+            float rot = Mathf.Cos(_elapsedTime * 2.0f) * 2.5f;
+            transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rot);
+
+            float scale = Mathf.Cos(_elapsedTime * 4.0f) * 0.2f + 5.0f;
+            transform.localScale = new Vector3(_isPlayerA ? 5.0f : -5.0f, scale, 5.0f);
         }
         else if(PlayerState.Idle == _playerState)
         {
