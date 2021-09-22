@@ -8,6 +8,8 @@ public class UIBarCS : MonoBehaviour
     public GameObject Bar;
     public GameObject PlayerID;
 
+    float _goalRatio = 1.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,12 +29,26 @@ public class UIBarCS : MonoBehaviour
 
     public void setBar(float ratio)
     {
-        Bar.transform.localScale = new Vector3(ratio, 1.0f, 1.0f);
+        _goalRatio = ratio;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        float ratio = Bar.transform.localScale.x;
+        if(_goalRatio != ratio)
+        {
+            if(_goalRatio < ratio)
+            {
+                ratio -= Time.deltaTime * 2.0f;
+            }
+
+            if(ratio < _goalRatio)
+            {
+                ratio = _goalRatio;
+            }
+
+            Bar.transform.localScale = new Vector3(ratio, 1.0f, 1.0f);
+        }
     }
 }

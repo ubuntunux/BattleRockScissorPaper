@@ -13,6 +13,7 @@ public enum GameState
     ReadyToAttack,
     AttackHit,
     Groggy,
+    GroggyAttack,
     RoundEnd,
     GameResult,
 }
@@ -26,6 +27,7 @@ public class GameManagerCS : MonoBehaviour
     float _attackHitTime = 0.0f;
     float _readyToRoundTime = 0.0f;
     float _groggyTime = 0.0f;
+    float _groggyAttackTime = 0.0f;
     float _roundEndTime = 0.0f;
     float _gameResultTime = 0.0f;
     int _maxRoundCount = 3;
@@ -397,7 +399,8 @@ public class GameManagerCS : MonoBehaviour
         Layer_AttackTimer.SetActive(false);
         
         _groggyTime = 0.0f;
-         _gameState = GameState.Groggy;
+        _groggyAttackTime = 0.0f;
+        _gameState = GameState.Groggy;
     }
 
     void SetHitPlayers()
@@ -597,8 +600,8 @@ public class GameManagerCS : MonoBehaviour
                 else
                 {
                     // check is groggy
-                    bool isGroggyHP_A = PlayerA_CS.isGroggyHP();
-                    bool isGroggyHP_B = PlayerB_CS.isGroggyHP();
+                    bool isGroggyHP_A = PlayerA_CS.isAlive() && PlayerA_CS.isGroggyHP();
+                    bool isGroggyHP_B = PlayerB_CS.isAlive() && PlayerB_CS.isGroggyHP();
                     int winCountA = PlayerA_CS.GetWin() + ((false == isGroggyHP_A && isGroggyHP_B) ? 1 : 0);
                     int winCountB = PlayerB_CS.GetWin() + ((false == isGroggyHP_B && isGroggyHP_A) ? 1 : 0);
                     int maxWinCount = Mathf.Max(winCountA, winCountB);
@@ -620,13 +623,48 @@ public class GameManagerCS : MonoBehaviour
             bool isGroggyHP_B = PlayerB_CS.isGroggyHP();
 
             // groggy attack
-            if(false == isGroggyHP_A && AttackType.None != PlayerA_CS.getLastAttackType())
+            if(0.0f < _groggyAttackTime)
             {
-                SetHitPlayers();
+                _groggyAttackTime -= Time.deltaTime;
+
+                if(_groggyAttackTime < 0.0f)
+                {
+                    if(isGroggyHP_A)
+                    {
+                        PlayerA_CS.SetGroggyState();
+                    }
+                    else
+                    {
+                        PlayerA_CS.SetReadyToAttack();
+                    }
+
+                    if(isGroggyHP_B)
+                    {
+                        PlayerB_CS.SetGroggyState();
+                    }
+                    else
+                    {
+                        PlayerB_CS.SetReadyToAttack();
+                    }
+
+                    _groggyAttackTime = 0.0f;
+                }
             }
-            else if(false == isGroggyHP_B && AttackType.None != PlayerB_CS.getLastAttackType())
+
+            if(0.0f == _groggyAttackTime)
             {
-                SetHitPlayers();
+                if(false == isGroggyHP_A && AttackType.None != PlayerA_CS.getLastAttackType())
+                {
+                    PlayerA_CS.SetAttackHit();
+                    SetHitPlayers();
+                    _groggyAttackTime = Constants.GroggyAttackTime;
+                }
+                else if(false == isGroggyHP_B && AttackType.None != PlayerB_CS.getLastAttackType())
+                {
+                    PlayerB_CS.SetAttackHit();
+                    SetHitPlayers();
+                    _groggyAttackTime = Constants.GroggyAttackTime;
+                }
             }
 
             // end groggy
@@ -642,8 +680,9 @@ public class GameManagerCS : MonoBehaviour
                     PlayerB_CS.SetDead();
                 }
 
-                SetAttackHitState();
+                _gameState = GameState.AttackHit;
             }
+
             _groggyTime += Time.deltaTime;
         }
         else if(GameState.RoundEnd == _gameState)

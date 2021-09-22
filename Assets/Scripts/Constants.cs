@@ -22,6 +22,7 @@ public class Constants : MonoBehaviour
     static public float GameResultTime = 4.0f;
     static public float GroundPosition = 3.2f;
     static public float GroggyHitTime = 3.0f;
+    static public float GroggyAttackTime = 0.1f;
     static public float AttackDistance = 1.5f;
     static public float IdleDistance = 2.0f; 
     static public float SelectDistance = 4.0f;

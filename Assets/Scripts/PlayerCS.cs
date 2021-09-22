@@ -169,6 +169,8 @@ public class PlayerCS : MonoBehaviour
     float _idleMotionSpeed = 0.0f;
     float _attackMotionTime = 0.0f;
     float _nextAttackMotionTime = 0.0f;
+    float _groggyTime = 0.0f;
+    int _groggyRemainHP = 0;
     int _hp = 0;
     int _wins = 0;
 
@@ -417,6 +419,8 @@ public class PlayerCS : MonoBehaviour
         SetTexture(Sprite_Groggy);
         _lastAttackType = AttackType.None;
         _playerState = PlayerState.Groggy;
+        _groggyTime = Constants.GroggyHitTime;
+        _groggyRemainHP = _hp;
     }
 
     public bool CheckPlayerState(PlayerState checkState)
@@ -449,7 +453,12 @@ public class PlayerCS : MonoBehaviour
 
     public bool isGroggyHP()
     {
-        return (0 < _hp) && (_hp <= (_playerStat._hp / Constants.GroggyHPDivide));
+        return _hp <= GetGroggyHP();
+    }
+
+    public int GetGroggyHP()
+    {
+        return _playerStat._hp / Constants.GroggyHPDivide;
     }
 
     public int GetHP()
@@ -459,7 +468,7 @@ public class PlayerCS : MonoBehaviour
 
     public void SetHP(int hp)
     {
-        _hp = hp;
+        _hp = Mathf.Max(0, hp);
         Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _playerStat._hp);
     }
 
@@ -484,6 +493,11 @@ public class PlayerCS : MonoBehaviour
     {
         SetTexture(Sprite_Dead);
         _hp = 0;
+
+        float offsetX = _isPlayerA ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
+        float offsetY = Constants.GroundPosition;
+        transform.position = new Vector3(offsetX, offsetY, 0.0f);
+
         _lastAttackType = AttackType.None;
         _playerState = PlayerState.Dead;
     }
@@ -613,18 +627,24 @@ public class PlayerCS : MonoBehaviour
         }
         else if(PlayerState.Groggy == _playerState)
         {
-            float rot = Mathf.Cos(_elapsedTime * 2.0f) * 2.5f;
+            float rot = Mathf.Cos(_elapsedTime * 2.0f) * 2.0f;
             transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rot);
 
-            float scale = Mathf.Cos(_elapsedTime * 4.0f) * 0.2f + 5.0f;
-            transform.localScale = new Vector3(_isPlayerA ? 5.0f : -5.0f, scale, 5.0f);
+            // float scale = Mathf.Cos(_elapsedTime * 4.0f) * 0.1f + 5.0f;
+            // transform.localScale = new Vector3(_isPlayerA ? 5.0f : -5.0f, scale, 5.0f);
+
+            // reduce hp
+            int reduceHP = Mathf.Min(GetHP(), (int)((float)_groggyRemainHP * Mathf.Max(0.0f, _groggyTime) / Constants.GroggyHitTime));
+            SetHP(reduceHP);
+
+            _groggyTime -= Time.deltaTime;
         }
         else if(PlayerState.Idle == _playerState)
         {
             float speed = _elapsedTime * _idleMotionSpeed;
             float offsetX = _isPlayerA ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
             float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
-            transform.position = new Vector3(offsetX, offsetY, -1.0f);
+            transform.position = new Vector3(offsetX, offsetY, 0.0f);
         }
         else if(PlayerState.ReadyToRound == _playerState || PlayerState.AttackIdle == _playerState)
         {
