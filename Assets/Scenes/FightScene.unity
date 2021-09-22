@@ -2534,7 +2534,8 @@ MonoBehaviour:
   PlayerA: {fileID: 987775798}
   PlayerB: {fileID: 1285152789}
   SkinCardPrefab: {fileID: 3025796399646615790, guid: b0f7fa8cd1846c4109d28effc1a29961, type: 3}
-  LayerSkinCard: {fileID: 400335368}
+  LayerSkinCard: {fileID: 1065813847}
+  LayerSkinCardContents: {fileID: 400335368}
 --- !u!4 &212018139 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4311916672380040, guid: 18353bbdf23cf024cb6e7ccbf0f18af6, type: 3}
@@ -14504,7 +14505,7 @@ GameObject:
   - component: {fileID: 958911442}
   - component: {fileID: 958911441}
   m_Layer: 5
-  m_Name: Btn_League
+  m_Name: Btn_Challenge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14576,7 +14577,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1061397220}
         m_TargetAssemblyTypeName: MainSceneManagerCS, Assembly-CSharp
-        m_MethodName: Btn_League_OnClick
+        m_MethodName: Btn_Challenge_OnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14994,6 +14995,7 @@ MonoBehaviour:
   MainSceneManager: {fileID: 1061397219}
   PlayerA: {fileID: 987775798}
   PlayerB: {fileID: 1285152789}
+  SkinScene: {fileID: 211210731}
   Text_Health: {fileID: 1524941010}
   Text_Power: {fileID: 497229350}
   Text_Speed: {fileID: 1572764267}
@@ -19748,7 +19750,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1061397220}
         m_TargetAssemblyTypeName: MainSceneManagerCS, Assembly-CSharp
-        m_MethodName: Btn_League_OnClick
+        m_MethodName: Btn_Versus_OnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

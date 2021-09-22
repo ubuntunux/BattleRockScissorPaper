@@ -8,6 +8,7 @@ public class TrainingSceneManagerCS : MonoBehaviour
     public GameObject MainSceneManager;
     public GameObject PlayerA;
     public GameObject PlayerB;
+    public GameObject SkinScene;
 
     public GameObject Text_Health;
     public GameObject Text_Power;
@@ -34,6 +35,7 @@ public class TrainingSceneManagerCS : MonoBehaviour
 
     public void Btn_Skin_OnClick()
     {
+        SkinScene.GetComponent<SkinManagerCS>().SetTargetPlayer(PlayerA);
         MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.SkinScene);
     }
 

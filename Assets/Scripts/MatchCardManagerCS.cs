@@ -112,7 +112,7 @@ public class MatchCardManagerCS : MonoBehaviour
     {
         if(matchCard.GetPlayer().GetComponent<PlayerCS>().GetIsPlayer())
         {
-            _challengeSceneManager.Btn_Skin_OnClick();
+            _challengeSceneManager.Btn_Skin_OnClick(matchCard.GetPlayer());
         }
     }
 

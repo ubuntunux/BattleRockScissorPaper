@@ -18,6 +18,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject GameManager;
     public GameObject SkinScene;
 
+    public GameObject Text_Title;
     public GameObject LayerPortrait;    
     public GameObject LayerVersus;
     public GameObject VersusPortraitPlayerA;
@@ -55,6 +56,16 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     {
     }
 
+    public bool IsChallengeScene()
+    {
+        return GameSceneType.ChallenegeScene == MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType();
+    }
+
+    public bool IsVersusScene()
+    {
+        return GameSceneType.VersusScene == MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType();
+    }
+
     void ResetChallengeScene()
     {
         _timer = 0.0f;
@@ -64,27 +75,40 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         LayerVersus.SetActive(false);
         Btn_Back.SetActive(true);
 
+        bool isVersusScene = IsVersusScene();
+
+        Text_Title.GetComponent<TextMeshProUGUI>().text = isVersusScene ? "1P vs 2P" : "Challenge League";
+
+        PlayerA.SetActive(true);
+        PlayerA.GetComponent<PlayerCS>().SetPlayerInfo(true, false == isVersusScene);
+        PlayerA.GetComponent<PlayerCS>().SetStateIdle();
+
+        PlayerB.SetActive(true);
+        PlayerB.GetComponent<PlayerCS>().SetPlayerInfo(isVersusScene, false);
+        PlayerB.GetComponent<PlayerCS>().SetStateIdle();
+
         GameObject[] playerSkins = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkins();
         LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, playerSkins, PlayerA);
         LayerSelectPlayerA.SetActive(true);
 
-        LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, ChallengePlayers, PlayerB);
+        LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, isVersusScene ? playerSkins : ChallengePlayers, PlayerB);
         LayerSelectPlayerB.SetActive(true);
 
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().Reset();
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().SetSelected(true);
 
-        PlayerA.SetActive(true);
-        PlayerA.GetComponent<PlayerCS>().SetStateIdle();
-
-        PlayerB.SetActive(true);
-        PlayerB.GetComponent<PlayerCS>().SetStateIdle();
-
-        // 
-        SetPlayerCharacter();
+        // select player
+        ResetPlayerCharacter(true);
         
-        int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, 0);
-        LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().SelectMatchCardByIndex(currentStage, false);
+        if(isVersusScene)
+        {
+            ResetPlayerCharacter(false);
+        }
+        else
+        {
+            int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, 0);
+            LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().SelectMatchCardByIndex(currentStage, false);
+        }
     }
 
     public void ClearChallengeInfo()
@@ -97,23 +121,27 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public void AddChallengeScore(int attackPoint, int hp, bool isWin)
     {
         int score = attackPoint + hp;
-        
-        // save data
-        PlayerA.GetComponent<PlayerCS>()._playerStat._score += score;
-        PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
-
-        MainSceneManager.GetComponent<MainSceneManagerCS>().SetScore(PlayerA.GetComponent<PlayerCS>()._playerStat._score);
+        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(score);
     }
 
-    void SetPlayerCharacter()
+    void ResetPlayerCharacter(bool isPlayerA)
     {
-        int skinID = SystemValue.GetInt(SystemValue.PlayerSkinIDKey, Constants.DefaultSkinID);
-        LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().SelectMatchCardBySkinID(skinID, false);
-        PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerA.GetComponent<PlayerCS>());
+        int skinID = SystemValue.GetInt(isPlayerA ? SystemValue.PlayerSkinIDKey : SystemValue.PlayerBSkinIDKey, Constants.DefaultSkinID);
+        if(isPlayerA)
+        {
+            LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().SelectMatchCardBySkinID(skinID, false);
+            PlayerA_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerA.GetComponent<PlayerCS>());
+        }
+        else
+        {
+            LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().SelectMatchCardBySkinID(skinID, false);
+            PlayerB_Info.GetComponent<PlayerInfoCS>().SetPlayerInfo(PlayerB.GetComponent<PlayerCS>());
+        }
     }
 
     public void SelectChallengePlayer(GameObject player, PlayerCS playerSkin, int matchCardIndex, bool playSound = true)
     {
+        bool isVersusScene = IsVersusScene();
         bool isPlayerA = PlayerA == player;
         GameObject playerInfo = isPlayerA ? PlayerA_Info : PlayerB_Info;
 
@@ -128,14 +156,22 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             player.GetComponent<PlayerCS>().PlayCharacterName();
         }
 
+        // save last selected state
+        int skinID = player.GetComponent<PlayerCS>()._playerStat._skinID;
         if(isPlayerA)
         {
-            int skinID = player.GetComponent<PlayerCS>()._playerStat._skinID;
             SystemValue.SetInt(SystemValue.PlayerSkinIDKey, skinID);
         }
         else
         {
-            SystemValue.SetInt(SystemValue.PlayerLastStageKey, matchCardIndex);
+            if(isVersusScene)
+            {
+                SystemValue.SetInt(SystemValue.PlayerBSkinIDKey, skinID);
+            }
+            else
+            {
+                SystemValue.SetInt(SystemValue.PlayerLastStageKey, matchCardIndex);
+            }
         }
     }
 
@@ -162,8 +198,9 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         _challengeState = ChallengeState.Versus;
     }
 
-    public void Btn_Skin_OnClick()
+    public void Btn_Skin_OnClick(GameObject player)
     {
+        SkinScene.GetComponent<SkinManagerCS>().SetTargetPlayer(player);
         MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.SkinScene);
     }
 
@@ -178,9 +215,10 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType() == GameSceneType.ChallenegeScene)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            GameSceneType activateSceneType = MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType();
+            if(GameSceneType.ChallenegeScene == activateSceneType || GameSceneType.VersusScene == activateSceneType)
             {
                 Exit();
             }
@@ -190,21 +228,25 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         {
             if(LayerVersus.GetComponent<VersusCS>().isEnd())
             {
+                bool isVersusScene = IsVersusScene();
+
                 MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
                 
                 PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
                 playerCreateInfoA._name = PlayerA.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoA._isPlayer = true;
+                playerCreateInfoA._usePlayerStat = !isVersusScene;
                 playerCreateInfoA._isPlayerA = true;
                 playerCreateInfoA._skin = PlayerA.GetComponent<PlayerCS>();
                 
                 PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
                 playerCreateInfoB._name = PlayerB.GetComponent<PlayerCS>().GetCharacterName();
-                playerCreateInfoB._isPlayer = false;
+                playerCreateInfoB._isPlayer = isVersusScene;
+                playerCreateInfoA._usePlayerStat = false;
                 playerCreateInfoB._isPlayerA = false;
                 playerCreateInfoB._skin = PlayerB.GetComponent<PlayerCS>();
 
-                GameManager.GetComponent<GameManagerCS>().ResetGameManager(playerCreateInfoA, playerCreateInfoB);
+                GameManager.GetComponent<GameManagerCS>().ResetGameManager(isVersusScene, playerCreateInfoA, playerCreateInfoB);
             }
         }
         _timer += Time.deltaTime;

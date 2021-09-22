@@ -34,6 +34,7 @@ public class GameManagerCS : MonoBehaviour
     int _maxWinCount = 2;
     int _round = 1;
     bool _pause = false;
+    bool _isVersusScene = false;
     GameState _gameState = GameState.None;
 
     // Record
@@ -109,7 +110,7 @@ public class GameManagerCS : MonoBehaviour
     public void Exit()
     {   
         SetPause(false);
-        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.ChallenegeScene);
+        MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(_isVersusScene ? GameSceneType.VersusScene : GameSceneType.ChallenegeScene);
     }
 
     public bool CheckGameState(GameState gameState)
@@ -117,8 +118,9 @@ public class GameManagerCS : MonoBehaviour
         return _gameState == gameState;
     }
 
-    public void ResetGameManager(PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
+    public void ResetGameManager(bool isVersusScene, PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
     {
+        _isVersusScene = isVersusScene;
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
         _round = 1;
@@ -403,7 +405,7 @@ public class GameManagerCS : MonoBehaviour
         _gameState = GameState.Groggy;
     }
 
-    void SetHitPlayers()
+    void SetHitPlayers(float shaderIntensity = 0.0f)
     {
         AttackType attackTypeA = PlayerA_CS.getLastAttackType();
         AttackType attackTypeB = PlayerB_CS.getLastAttackType();
@@ -433,7 +435,7 @@ public class GameManagerCS : MonoBehaviour
             }
         }
 
-        MainCamera.GetComponent<CameraCS>().setShake();
+        MainCamera.GetComponent<CameraCS>().setShake(shaderIntensity);
     }
 
     void SetAttackHitState()
@@ -653,16 +655,17 @@ public class GameManagerCS : MonoBehaviour
 
             if(0.0f == _groggyAttackTime)
             {
+                float shaderIntensity = Constants.CameraShakeIntensity * 0.2f;
                 if(false == isGroggyHP_A && AttackType.None != PlayerA_CS.getLastAttackType())
                 {
                     PlayerA_CS.SetAttackHit();
-                    SetHitPlayers();
+                    SetHitPlayers(shaderIntensity);
                     _groggyAttackTime = Constants.GroggyAttackTime;
                 }
                 else if(false == isGroggyHP_B && AttackType.None != PlayerB_CS.getLastAttackType())
                 {
                     PlayerB_CS.SetAttackHit();
-                    SetHitPlayers();
+                    SetHitPlayers(shaderIntensity);
                     _groggyAttackTime = Constants.GroggyAttackTime;
                 }
             }
@@ -700,35 +703,38 @@ public class GameManagerCS : MonoBehaviour
                 else
                 {
                     // Save
-                    ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
-                    challenegeSceneManager.AddChallengeScore(_recordAttackPoint, _recordHP, isPlayerA_Win);
-                    if(PlayerB_CS.GetWin() < PlayerA_CS.GetWin())
+                    if(false == _isVersusScene)
                     {
-                        PlayerA_CS._playerStat._win += 1;
-                        PlayerB_CS._playerStat._lose += 1;
-
-                        // next stage
-                        if(false == PlayerB_CS.GetIsPlayer())
+                        ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
+                        challenegeSceneManager.AddChallengeScore(_recordAttackPoint, _recordHP, isPlayerA_Win);
+                        if(PlayerB_CS.GetWin() < PlayerA_CS.GetWin())
                         {
-                            int nextStage = PlayerA_CS._playerStat._stage + 1;
-                            PlayerA_CS._playerStat._stage = nextStage;
-                            SystemValue.SetInt(SystemValue.PlayerLastStageKey, nextStage);
+                            PlayerA_CS._playerStat._win += 1;
+                            PlayerB_CS._playerStat._lose += 1;
+
+                            // next stage
+                            if(false == PlayerB_CS.GetIsPlayer())
+                            {
+                                int nextStage = PlayerA_CS._playerStat._stage + 1;
+                                PlayerA_CS._playerStat._stage = nextStage;
+                                SystemValue.SetInt(SystemValue.PlayerLastStageKey, nextStage);
+                            }
                         }
-                    }
-                    else if(PlayerA_CS.GetWin() < PlayerB_CS.GetWin())
-                    {
-                        PlayerB_CS._playerStat._win += 1;
-                        PlayerA_CS._playerStat._lose += 1;
-                    }
-                    else
-                    {
-                        PlayerA_CS._playerStat._draw += 1;
-                        PlayerB_CS._playerStat._draw += 1;
-                    }
+                        else if(PlayerA_CS.GetWin() < PlayerB_CS.GetWin())
+                        {
+                            PlayerB_CS._playerStat._win += 1;
+                            PlayerA_CS._playerStat._lose += 1;
+                        }
+                        else
+                        {
+                            PlayerA_CS._playerStat._draw += 1;
+                            PlayerB_CS._playerStat._draw += 1;
+                        }
 
-                    PlayerA_CS.SavePlayerStat();
-                    PlayerB_CS.SavePlayerStat();
-
+                        PlayerA_CS.SavePlayerStat();
+                        PlayerB_CS.SavePlayerStat();
+                    }
+                    
                     SetGameResult();
                 }
             }

@@ -11,6 +11,9 @@ public class SkinManagerCS : MonoBehaviour
 
     public GameObject SkinCardPrefab;
     public GameObject LayerSkinCard;
+    public GameObject LayerSkinCardContents;
+
+    GameObject _targetPlayer = null;
 
     // Start is called before the first frame update
     void Start()
@@ -34,10 +37,20 @@ public class SkinManagerCS : MonoBehaviour
 
     public void ResetSkinScene()
     {
-        PlayerA.SetActive(true);
+        bool showPlayerA = PlayerA == _targetPlayer;
+
+        LayerSkinCard.transform.localPosition = new Vector3(showPlayerA ? 165.0f : -165.0f, 150.0f, 0.0f);
+
+        PlayerA.SetActive(showPlayerA);
         PlayerA.GetComponent<PlayerCS>().SetStateIdle();
         
-        PlayerB.SetActive(false);
+        PlayerB.SetActive(false == showPlayerA);
+        PlayerB.GetComponent<PlayerCS>().SetStateIdle();
+    }
+
+    public void SetTargetPlayer(GameObject targetPlayer)
+    {
+        _targetPlayer = targetPlayer;
     }
 
     public void AddSkinCards()
@@ -55,7 +68,7 @@ public class SkinManagerCS : MonoBehaviour
             {
                 PlayerCS skin = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinByIndex(skinIndex++);
                 GameObject SkinCardEntry = (GameObject)GameObject.Instantiate(SkinCardPrefab);
-                SkinCardEntry.transform.SetParent(LayerSkinCard.transform);
+                SkinCardEntry.transform.SetParent(LayerSkinCardContents.transform);
                 SkinCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(offsetX + x * cardSize, offsetY + y * -cardSize, 0.0f);
                 SkinCardEntry.transform.localScale = new Vector3(1, 1, 1);
                 SkinCardEntry.GetComponent<SkinCardCS>().SetSkinCard(GetComponent<SkinManagerCS>(), skin);
@@ -75,15 +88,16 @@ public class SkinManagerCS : MonoBehaviour
 
     public void SetPlayerSkin(PlayerCS skin)
     {
-        PlayerA.GetComponent<PlayerCS>().SetSkin(skin);
-        PlayerA.GetComponent<PlayerCS>().PlayCharacterName();
-        SystemValue.SetInt(SystemValue.PlayerSkinIDKey, skin._playerStat._skinID);
+        _targetPlayer.GetComponent<PlayerCS>().SetSkin(skin);
+        _targetPlayer.GetComponent<PlayerCS>().PlayCharacterName();
+        SystemValue.SetInt((PlayerA == _targetPlayer) ? SystemValue.PlayerSkinIDKey : SystemValue.PlayerBSkinIDKey, skin._playerStat._skinID);
     }
 
     public void PurchaseSkinByAccounts(SkinCardCS skinCard)
     {
         PlayerCS skin = skinCard.GetSkin();
-        int score = PlayerA.GetComponent<PlayerCS>()._playerStat._score - skin.Accounts;
+        int score = MainSceneManager.GetComponent<MainSceneManagerCS>().GetScore() - skin.Accounts;
+
         if(0 <= score)
         {
             MainSceneManager.GetComponent<MainSceneManagerCS>().SetScore(score);

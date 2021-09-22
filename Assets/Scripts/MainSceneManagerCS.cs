@@ -11,6 +11,7 @@ public enum GameSceneType
     None,
     TitleScene,
     MainScene,
+    VersusScene,
     ChallenegeScene,
     TrainingScene,
     SkinScene,
@@ -85,6 +86,7 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerCreateInfo playerCreateInfoA = new PlayerCreateInfo();
         playerCreateInfoA._name = "PlayerA";
         playerCreateInfoA._isPlayer = true;
+        playerCreateInfoA._usePlayerStat = true;
         playerCreateInfoA._isPlayerA = true;
         PlayerA.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoA);
         PlayerA.SetActive(false);
@@ -92,6 +94,7 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
         playerCreateInfoB._name = "PlayerB";
         playerCreateInfoB._isPlayer = false;
+        playerCreateInfoA._usePlayerStat = false;
         playerCreateInfoB._isPlayerA = false;
         PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
         PlayerB.SetActive(false);
@@ -129,19 +132,22 @@ public class MainSceneManagerCS : MonoBehaviour
     {
         _advertisementManager.ShowRewardedAd(rewardedSkinCard);
     }
-    //
+
+    public int GetScore()
+    {
+        return SystemValue.GetInt(SystemValue.PlayerScoreKey, Constants.DefaultAccounts);
+    }
 
     public void SetScore(int score)
     {
+        score = Mathf.Max(0, score);
         Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
-        PlayerA.GetComponent<PlayerCS>()._playerStat._score = score;
-        PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
+        SystemValue.SetInt(SystemValue.PlayerScoreKey, score);
     }
 
     public void AddScore(int score)
     {
-        score += PlayerA.GetComponent<PlayerCS>()._playerStat._score;
-        SetScore(Mathf.Max(0, score));
+        SetScore(GetScore() + score);
     }
 
     public void LoadPlayerCharacterInfo()
@@ -150,8 +156,7 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerCS playerSkin = GetSkin(skinID);
         PlayerA.GetComponent<PlayerCS>().SetSkin(playerSkin);
 
-        int score = PlayerA.GetComponent<PlayerCS>()._playerStat._score;
-        SetScore(score);
+        SetScore(GetScore());
     }
 
     public int GetSkinCount()
@@ -195,7 +200,10 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerA.GetComponent<PlayerCS>().InitializePlayerStat();
         PlayerA.GetComponent<PlayerCS>().SavePlayerStat();
         
+        // TEST CODE
+        SystemValue.SetInt(SystemValue.PlayerScoreKey, 10000);//Constants.DefaultAccounts);
         SystemValue.SetInt(SystemValue.PlayerSkinIDKey, Constants.DefaultSkinID);
+        SystemValue.SetInt(SystemValue.PlayerBSkinIDKey, Constants.DefaultSkinID);
         SystemValue.SetInt(SystemValue.PlayerLastStageKey, 0);
 
         LoadPlayerCharacterInfo();
@@ -220,6 +228,7 @@ public class MainSceneManagerCS : MonoBehaviour
                 return TitleScene;
             case GameSceneType.MainScene:
                 return MainScene;
+            case GameSceneType.VersusScene:
             case GameSceneType.ChallenegeScene:
                 return ChallenegeScene;
             case GameSceneType.FightScene:
@@ -267,6 +276,7 @@ public class MainSceneManagerCS : MonoBehaviour
             case GameSceneType.MainScene:
                 ShowScoreAndSkinButton(true);
                 break;
+            case GameSceneType.VersusScene:
             case GameSceneType.ChallenegeScene:
                 ShowScoreAndSkinButton(true);
                 Gym.SetActive(false);
@@ -312,7 +322,12 @@ public class MainSceneManagerCS : MonoBehaviour
         SetActivateScene(GameSceneType.MainScene);
     }
 
-    public void Btn_League_OnClick()
+    public void Btn_Versus_OnClick()
+    {
+        SetActivateScene(GameSceneType.VersusScene);
+    }
+
+    public void Btn_Challenge_OnClick()
     {
         SetActivateScene(GameSceneType.ChallenegeScene);
     }
@@ -324,6 +339,7 @@ public class MainSceneManagerCS : MonoBehaviour
 
     public void Btn_Skin_OnClick()
     {
+        SkinScene.GetComponent<SkinManagerCS>().SetTargetPlayer(PlayerA);
         SetActivateScene(GameSceneType.SkinScene);
     }
 

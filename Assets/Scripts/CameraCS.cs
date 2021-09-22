@@ -83,9 +83,13 @@ public class CameraCS : MonoBehaviour
         _cameraHandMove.setShake(0.0f, 0.5f, 3.0f);
     }
 
-    public void setShake()
+    public void setShake(float shaderIntensity = 0.0f)
     {
-        _cameraShake.setShake(Constants.CameraShakeDuration, Constants.CameraShakeIntensity, Constants.CameraShakeRandomTerm);
+        _cameraShake.setShake(
+            Constants.CameraShakeDuration, 
+            (0.0f == shaderIntensity) ? Constants.CameraShakeIntensity : shaderIntensity, 
+            Constants.CameraShakeRandomTerm
+        );
     }
 
     // Update is called once per frame

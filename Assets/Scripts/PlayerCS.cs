@@ -1,3 +1,5 @@
+#define USE_PLAYER_STAT
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,13 +29,14 @@ public class PlayerCreateInfo
 {
     public string _name = "";
     public bool _isPlayer = false;
+    public bool _usePlayerStat = false;
     public bool _isPlayerA = true;
     public PlayerCS _skin = null;
 }
 
 public class PlayerStat
 {
-    public bool _isPlayer = false;    
+    public bool _usePlayerStat = false;    
     public int _skinID = Constants.DefaultSkinID;
     public int _advertisement = 0;
     public bool _purchased = false;
@@ -41,7 +44,6 @@ public class PlayerStat
     public int _win = 0;
     public int _draw = 0;
     public int _lose = 0;
-    public int _score = 0;
     public int _stage = 0;    
     public int _hp = Constants.DefaultHP;
     public int _power = Constants.DefaultPower;
@@ -51,7 +53,7 @@ public class PlayerStat
     {
         Debug.Log("=============================");
         Debug.Log(title);
-        Debug.Log("_isPlayer: " + _isPlayer.ToString() 
+        Debug.Log("_usePlayerStat: " + _usePlayerStat.ToString() 
             + ", _skinID: " + _skinID.ToString()
             + ", _advertisement: " + _advertisement.ToString()
             + ", _purchased: " + _purchased.ToString()
@@ -59,7 +61,6 @@ public class PlayerStat
             + ", _win: " + _win.ToString()
             + ", _draw: " + _draw.ToString()
             + ", _lose: " + _lose.ToString()
-            + ", _score: " + _score.ToString()
             + ", _stage: " + _stage.ToString()
             + ", _hp: " + _hp.ToString()
             + ", _power: " + _power.ToString()
@@ -67,30 +68,25 @@ public class PlayerStat
         );
     }
 
-    public void InitializePlayerStat(PlayerCS player, bool isPlayer)
+    public void InitializePlayerStat(PlayerCS player, bool usePlayerStat)
     {
-        // TEST CODE
-        int defaultPlayerScore = 10000;//0;
-        int defaultPlayerPower = 10;//Constants.DefaultPower;
-
-        _isPlayer = isPlayer;
+        _usePlayerStat = usePlayerStat;
         _skinID = player.SkinID;
         _advertisement = 0;
         _purchased = player.Purchased;
-        _perfect = isPlayer ? 0 : player.Perfect;
-        _win = isPlayer ? 0 : player.Win;
-        _draw = isPlayer ? 0 : player.Draw;
-        _lose = isPlayer ? 0 : player.Lose;
-        _score = isPlayer ? defaultPlayerScore : player.Score;
+        _perfect = usePlayerStat ? 0 : player.Perfect;
+        _win = usePlayerStat ? 0 : player.Win;
+        _draw = usePlayerStat ? 0 : player.Draw;
+        _lose = usePlayerStat ? 0 : player.Lose;
         _stage = 0;
-        _hp = isPlayer ? Constants.DefaultHP : player.HP;
-        _power = isPlayer ? defaultPlayerPower : player.Power;
-        _speed = isPlayer ? Constants.AttackTimerTime : player.Speed;
+        _hp = usePlayerStat ? Constants.DefaultHP : player.HP;
+        _power = usePlayerStat ? Constants.DefaultPower : player.Power;
+        _speed = usePlayerStat ? Constants.AttackTimerTime : player.Speed;
     }
 
     public string GetSkinIDString()
     {
-        return _isPlayer ? "" : _skinID.ToString();
+        return _usePlayerStat ? "" : _skinID.ToString();
     }
 
     public void LoadPlayerStat()
@@ -104,7 +100,6 @@ public class PlayerStat
         _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         _stage = SystemValue.GetInt(skinID + SystemValue.PlayerStatStageKey, _stage);
-        _score = SystemValue.GetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
         _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
         _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
         _speed = SystemValue.GetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
@@ -120,7 +115,6 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
-        SystemValue.SetInt(skinID + SystemValue.PlayerStatScoreKey, _score);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatStageKey, _stage);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
@@ -157,11 +151,14 @@ public class PlayerStat
 
 public class PlayerCS : MonoBehaviour
 {
+    static public bool USE_PLAYER_STAT = true;
+
     // properties
     public string _characterName;
     string _name;
     bool _pause = false;
     bool _isPlayer = false;
+    bool _usePlayerStat = false;
     bool _isPlayerA = false;
     PlayerState _playerState = PlayerState.None;
     AttackType _lastAttackType = AttackType.None;
@@ -303,6 +300,7 @@ public class PlayerCS : MonoBehaviour
     {
         _name = playerCreateInfo._name;
         _isPlayer = playerCreateInfo._isPlayer;
+        _usePlayerStat = playerCreateInfo._usePlayerStat;
         _isPlayerA = playerCreateInfo._isPlayerA;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         _elapsedTime = 0.0f;
@@ -329,7 +327,7 @@ public class PlayerCS : MonoBehaviour
 
     public void InitializePlayerStat()
     {
-        _playerStat.InitializePlayerStat(this, _isPlayer);
+        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ?_usePlayerStat : _isPlayer);
     }
 
     public void LoadPlayerStat()
@@ -343,6 +341,14 @@ public class PlayerCS : MonoBehaviour
         _playerStat.SavePlayerStat();
     }
 
+    public void SetPlayerInfo(bool isPlayer, bool usePlayerStat)
+    {
+        _isPlayer = isPlayer;
+        _usePlayerStat = usePlayerStat;
+        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ?_usePlayerStat : _isPlayer);
+        _playerStat.LoadPlayerStat();
+    }
+
     public void SetPause(bool pause)
     {
         _pause = pause;
@@ -351,6 +357,11 @@ public class PlayerCS : MonoBehaviour
     public bool GetIsPlayer()
     {
         return _isPlayer;
+    }
+
+    public bool GetUsePlayerStat()
+    {
+        return _usePlayerStat;
     }
 
     public bool GetIsPlayerA()
