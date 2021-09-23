@@ -55,7 +55,8 @@ public class MatchCardManagerCS : MonoBehaviour
 
         GameObject LayerMatchCardEntry = (GameObject)GameObject.Instantiate(LayerMatchCardPrefab);
         LayerMatchCardEntry.transform.SetParent(LayerMatchCardContents.transform);
-        LayerMatchCardEntry.transform.localScale = new Vector3(1, 1, 1);        
+        float scaleX = player.GetComponent<PlayerCS>().GetIsPlayerA() ? -1 : 1;
+        LayerMatchCardEntry.transform.localScale = new Vector3(scaleX, 1, 1);        
         LayerMatchCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(posX, 0.0f, 0.0f);
         LayerMatchCardEntry.GetComponent<MatchCardCS>().SetMatchCard(this, stageIndex, unlocked, skin, player);
 

@@ -33,6 +33,7 @@ public class GameManagerCS : MonoBehaviour
     int _maxRoundCount = 3;
     int _maxWinCount = 2;
     int _round = 1;
+    float _roundTimer = Constants.RoundTime;
     bool _pause = false;
     bool _isVersusScene = false;
     GameState _gameState = GameState.None;
@@ -40,6 +41,8 @@ public class GameManagerCS : MonoBehaviour
     // Record
     int _recordAttackPoint = 0;
     int _recordHP = 0;
+    int _recordBonus = 0;
+    int _recordTotalScore = 0;
 
     //
     public GameObject MainCamera;
@@ -131,6 +134,8 @@ public class GameManagerCS : MonoBehaviour
         // record
         _recordAttackPoint = 0;
         _recordHP = 0;
+        _recordBonus = 0;
+        _recordTotalScore = 0;
 
         for(int i=0; i < 3; ++i)
         {
@@ -145,8 +150,6 @@ public class GameManagerCS : MonoBehaviour
 
         PlayerA_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, playerCreateInfoA);
         PlayerB_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, playerCreateInfoB);
-
-        _initialAttackTimerTime = Mathf.Min(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
 
         Layer_AttackButtonsB.SetActive(playerCreateInfoB._isPlayer);
         LayerResult.SetActive(false);
@@ -234,7 +237,10 @@ public class GameManagerCS : MonoBehaviour
 
     public void Btn_Back_OnClick()
     {
-        SetPause(!_pause);
+        if(GameState.GameResult != _gameState)
+        {
+            SetPause(!_pause);
+        }
     }
 
     public void Btn_PlayerA_Rock_OnClick() {
@@ -312,7 +318,6 @@ public class GameManagerCS : MonoBehaviour
         _attackHitTime = 0.0f;
         _readyToRoundTime = 0.0f;
         _roundEndTime = 0.0f;
-        _gameResultTime = 0.0f;
 
         PlayerA_CS.SetReadyToRound();
         PlayerB_CS.SetReadyToRound();
@@ -343,6 +348,10 @@ public class GameManagerCS : MonoBehaviour
 
         Text_Result.SetActive(true);
         Text_Result.GetComponent<TextMeshProUGUI>().text = (_maxRoundCount == _round) ? "Final Round" : ("Round " + _round.ToString());
+        Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, 100.0f);
+
+        _initialAttackTimerTime = Constants.AttackTimerTime;
+        _roundTimer = Constants.RoundTime;
 
         _gameState = GameState.ReadyToRound;
     }
@@ -365,7 +374,17 @@ public class GameManagerCS : MonoBehaviour
     void SetGameResult()
     {
         LayerResult.SetActive(true);
-        LayerResult.GetComponent<ResultCS>().Reset(PlayerA_CS, PlayerA_CS.GetWin(), PlayerB_CS, PlayerB_CS.GetWin());
+        LayerResult.GetComponent<ResultCS>().ResetResultScene(
+            PlayerA_CS, 
+            PlayerA_CS.GetWin(), 
+            PlayerB_CS, 
+            PlayerB_CS.GetWin(), 
+            _isVersusScene,
+            _recordAttackPoint,
+            _recordHP,
+            _recordBonus,
+            _recordTotalScore
+        );
         _gameResultTime = 0.0f;
         _gameState = GameState.GameResult;
     }
@@ -378,6 +397,11 @@ public class GameManagerCS : MonoBehaviour
         AttackTimer_CS.ResetFightTimer();
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
+        
+        float newAttackTime = 2.0f / Mathf.Max(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
+        // prevent too fast
+        _initialAttackTimerTime = Mathf.Lerp(_initialAttackTimerTime, Random.Range(newAttackTime, Constants.AttackTimerTime), 0.5f);
+
         _attackTimerTime = 0.0f;
         _gameState = GameState.ReadyToAttack;
     }
@@ -431,17 +455,18 @@ public class GameManagerCS : MonoBehaviour
         if(AttackType.None != attackerAttackType && (attackerAttackType == attackeeAttackType || checkLose(attackerAttackType, attackeeAttackType)))
         {
             CreateEffectAttackHit(attackerAttackType, attackee.GetIsPlayerA());
-            bool isCritical = attacker.IsCriticalAttack();
+            bool isGroggyHP = attackee.isGroggyHP();
+            bool isCritical = attacker.IsCriticalAttack() && false == isGroggyHP;
             Vector3 imagePosition = Image_Bam.transform.localPosition;
             imagePosition.y = GetHitImagePositionY(attackerAttackType);
             Image_Bam.transform.localPosition = imagePosition;
             Image_Bam.SetActive(!isCritical);
             Image_Critical.transform.localPosition = imagePosition;
             Image_Critical.SetActive(isCritical);
-            int damage = attackee.isGroggyHP() ? attacker.GetPower() : attacker.GetPowerWithGuage();
+            int damage = isGroggyHP ? attacker.GetPower() : attacker.GetPowerWithGuage();
             attackee.SetDamage(damage, attackerAttackType);
 
-            //first you need the RectTransform component of your canvas
+            // first you need the RectTransform component of your canvas
             Vector3 damagePosition = imagePosition;
             damagePosition.y += 1.0f;
             RectTransform CanvasRect = Canvas.GetComponent<RectTransform>();
@@ -516,12 +541,7 @@ public class GameManagerCS : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if(GameState.GameResult == _gameState)
-                {
-                    Exit();
-                    return;
-                }
-                else
+                if(GameState.GameResult != _gameState)
                 {
                     SetPause(!_pause);
                 }
@@ -567,8 +587,9 @@ public class GameManagerCS : MonoBehaviour
         }
         else if(GameState.ReadyToAttack == _gameState)
         {
-            float attackTimerBar = 1.0f - ((_attackTimerTime % _initialAttackTimerTime) / _initialAttackTimerTime);
+            float attackTimerBar = Mathf.Max(0.0f, 1.0f - (_attackTimerTime / _initialAttackTimerTime));
             AttackTimer_CS.setBar(attackTimerBar);
+
             if(_initialAttackTimerTime <= _attackTimerTime)
             {
                 SetAttackHitState();
@@ -594,6 +615,9 @@ public class GameManagerCS : MonoBehaviour
                 if (false == isAliveA || false == isAliveB)
                 {
                     Text_Result.SetActive(true);
+                    float textResultPosOffsetX = 250.0f;
+                    float textResultPosX = 0.0f;
+                    float textResultPosY = _isVersusScene ? 120.0f : 100.0f;
 
                     if(isAliveA && false == isAliveB)
                     {
@@ -601,15 +625,32 @@ public class GameManagerCS : MonoBehaviour
                         PlayerA_CS.SetWin();
                         PlayerB_CS.SetDead();
                         Snd_Win.Play();
-                        Text_Result.GetComponent<TextMeshProUGUI>().text = "You Win";
+                        if(_isVersusScene)
+                        {
+                            textResultPosX = -textResultPosOffsetX;
+                            Text_Result.GetComponent<TextMeshProUGUI>().text = "Win";
+                        }
+                        else
+                        {
+                            Text_Result.GetComponent<TextMeshProUGUI>().text = "You Win";
+                        }
                     }
                     else if(false == isAliveA && isAliveB)
                     {
                         Layer_Wins.transform.Find("WinB" + PlayerB_CS.GetWin().ToString()).gameObject.SetActive(true);
                         PlayerA_CS.SetDead();
                         PlayerB_CS.SetWin();
-                        Snd_Lose.Play();
-                        Text_Result.GetComponent<TextMeshProUGUI>().text = "You Lose";
+                        if(_isVersusScene)
+                        {
+                            textResultPosX = textResultPosOffsetX;
+                            Snd_Win.Play();
+                            Text_Result.GetComponent<TextMeshProUGUI>().text = "Win";
+                        }
+                        else
+                        {
+                            Snd_Lose.Play();
+                            Text_Result.GetComponent<TextMeshProUGUI>().text = "You Lose";
+                        }
                     }
                     else
                     {
@@ -618,6 +659,7 @@ public class GameManagerCS : MonoBehaviour
                         Snd_Draw.Play();
                         Text_Result.GetComponent<TextMeshProUGUI>().text = "Draw";
                     }
+                    Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(textResultPosX, textResultPosY);
                     
                     int maxWinCount = Mathf.Max(PlayerA_CS.GetWin(), PlayerB_CS.GetWin());
                     if (_round < _maxRoundCount && maxWinCount < _maxWinCount)
@@ -744,8 +786,12 @@ public class GameManagerCS : MonoBehaviour
                     // Save
                     if(false == _isVersusScene)
                     {
-                        ChallengeSceneManagerCS challenegeSceneManager = ChallengeSceneManager.GetComponent<ChallengeSceneManagerCS>();
-                        challenegeSceneManager.AddChallengeScore(_recordAttackPoint, _recordHP, isPlayerA_Win);
+                        // record score
+                        _recordTotalScore = _recordAttackPoint + _recordHP;
+                        _recordBonus = isPlayerA_Win ? (_recordTotalScore / 2) : 0;
+                        _recordTotalScore += _recordBonus;
+                        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(_recordBonus);
+                        
                         if(PlayerB_CS.GetWin() < PlayerA_CS.GetWin())
                         {
                             PlayerA_CS._playerStat._win += 1;
@@ -754,8 +800,13 @@ public class GameManagerCS : MonoBehaviour
                             // next stage
                             if(false == PlayerB_CS.GetIsPlayer())
                             {
-                                int nextStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey) + 1;
-                                SystemValue.SetInt(SystemValue.PlayerLastStageKey, nextStage);
+                                int lastStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey);
+                                if(lastStage <= SystemValue.GetInt(SystemValue.PlayerSelectStageKey))
+                                {
+                                    int nextStage = lastStage + 1;
+                                    SystemValue.SetInt(SystemValue.PlayerLastStageKey, nextStage);
+                                    SystemValue.GetInt(SystemValue.PlayerSelectStageKey, nextStage);
+                                }
                             }
                         }
                         else if(PlayerA_CS.GetWin() < PlayerB_CS.GetWin())

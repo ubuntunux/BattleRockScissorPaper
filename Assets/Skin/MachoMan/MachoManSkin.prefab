@@ -729,10 +729,10 @@ MonoBehaviour:
   HP: 30
   Power: 10
   Level: 1
-  Speed: 2
+  Speed: 1
   SkinID: 1
-  Advertisement: 3
   Accounts: 1000
+  Advertisement: 3
   Purchased: 1
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: ff06736d089b5d4c4b254b0d367ce310, type: 3}

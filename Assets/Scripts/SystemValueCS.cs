@@ -19,6 +19,7 @@ public class SystemValue : MonoBehaviour
 
     public static string PlayerScoreKey = "PlayerScore";
     public static string PlayerLastStageKey = "PlayerLastStage";
+    public static string PlayerSelectStageKey = "PlayerSelectStage";
 
     public static bool GetBool(string key, bool defaultValue = false)
     {

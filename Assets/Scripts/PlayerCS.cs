@@ -1,4 +1,3 @@
-#define USE_PLAYER_STAT
 
 using System.Collections;
 using System.Collections.Generic;
@@ -275,7 +274,7 @@ public class PlayerCS : MonoBehaviour
 
     public int GetPowerWithGuage()
     {
-        float powerGuage = GetPowerGuage();
+        float powerGuage = Mathf.Max(Constants.MinPowerGuage, GetPowerGuage());
         int damage = Mathf.Max(1, (int)Mathf.Ceil((float)_playerStat._power * powerGuage));
         if(Constants.CriticalPowerGuage <= powerGuage)
         {
@@ -335,7 +334,7 @@ public class PlayerCS : MonoBehaviour
 
     public void InitializePlayerStat()
     {
-        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ?_usePlayerStat : _isPlayer);
+        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ? _usePlayerStat : _isPlayer);
     }
 
     public void LoadPlayerStat()
@@ -353,7 +352,7 @@ public class PlayerCS : MonoBehaviour
     {
         _isPlayer = isPlayer;
         _usePlayerStat = usePlayerStat;
-        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ?_usePlayerStat : _isPlayer);
+        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ? usePlayerStat : isPlayer);
         _playerStat.LoadPlayerStat();
     }
 

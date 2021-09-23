@@ -106,7 +106,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         }
         else
         {
-            int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey);
+            int currentStage = SystemValue.GetInt(SystemValue.PlayerSelectStageKey);
             LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().SelectMatchCardByIndex(currentStage, false);
         }
     }
@@ -116,12 +116,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
         MainSceneManager.GetComponent<MainSceneManagerCS>().ClearPlayerStats();
         ResetChallengeScene();
-    }
-
-    public void AddChallengeScore(int attackPoint, int hp, bool isWin)
-    {
-        int score = attackPoint + hp;
-        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(score);
     }
 
     void ResetPlayerCharacter(bool isPlayerA)
@@ -169,7 +163,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             }
             else
             {
-                SystemValue.SetInt(SystemValue.PlayerLastStageKey, matchCardIndex);
+                SystemValue.SetInt(SystemValue.PlayerSelectStageKey, matchCardIndex);
             }
         }
     }
@@ -228,6 +222,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             if(LayerVersus.GetComponent<VersusCS>().isEnd())
             {
                 bool isVersusScene = IsVersusScene();
+                Debug.Log("isVersusScene: " + isVersusScene.ToString());
 
                 MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
                 
@@ -241,7 +236,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
                 PlayerCreateInfo playerCreateInfoB = new PlayerCreateInfo();
                 playerCreateInfoB._name = PlayerB.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoB._isPlayer = isVersusScene;
-                playerCreateInfoA._usePlayerStat = false;
+                playerCreateInfoB._usePlayerStat = false;
                 playerCreateInfoB._isPlayerA = false;
                 playerCreateInfoB._skin = PlayerB.GetComponent<PlayerCS>();
 

@@ -204,7 +204,7 @@ public class MainSceneManagerCS : MonoBehaviour
         SystemValue.SetInt(SystemValue.PlayerSkinIDKey, Constants.DefaultSkinID);
         SystemValue.SetInt(SystemValue.PlayerBSkinIDKey, Constants.DefaultSkinID);
         SystemValue.SetInt(SystemValue.PlayerLastStageKey, 0);
-
+        SystemValue.SetInt(SystemValue.PlayerSelectStageKey, 0);
         LoadPlayerCharacterInfo();
     }
 
