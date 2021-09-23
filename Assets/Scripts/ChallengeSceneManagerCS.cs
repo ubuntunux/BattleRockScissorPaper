@@ -222,7 +222,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
             if(LayerVersus.GetComponent<VersusCS>().isEnd())
             {
                 bool isVersusScene = IsVersusScene();
-                Debug.Log("isVersusScene: " + isVersusScene.ToString());
 
                 MainSceneManager.GetComponent<MainSceneManagerCS>().SetActivateScene(GameSceneType.FightScene);
                 

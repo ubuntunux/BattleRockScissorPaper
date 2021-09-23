@@ -96,17 +96,19 @@ public class ResultCS : MonoBehaviour
         }
         else if(playerA_Win < playerB_Win)
         {
-            Snd_Lose.Play();
             spritePlayerA = playerA.GetImagePortraitLose();
             spritePlayerB = playerB.GetImagePortrait();
+            
             if(isVersusScene)
             {
+                Snd_Win.Play();
                 resultTextPosX = resultTextOffsetX;
                 Text_Result.GetComponent<Text>().text = "Win";
                 Text_Result.GetComponent<Text>().color = WinColor;
             }
             else
             {
+                Snd_Lose.Play();
                 Text_Result.GetComponent<Text>().text = "You Lose";
                 Text_Result.GetComponent<Text>().color = LoseColor;
             }

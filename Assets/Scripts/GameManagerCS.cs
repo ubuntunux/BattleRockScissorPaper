@@ -92,6 +92,7 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Layer_HP_Bar_A;
     public GameObject Layer_HP_Bar_B;
     public GameObject Text_Result;
+    public GameObject Text_Timer;
     public GameObject Image_KO;    
     public Sprite Sprite_Ko;
     public Sprite Sprite_Ko_Invert;
@@ -348,7 +349,7 @@ public class GameManagerCS : MonoBehaviour
 
         Text_Result.SetActive(true);
         Text_Result.GetComponent<TextMeshProUGUI>().text = (_maxRoundCount == _round) ? "Final Round" : ("Round " + _round.ToString());
-        Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, 100.0f);
+        Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, Text_Result.GetComponent<RectTransform>().anchoredPosition.y);
 
         _initialAttackTimerTime = Constants.AttackTimerTime;
         _roundTimer = Constants.RoundTime;
@@ -427,6 +428,8 @@ public class GameManagerCS : MonoBehaviour
         }
 
         Snd_Finish.Play();
+        Text_Result.SetActive(true);
+        Text_Result.GetComponent<TextMeshProUGUI>().text = "Finish!!";
         Layer_AttackTimer.SetActive(false);
         
         _groggyTime = 0.0f;
@@ -564,6 +567,21 @@ public class GameManagerCS : MonoBehaviour
             _ko_sprite_flicker_time -= Time.deltaTime;
         }
 
+        // update timer
+        if(GameState.ReadyToAttack == _gameState || GameState.AttackHit == _gameState)
+        {
+            if(0.0f < _roundTimer)
+            {
+                _roundTimer -= Time.deltaTime;
+                if(_roundTimer < 0.0f)
+                {
+                    _roundTimer = 0.0f;
+                }
+            }
+        }
+        int timer = Mathf.Max(0, (int)(Mathf.Ceil(_roundTimer)));
+        Text_Timer.GetComponent<TextMeshProUGUI>().text = timer.ToString();
+
         // update state
         if(GameState.ReadyToFight == _gameState)
         {
@@ -612,19 +630,28 @@ public class GameManagerCS : MonoBehaviour
 
                 bool isAliveA = PlayerA_CS.isAlive();
                 bool isAliveB = PlayerB_CS.isAlive();
-                if (false == isAliveA || false == isAliveB)
+                if (false == isAliveA || false == isAliveB || _roundTimer <= 0.0f)
                 {
                     Text_Result.SetActive(true);
-                    float textResultPosOffsetX = 250.0f;
+                    float textResultPosOffsetX = 270.0f;
                     float textResultPosX = 0.0f;
-                    float textResultPosY = _isVersusScene ? 120.0f : 100.0f;
+
+                    if(false == isAliveA)
+                    {
+                        PlayerA_CS.SetDead();
+                    }
+
+                    if(false == isAliveB)
+                    {
+                        PlayerB_CS.SetDead();
+                    }
 
                     if(isAliveA && false == isAliveB)
                     {
                         Layer_Wins.transform.Find("WinA" + PlayerA_CS.GetWin().ToString()).gameObject.SetActive(true);
                         PlayerA_CS.SetWin();
-                        PlayerB_CS.SetDead();
                         Snd_Win.Play();
+
                         if(_isVersusScene)
                         {
                             textResultPosX = -textResultPosOffsetX;
@@ -638,13 +665,13 @@ public class GameManagerCS : MonoBehaviour
                     else if(false == isAliveA && isAliveB)
                     {
                         Layer_Wins.transform.Find("WinB" + PlayerB_CS.GetWin().ToString()).gameObject.SetActive(true);
-                        PlayerA_CS.SetDead();
                         PlayerB_CS.SetWin();
+
                         if(_isVersusScene)
                         {
-                            textResultPosX = textResultPosOffsetX;
                             Snd_Win.Play();
                             Text_Result.GetComponent<TextMeshProUGUI>().text = "Win";
+                            textResultPosX = textResultPosOffsetX;
                         }
                         else
                         {
@@ -654,12 +681,10 @@ public class GameManagerCS : MonoBehaviour
                     }
                     else
                     {
-                        PlayerA_CS.SetDead();
-                        PlayerB_CS.SetDead();
                         Snd_Draw.Play();
                         Text_Result.GetComponent<TextMeshProUGUI>().text = "Draw";
                     }
-                    Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(textResultPosX, textResultPosY);
+                    Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(textResultPosX, Text_Result.GetComponent<RectTransform>().anchoredPosition.y);
                     
                     int maxWinCount = Mathf.Max(PlayerA_CS.GetWin(), PlayerB_CS.GetWin());
                     if (_round < _maxRoundCount && maxWinCount < _maxWinCount)
@@ -754,16 +779,6 @@ public class GameManagerCS : MonoBehaviour
             // end groggy
             if(Constants.GroggyHitTime <= _groggyTime)
             {
-                if(isGroggyHP_A)
-                {
-                    PlayerA_CS.SetDead();
-                }
-
-                if(isGroggyHP_B)
-                {
-                    PlayerB_CS.SetDead();
-                }
-
                 _gameState = GameState.AttackHit;
             }
 
@@ -805,7 +820,7 @@ public class GameManagerCS : MonoBehaviour
                                 {
                                     int nextStage = lastStage + 1;
                                     SystemValue.SetInt(SystemValue.PlayerLastStageKey, nextStage);
-                                    SystemValue.GetInt(SystemValue.PlayerSelectStageKey, nextStage);
+                                    SystemValue.SetInt(SystemValue.PlayerSelectStageKey, nextStage);
                                 }
                             }
                         }

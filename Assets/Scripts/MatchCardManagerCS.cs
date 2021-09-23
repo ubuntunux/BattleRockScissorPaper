@@ -49,8 +49,8 @@ public class MatchCardManagerCS : MonoBehaviour
         }
         else
         {
-            int stage = SystemValue.GetInt(SystemValue.PlayerLastStageKey);
-            unlocked = stageIndex <= stage;
+            int lastStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey);
+            unlocked = stageIndex <= lastStage;
         }
 
         GameObject LayerMatchCardEntry = (GameObject)GameObject.Instantiate(LayerMatchCardPrefab);

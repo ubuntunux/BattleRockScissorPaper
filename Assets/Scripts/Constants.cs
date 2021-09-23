@@ -17,7 +17,7 @@ public class Constants : MonoBehaviour
     static public float AttackHitTimeDelay = 0.5f;
     static public float AttackMotionTime = 0.1f;
     static public float AttackHitTime = 0.5f;
-    static public float RoundTime = 10.0f;
+    static public float RoundTime = 3.0f;
     static public float RoundReadyTime = 3.0f;
     static public float RoundEndTime = 3.0f;
     static public float GameResultTime = 4.0f;

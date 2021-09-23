@@ -509,15 +509,20 @@ public class PlayerCS : MonoBehaviour
 
     public void SetDead()
     {
-        SetTexture(Sprite_Dead);
-        _hp = 0;
+        if(_playerState != PlayerState.Dead)
+        {
+            Snd_AttackDeadVoice.Play();
+            SetTexture(Sprite_Dead);
 
-        float offsetX = _isPlayerA ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
-        float offsetY = Constants.GroundPosition;
-        transform.position = new Vector3(offsetX, offsetY, 0.0f);
+            _hp = 0;
 
-        _lastAttackType = AttackType.None;
-        _playerState = PlayerState.Dead;
+            float offsetX = _isPlayerA ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
+            float offsetY = Constants.GroundPosition;
+            transform.position = new Vector3(offsetX, offsetY, 0.0f);
+
+            _lastAttackType = AttackType.None;
+            _playerState = PlayerState.Dead;
+        }
     }
 
     public AttackType getLastAttackType()
@@ -551,7 +556,7 @@ public class PlayerCS : MonoBehaviour
                 break;
         }
 
-        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _playerStat._power, _isPlayerA);
+        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _playerStat._power, _isPlayerA, _isPlayer);
 
         if(isAttackHit)
         {

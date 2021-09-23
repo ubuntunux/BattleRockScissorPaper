@@ -32,8 +32,8 @@ public class FightTimerCS : MonoBehaviour
 
     public void ResetFightTimer()
     {
-        SetAttackType(AttackType.None, 0, true);
-        SetAttackType(AttackType.None, 0, false);
+        SetAttackType(AttackType.None, 0, true, true);
+        SetAttackType(AttackType.None, 0, false, false);
 
         setBar(1.0f);
 
@@ -44,7 +44,7 @@ public class FightTimerCS : MonoBehaviour
         LayerPowerGuageB.GetComponent<PowerGaugeCS>().ResetPowerGauge();
     }
 
-    public void SetAttackType(AttackType attackType, int power, bool isPlayerA)
+    public void SetAttackType(AttackType attackType, int power, bool isPlayerA, bool isPlayer)
     {
         GameObject obj = isPlayerA ? AttackTypeA : AttackTypeB;
         GameObject layerPowerGuage = isPlayerA ? LayerPowerGuageA : LayerPowerGuageB;
@@ -66,7 +66,7 @@ public class FightTimerCS : MonoBehaviour
             obj.GetComponent<Image>().sprite = Sprite_AttackNone;
         }
 
-        if(false == isPlayerA)
+        if(false == isPlayer)
         {
             // Random Power Guage
             float powerGuage = 1.0f - Mathf.Pow(Random.value, 2.0f);
