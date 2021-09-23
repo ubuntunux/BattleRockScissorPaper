@@ -76,6 +76,7 @@ public class TrainingSceneManagerCS : MonoBehaviour
     void ResetTrainingScene()
     {
         PlayerA.SetActive(true);
+        PlayerA.GetComponent<PlayerCS>().SetPlayerInfo(true, true);
         PlayerA.GetComponent<PlayerCS>().SetStateIdle();
         
         PlayerB.SetActive(false);

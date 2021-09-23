@@ -6,7 +6,7 @@ public class Constants : MonoBehaviour
 {
     static public int DefaultSkinID = 1;
     static public int DefaultAdvertiseNum = 3;
-    static public int DefaultAccounts = 1000;
+    static public int DefaultAccounts = 100000;
     static public int DefaultHP = 30;
     static public int DefaultPower = 10;
 
@@ -22,7 +22,6 @@ public class Constants : MonoBehaviour
     static public float GameResultTime = 4.0f;
     static public float GroundPosition = 3.2f;
     static public float GroggyHitTime = 3.0f;
-    static public float GroggyAttackTime = 0.1f;
     static public float AttackDistance = 1.5f;
     static public float IdleDistance = 2.0f; 
     static public float SelectDistance = 4.0f;

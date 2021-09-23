@@ -106,7 +106,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         }
         else
         {
-            int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey, 0);
+            int currentStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey);
             LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().SelectMatchCardByIndex(currentStage, false);
         }
     }
@@ -152,7 +152,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
         if(playSound)
         {
-            Snd_MatchCardSelect.Play();
             player.GetComponent<PlayerCS>().PlayCharacterName();
         }
 

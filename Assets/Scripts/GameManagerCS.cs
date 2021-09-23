@@ -60,6 +60,8 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Image_Bam_B;
     public GameObject Image_Critical_A;
     public GameObject Image_Critical_B;
+    public GameObject Text_Damage_A;
+    public GameObject Text_Damage_B;
 
     // Sounds
     public AudioSource Snd_Round1;
@@ -77,6 +79,7 @@ public class GameManagerCS : MonoBehaviour
     public AudioSource Snd_Bell_3;
 
     // UI
+    public GameObject Canvas;    
     public GameObject LayerResult;
     public GameObject Image_Exit;
     public GameObject Layer_AttackButtonsA;
@@ -179,34 +182,34 @@ public class GameManagerCS : MonoBehaviour
 
 	public void CreateEffectAttackHit(AttackType attackType, bool isPlayerA)
     {
-        DestroyEffectAttackHit(isPlayerA);
+        // DestroyEffectAttackHit(isPlayerA);
 
-        float offsetY = Constants.GroundPosition;
-        if(AttackType.Rock == attackType)
-        {
-            offsetY = 2.0f;
-        }
-        else if(AttackType.Scissor == attackType)
-        {
-            offsetY = 1.0f;
-        }
-        else if(AttackType.Paper == attackType)
-        {
-            offsetY = 3.0f;
-        }
+        // float offsetY = Constants.GroundPosition;
+        // if(AttackType.Rock == attackType)
+        // {
+        //     offsetY = 2.0f;
+        // }
+        // else if(AttackType.Scissor == attackType)
+        // {
+        //     offsetY = 1.0f;
+        // }
+        // else if(AttackType.Paper == attackType)
+        // {
+        //     offsetY = 3.0f;
+        // }
 
-        Vector3 pos = new Vector3(isPlayerA ? -Constants.AttackDistance : Constants.AttackDistance, offsetY, 0.0f);
-        Quaternion rot = Quaternion.Euler(-90.0f, isPlayerA ? 180.0f : 0.0f, 0.0f);
-		GameObject effect_AttackHit = (GameObject)GameObject.Instantiate(Effect_AttackHit, pos, rot);
+        // Vector3 pos = new Vector3(isPlayerA ? -Constants.AttackDistance : Constants.AttackDistance, offsetY, 0.0f);
+        // Quaternion rot = Quaternion.Euler(-90.0f, isPlayerA ? 180.0f : 0.0f, 0.0f);
+		// GameObject effect_AttackHit = (GameObject)GameObject.Instantiate(Effect_AttackHit, pos, rot);
 
-        if(isPlayerA)
-        {
-            _effect_AttackHitA = effect_AttackHit;
-        }
-        else
-        {   
-            _effect_AttackHitB = effect_AttackHit;
-        }
+        // if(isPlayerA)
+        // {
+        //     _effect_AttackHitA = effect_AttackHit;
+        // }
+        // else
+        // {   
+        //     _effect_AttackHitB = effect_AttackHit;
+        // }
 	}
 
     public void DestroyEffectAttackHit(bool isPlayerA)
@@ -324,6 +327,8 @@ public class GameManagerCS : MonoBehaviour
         Image_Bam_B.SetActive(false);
         Image_Critical_A.SetActive(false);
         Image_Critical_B.SetActive(false);
+        Text_Damage_A.SetActive(false);
+        Text_Damage_B.SetActive(false);
     }
 
     void SetReadyToRound()
@@ -405,36 +410,64 @@ public class GameManagerCS : MonoBehaviour
         _gameState = GameState.Groggy;
     }
 
+    float GetHitImagePositionY(AttackType attackType)
+    {
+        if(AttackType.Paper == attackType)
+        {
+            return 3.8f;
+        }
+        else if(AttackType.Scissor == attackType)
+        {
+            return 1.5f;
+        }
+        return 2.8f;
+    }
+
+    int SetHitPlayer(PlayerCS attacker, PlayerCS attackee, GameObject Image_Bam, GameObject Image_Critical, GameObject Text_Damage)
+    {
+        AttackType attackeeAttackType = attackee.getLastAttackType();
+        AttackType attackerAttackType = attacker.getLastAttackType();
+
+        if(AttackType.None != attackerAttackType && (attackerAttackType == attackeeAttackType || checkLose(attackerAttackType, attackeeAttackType)))
+        {
+            CreateEffectAttackHit(attackerAttackType, attackee.GetIsPlayerA());
+            bool isCritical = attacker.IsCriticalAttack();
+            Vector3 imagePosition = Image_Bam.transform.localPosition;
+            imagePosition.y = GetHitImagePositionY(attackerAttackType);
+            Image_Bam.transform.localPosition = imagePosition;
+            Image_Bam.SetActive(!isCritical);
+            Image_Critical.transform.localPosition = imagePosition;
+            Image_Critical.SetActive(isCritical);
+            int damage = attackee.isGroggyHP() ? attacker.GetPower() : attacker.GetPowerWithGuage();
+            attackee.SetDamage(damage, attackerAttackType);
+
+            //first you need the RectTransform component of your canvas
+            Vector3 damagePosition = imagePosition;
+            damagePosition.y += 1.0f;
+            RectTransform CanvasRect = Canvas.GetComponent<RectTransform>();
+            Vector2 ViewportPosition = MainCamera.GetComponent<Camera>().WorldToViewportPoint(damagePosition);
+            Vector2 WorldObject_ScreenPosition = new Vector2(
+                ((ViewportPosition.x*CanvasRect.sizeDelta.x)-(CanvasRect.sizeDelta.x*0.5f)),
+                ((ViewportPosition.y*CanvasRect.sizeDelta.y)-(CanvasRect.sizeDelta.y*0.5f))
+            );
+            Text_Damage.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition;
+            Text_Damage.GetComponent<TextMeshProUGUI>().text = damage.ToString();
+            Text_Damage.GetComponent<TextMeshProUGUI>().color = attacker.GetPowerGuageColor();
+            Text_Damage.SetActive(true);
+
+            return damage;
+        }
+        return 0;
+    }
+
     void SetHitPlayers(float shaderIntensity = 0.0f)
     {
-        AttackType attackTypeA = PlayerA_CS.getLastAttackType();
-        AttackType attackTypeB = PlayerB_CS.getLastAttackType();
-
-        if(AttackType.None != attackTypeB && (attackTypeB == attackTypeA || checkLose(attackTypeB, attackTypeA)))
+        SetHitPlayer(PlayerB_CS, PlayerA_CS, Image_Bam_A, Image_Critical_A, Text_Damage_A);
+        int damage = SetHitPlayer(PlayerA_CS, PlayerB_CS, Image_Bam_B, Image_Critical_B, Text_Damage_B);
+        if(0 < damage && false == PlayerB_CS.GetIsPlayer())
         {
-            CreateEffectAttackHit(attackTypeB, true);
-            bool isCritical = PlayerB_CS.IsCriticalAttack();
-            Image_Bam_A.SetActive(!isCritical);
-            Image_Critical_A.SetActive(isCritical);
-            int damage = PlayerB_CS.GetPowerWithGuage();
-            PlayerA_CS.SetDamage(damage, attackTypeB);
+            _recordAttackPoint += damage;
         }
-
-        if(AttackType.None != attackTypeA && (attackTypeA == attackTypeB || checkLose(attackTypeA, attackTypeB)))
-        {
-            CreateEffectAttackHit(attackTypeA, false);
-            bool isCritical = PlayerA_CS.IsCriticalAttack();
-            Image_Bam_B.SetActive(!isCritical);
-            Image_Critical_B.SetActive(isCritical);
-            int damage = PlayerA_CS.GetPowerWithGuage();
-            PlayerB_CS.SetDamage(damage, attackTypeA);
-
-            if(false == PlayerB_CS.GetIsPlayer())
-            {
-                _recordAttackPoint += damage;
-            }
-        }
-
         MainCamera.GetComponent<CameraCS>().setShake(shaderIntensity);
     }
 
@@ -553,6 +586,8 @@ public class GameManagerCS : MonoBehaviour
                 Image_Bam_B.SetActive(false);
                 Image_Critical_A.SetActive(false);
                 Image_Critical_B.SetActive(false);
+                Text_Damage_A.SetActive(false);
+                Text_Damage_B.SetActive(false);
 
                 bool isAliveA = PlayerA_CS.isAlive();
                 bool isAliveB = PlayerB_CS.isAlive();
@@ -656,17 +691,21 @@ public class GameManagerCS : MonoBehaviour
             if(0.0f == _groggyAttackTime)
             {
                 float shaderIntensity = Constants.CameraShakeIntensity * 0.2f;
+                PlayerCS player = null;
                 if(false == isGroggyHP_A && AttackType.None != PlayerA_CS.getLastAttackType())
                 {
-                    PlayerA_CS.SetAttackHit();
-                    SetHitPlayers(shaderIntensity);
-                    _groggyAttackTime = Constants.GroggyAttackTime;
+                    player = PlayerA_CS;
                 }
                 else if(false == isGroggyHP_B && AttackType.None != PlayerB_CS.getLastAttackType())
                 {
-                    PlayerB_CS.SetAttackHit();
+                    player = PlayerB_CS;
+                }
+
+                if(null != player)
+                {
+                    player.SetAttackHit();
                     SetHitPlayers(shaderIntensity);
-                    _groggyAttackTime = Constants.GroggyAttackTime;
+                    _groggyAttackTime = Constants.AttackMotionTime;
                 }
             }
 
@@ -715,8 +754,7 @@ public class GameManagerCS : MonoBehaviour
                             // next stage
                             if(false == PlayerB_CS.GetIsPlayer())
                             {
-                                int nextStage = PlayerA_CS._playerStat._stage + 1;
-                                PlayerA_CS._playerStat._stage = nextStage;
+                                int nextStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey) + 1;
                                 SystemValue.SetInt(SystemValue.PlayerLastStageKey, nextStage);
                             }
                         }

@@ -72,6 +72,11 @@ public class PowerGaugeCS : MonoBehaviour
         return _powerRatio;
     }
 
+    public Color GetPowerGuageColor()
+    {
+        return PowerGauage.GetComponent<Image>().color;
+    }
+
     public void SetPause()
     {
         _pause = true;

@@ -44,7 +44,6 @@ public class PlayerStat
     public int _win = 0;
     public int _draw = 0;
     public int _lose = 0;
-    public int _stage = 0;    
     public int _hp = Constants.DefaultHP;
     public int _power = Constants.DefaultPower;
     public float _speed = Constants.AttackTimerTime;
@@ -61,7 +60,6 @@ public class PlayerStat
             + ", _win: " + _win.ToString()
             + ", _draw: " + _draw.ToString()
             + ", _lose: " + _lose.ToString()
-            + ", _stage: " + _stage.ToString()
             + ", _hp: " + _hp.ToString()
             + ", _power: " + _power.ToString()
             + ", _speed: " + _speed.ToString()
@@ -78,7 +76,6 @@ public class PlayerStat
         _win = usePlayerStat ? 0 : player.Win;
         _draw = usePlayerStat ? 0 : player.Draw;
         _lose = usePlayerStat ? 0 : player.Lose;
-        _stage = 0;
         _hp = usePlayerStat ? Constants.DefaultHP : player.HP;
         _power = usePlayerStat ? Constants.DefaultPower : player.Power;
         _speed = usePlayerStat ? Constants.AttackTimerTime : player.Speed;
@@ -99,10 +96,13 @@ public class PlayerStat
         _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
-        _stage = SystemValue.GetInt(skinID + SystemValue.PlayerStatStageKey, _stage);
-        _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
-        _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
-        _speed = SystemValue.GetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+        
+        if(_usePlayerStat)
+        {
+            _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
+            _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
+            _speed = SystemValue.GetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+        }
     }
 
     public void SavePlayerStat()
@@ -115,10 +115,13 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
-        SystemValue.SetInt(skinID + SystemValue.PlayerStatStageKey, _stage);
-        SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
-        SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
-        SystemValue.SetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+
+        if(_usePlayerStat)
+        {
+            SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
+            SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
+            SystemValue.SetFloat(skinID + SystemValue.PlayerStatSpeedKey, _speed);
+        }
     }
 
     public void SaveBool(string key, bool value)
@@ -255,9 +258,19 @@ public class PlayerCS : MonoBehaviour
         return Constants.CriticalPowerGuage <= GetPowerGuage();
     }
 
+    public int GetPower()
+    {
+        return _playerStat._power;
+    }
+
     public float GetPowerGuage()
     {
         return Layer_AttackTimer.GetComponent<FightTimerCS>().GetPowerGuage(_isPlayerA);
+    }
+
+    public Color GetPowerGuageColor()
+    {
+        return Layer_AttackTimer.GetComponent<FightTimerCS>().GetPowerGuageColor(_isPlayerA);
     }
 
     public int GetPowerWithGuage()
@@ -284,11 +297,6 @@ public class PlayerCS : MonoBehaviour
     public Sprite GetImageBorn()
     {
         return Sprite_Born;
-    }
-
-    public void SetRank(int rank)
-    {
-        _playerStat._stage = rank;
     }
 
     public void SetTexture(Sprite sprite)
@@ -522,8 +530,7 @@ public class PlayerCS : MonoBehaviour
     {
         if (false == isAlive() || 
             PlayerState.AttackHit == _playerState || 
-            PlayerState.Groggy == _playerState || 
-            AttackType.None == attackType)
+            PlayerState.Groggy == _playerState)
         {
             return;
         }
@@ -553,7 +560,7 @@ public class PlayerCS : MonoBehaviour
             Snd_AttackHit.Play();
             _playerState = PlayerState.AttackHit;
         }
-        else
+        else if(AttackType.None != attackType)
         {
             Snd_Attack.Play();
             _playerState = PlayerState.AttackMotion;

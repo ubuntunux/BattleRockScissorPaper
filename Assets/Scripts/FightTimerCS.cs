@@ -87,6 +87,11 @@ public class FightTimerCS : MonoBehaviour
         return (isPlayerA ? LayerPowerGuageA : LayerPowerGuageB).GetComponent<PowerGaugeCS>().GetPowerGuage();
     }
 
+    public Color GetPowerGuageColor(bool isPlayerA)
+    {
+        return (isPlayerA ? LayerPowerGuageA : LayerPowerGuageB).GetComponent<PowerGaugeCS>().GetPowerGuageColor();
+    }
+
     public void setBar(float ratio)
     {
         float prevRatio = _prevRatio;

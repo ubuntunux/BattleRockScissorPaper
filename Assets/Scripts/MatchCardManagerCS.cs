@@ -49,7 +49,7 @@ public class MatchCardManagerCS : MonoBehaviour
         }
         else
         {
-            int stage = SystemValue.GetInt(SystemValue.PlayerStatStageKey, 0);
+            int stage = SystemValue.GetInt(SystemValue.PlayerLastStageKey);
             unlocked = stageIndex <= stage;
         }
 

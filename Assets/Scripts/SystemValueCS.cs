@@ -14,11 +14,10 @@ public class SystemValue : MonoBehaviour
     public static string PlayerStatDrawKey = "PlayerStatDraw";
     public static string PlayerStatLoseKey = "PlayerStatLose";
     public static string PlayerStatHPKey = "PlayerStatHP";
-    public static string PlayerStatPowerKey = "PlayerStatPower";    
+    public static string PlayerStatPowerKey = "PlayerStatPower";
     public static string PlayerStatSpeedKey = "PlayerStatSpeed";
-    public static string PlayerStatStageKey = "PlayerStatStage";
 
-    public static string PlayerScoreKey = "PlayerScore";    
+    public static string PlayerScoreKey = "PlayerScore";
     public static string PlayerLastStageKey = "PlayerLastStage";
 
     public static bool GetBool(string key, bool defaultValue = false)

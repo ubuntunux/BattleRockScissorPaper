@@ -200,8 +200,7 @@ public class MainSceneManagerCS : MonoBehaviour
         PlayerA.GetComponent<PlayerCS>().InitializePlayerStat();
         PlayerA.GetComponent<PlayerCS>().SavePlayerStat();
         
-        // TEST CODE
-        SystemValue.SetInt(SystemValue.PlayerScoreKey, 10000);//Constants.DefaultAccounts);
+        SystemValue.SetInt(SystemValue.PlayerScoreKey, Constants.DefaultAccounts);
         SystemValue.SetInt(SystemValue.PlayerSkinIDKey, Constants.DefaultSkinID);
         SystemValue.SetInt(SystemValue.PlayerBSkinIDKey, Constants.DefaultSkinID);
         SystemValue.SetInt(SystemValue.PlayerLastStageKey, 0);
