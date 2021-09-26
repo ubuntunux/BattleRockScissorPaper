@@ -36,9 +36,11 @@ public class GameManagerCS : MonoBehaviour
     float _roundTimer = Constants.RoundTime;
     bool _pause = false;
     bool _isVersusScene = false;
+    bool _stopRoundTimer = false;
     GameState _gameState = GameState.None;
 
     // Record
+    int _recordTimePoint = 0;
     int _recordAttackPoint = 0;
     int _recordHP = 0;
     int _recordBonus = 0;
@@ -93,13 +95,14 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Layer_HP_Bar_B;
     public GameObject Text_Result;
     public GameObject Text_Timer;
-    public GameObject Image_KO;    
+    public GameObject Image_KO;
     public Sprite Sprite_Ko;
     public Sprite Sprite_Ko_Invert;
     float _ko_sprite_flicker_time = 0.0f;
     bool _ko_sprite_flicker = false;
     bool _ko_sprite_flicker_low_hp = false;
     public GameObject Layer_Wins;
+    public GameObject Btn_Advertisement;
     
     // Start is called before the first frame update
     void Start()
@@ -131,8 +134,10 @@ public class GameManagerCS : MonoBehaviour
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
         _round = 1;
+        _stopRoundTimer = false;
 
         // record
+        _recordTimePoint = 0;
         _recordAttackPoint = 0;
         _recordHP = 0;
         _recordBonus = 0;
@@ -154,6 +159,7 @@ public class GameManagerCS : MonoBehaviour
 
         Layer_AttackButtonsB.SetActive(playerCreateInfoB._isPlayer);
         LayerResult.SetActive(false);
+        Btn_Advertisement.SetActive(true);
 
         SetReadyToRound();
         SetPause(false);
@@ -234,6 +240,12 @@ public class GameManagerCS : MonoBehaviour
                 _effect_AttackHitB = null;
             }
         }
+    }
+
+    public void OnClickAdvertisement()
+    {
+        Btn_Advertisement.SetActive(false);
+        MainSceneManager.GetComponent<MainSceneManagerCS>().ShowFightRewardedAd(_recordTotalScore);
     }
 
     public void Btn_Back_OnClick()
@@ -319,6 +331,7 @@ public class GameManagerCS : MonoBehaviour
         _attackHitTime = 0.0f;
         _readyToRoundTime = 0.0f;
         _roundEndTime = 0.0f;
+        _stopRoundTimer = false;
 
         PlayerA_CS.SetReadyToRound();
         PlayerB_CS.SetReadyToRound();
@@ -381,6 +394,7 @@ public class GameManagerCS : MonoBehaviour
             PlayerB_CS, 
             PlayerB_CS.GetWin(), 
             _isVersusScene,
+            _recordTimePoint,
             _recordAttackPoint,
             _recordHP,
             _recordBonus,
@@ -432,8 +446,9 @@ public class GameManagerCS : MonoBehaviour
         Text_Result.GetComponent<TextMeshProUGUI>().text = "Finish!!";
         Layer_AttackTimer.SetActive(false);
         
+        _stopRoundTimer = true;
         _groggyTime = 0.0f;
-        _groggyAttackTime = 0.0f;
+        _groggyAttackTime = 0.0f;        
         _gameState = GameState.Groggy;
     }
 
@@ -568,19 +583,23 @@ public class GameManagerCS : MonoBehaviour
         }
 
         // update timer
-        if(GameState.ReadyToAttack == _gameState || GameState.AttackHit == _gameState)
+        if(false == _stopRoundTimer)
         {
-            if(0.0f < _roundTimer)
+            if(GameState.ReadyToAttack == _gameState || GameState.AttackHit == _gameState)
             {
-                _roundTimer -= Time.deltaTime;
-                if(_roundTimer < 0.0f)
+                if(0.0f < _roundTimer)
                 {
-                    _roundTimer = 0.0f;
+                    _roundTimer -= Time.deltaTime;
+                    if(_roundTimer < 0.0f)
+                    {
+                        _roundTimer = 0.0f;
+                    }
                 }
             }
+
+            int timer = Mathf.Max(0, (int)(Mathf.Ceil(_roundTimer)));
+            Text_Timer.GetComponent<TextMeshProUGUI>().text = timer.ToString();
         }
-        int timer = Mathf.Max(0, (int)(Mathf.Ceil(_roundTimer)));
-        Text_Timer.GetComponent<TextMeshProUGUI>().text = timer.ToString();
 
         // update state
         if(GameState.ReadyToFight == _gameState)
@@ -698,6 +717,7 @@ public class GameManagerCS : MonoBehaviour
 
                     // record
                     _recordHP += PlayerA_CS.GetHP();
+                    _recordTimePoint += Mathf.Max(0, (int)(Mathf.Ceil(_roundTimer)));
 
                     SetRoundEnd();
                 }
@@ -802,10 +822,10 @@ public class GameManagerCS : MonoBehaviour
                     if(false == _isVersusScene)
                     {
                         // record score
-                        _recordTotalScore = _recordAttackPoint + _recordHP;
+                        _recordTotalScore = _recordAttackPoint + _recordHP + _recordTimePoint * Constants.TimePoint;
                         _recordBonus = isPlayerA_Win ? (_recordTotalScore / 2) : 0;
                         _recordTotalScore += _recordBonus;
-                        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(_recordBonus);
+                        MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(_recordTotalScore);
                         
                         if(PlayerB_CS.GetWin() < PlayerA_CS.GetWin())
                         {
@@ -848,7 +868,11 @@ public class GameManagerCS : MonoBehaviour
         {
             if(Constants.GameResultTime <= _gameResultTime)
             {
-                MainSceneManager.GetComponent<MainSceneManagerCS>().ShowInterstitial();
+                if(false == _isVersusScene)
+                {
+                    MainSceneManager.GetComponent<MainSceneManagerCS>().ShowInterstitial();
+                }
+                
                 Exit();
             }
             _gameResultTime += Time.deltaTime;

@@ -58,7 +58,7 @@ public class MainSceneManagerCS : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _advertisementManager.InitializeMobileAds();
+        _advertisementManager.InitializeMobileAds(this);
 
         _gameSceneList.Add(TitleScene);
         _gameSceneList.Add(MainScene);
@@ -131,6 +131,11 @@ public class MainSceneManagerCS : MonoBehaviour
     public void ShowRewardedAd(SkinCardCS rewardedSkinCard)
     {
         _advertisementManager.ShowRewardedAd(rewardedSkinCard);
+    }
+
+    public void ShowFightRewardedAd(int rewardScore)
+    {
+        _advertisementManager.ShowFightRewardedAd(rewardScore);
     }
 
     public int GetScore()

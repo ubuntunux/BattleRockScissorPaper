@@ -98,7 +98,7 @@ public class SkinCardCS : MonoBehaviour
     {
         bool locked = !_skin._playerStat._purchased;
         Btn_Accounts.SetActive(locked);
-        Btn_Advertisement.SetActive(locked);
+        Btn_Advertisement.SetActive(locked && 0 < _skin.Advertisement);
         Image_Lock.SetActive(locked);
 
         SetAccountsText();

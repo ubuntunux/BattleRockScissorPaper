@@ -11,6 +11,7 @@ public class ResultCS : MonoBehaviour
     public GameObject Result_PlayerB;
     public GameObject Text_Result;
     public GameObject LayerScore;
+    public GameObject Text_TimePoint;
     public GameObject Text_Point;
     public GameObject Text_Vital;
     public GameObject Text_Bonus;
@@ -44,6 +45,7 @@ public class ResultCS : MonoBehaviour
         PlayerCS playerB, 
         int playerB_Win, 
         bool isVersusScene, 
+        int recordTimePoint, 
         int recordAttackPoint, 
         int recordHP,
         int bonus,        
@@ -67,6 +69,7 @@ public class ResultCS : MonoBehaviour
                 Snd_CoinLoop.Play();
             }
 
+            Text_TimePoint.GetComponent<TextMeshProUGUI>().text = recordTimePoint.ToString();
             Text_Point.GetComponent<TextMeshProUGUI>().text = recordAttackPoint.ToString();
             Text_Vital.GetComponent<TextMeshProUGUI>().text = recordHP.ToString();
             Text_Bonus.GetComponent<TextMeshProUGUI>().text = bonus.ToString();
@@ -92,7 +95,7 @@ public class ResultCS : MonoBehaviour
             spritePlayerB = playerB.GetImagePortrait();
             resultTextPosX = 0.0f;
             Text_Result.GetComponent<Text>().text = "Draw";
-            Text_Result.GetComponent<Text>().color = DrawColor;
+            //Text_Result.GetComponent<Text>().color = DrawColor;
         }
         else if(playerA_Win < playerB_Win)
         {
@@ -104,13 +107,13 @@ public class ResultCS : MonoBehaviour
                 Snd_Win.Play();
                 resultTextPosX = resultTextOffsetX;
                 Text_Result.GetComponent<Text>().text = "Win";
-                Text_Result.GetComponent<Text>().color = WinColor;
+                //Text_Result.GetComponent<Text>().color = WinColor;
             }
             else
             {
                 Snd_Lose.Play();
                 Text_Result.GetComponent<Text>().text = "You Lose";
-                Text_Result.GetComponent<Text>().color = LoseColor;
+                //Text_Result.GetComponent<Text>().color = LoseColor;
             }
         }
         else if(playerB_Win < playerA_Win)
@@ -126,7 +129,7 @@ public class ResultCS : MonoBehaviour
             {
                 Text_Result.GetComponent<Text>().text = "You Win";
             }
-            Text_Result.GetComponent<Text>().color = WinColor;
+            //Text_Result.GetComponent<Text>().color = WinColor;
         }
         Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(resultTextPosX, Text_Result.GetComponent<RectTransform>().anchoredPosition.y);
 

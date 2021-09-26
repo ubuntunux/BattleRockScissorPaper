@@ -17,10 +17,10 @@ public class Constants : MonoBehaviour
     static public float AttackHitTimeDelay = 0.5f;
     static public float AttackMotionTime = 0.1f;
     static public float AttackHitTime = 0.5f;
-    static public float RoundTime = 3.0f;
+    static public float RoundTime = 10.0f;
     static public float RoundReadyTime = 3.0f;
     static public float RoundEndTime = 3.0f;
-    static public float GameResultTime = 4.0f;
+    static public float GameResultTime = 5.0f;
     static public float GroundPosition = 3.2f;
     static public float GroggyHitTime = 3.0f;
     static public float AttackDistance = 1.5f;
@@ -33,4 +33,5 @@ public class Constants : MonoBehaviour
     static public float MinPowerGuage = 0.2f;
     static public int WarningHPDivide = 3;
     static public int GroggyHPDivide = 2;
+    static public int TimePoint = 10;
 }

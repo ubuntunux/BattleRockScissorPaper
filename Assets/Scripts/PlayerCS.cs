@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,6 +34,7 @@ public class PlayerCreateInfo
 
 public class PlayerStat
 {
+    static bool ENABLE_PLAYER_FIGHT_STAT = false;
     public bool _usePlayerStat = false;    
     public int _skinID = Constants.DefaultSkinID;
     public int _advertisement = 0;
@@ -75,9 +75,9 @@ public class PlayerStat
         _win = usePlayerStat ? 0 : player.Win;
         _draw = usePlayerStat ? 0 : player.Draw;
         _lose = usePlayerStat ? 0 : player.Lose;
-        _hp = usePlayerStat ? Constants.DefaultHP : player.HP;
-        _power = usePlayerStat ? Constants.DefaultPower : player.Power;
-        _speed = usePlayerStat ? Constants.AttackTimerTime : player.Speed;
+        _hp = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.DefaultHP : player.HP;
+        _power = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.DefaultPower : player.Power;
+        _speed = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.AttackTimerTime : player.Speed;
     }
 
     public string GetSkinIDString()
@@ -96,7 +96,7 @@ public class PlayerStat
         _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         
-        if(_usePlayerStat)
+        if(_usePlayerStat && ENABLE_PLAYER_FIGHT_STAT)
         {
             _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
             _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
@@ -115,7 +115,7 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
 
-        if(_usePlayerStat)
+        if(_usePlayerStat && ENABLE_PLAYER_FIGHT_STAT)
         {
             SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
             SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);

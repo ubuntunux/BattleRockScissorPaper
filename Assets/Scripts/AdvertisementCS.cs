@@ -10,11 +10,13 @@ using GoogleMobileAds.Common;
 
 public class AdvertisementCS : MonoBehaviour
 {
+    MainSceneManagerCS _mainSceneManager = null;
     BannerView _bannerView = null;
 
     InterstitialAd _interstitial = null;
     bool _showInterstitial = false;
 
+    int _rewardScore = 0;
     SkinCardCS _rewardSkinCard = null;
     RewardedAd _rewardedAd = null;
     RewardedAd _rewardedAdNext = null;
@@ -26,8 +28,10 @@ public class AdvertisementCS : MonoBehaviour
         
     }
 
-    public void InitializeMobileAds()
+    public void InitializeMobileAds(MainSceneManagerCS mainSceneManager)
     {
+        _mainSceneManager = mainSceneManager;
+
         MobileAds.Initialize(initStatus => { });
 
         _bannerView = CreateBannerView();
@@ -89,17 +93,24 @@ public class AdvertisementCS : MonoBehaviour
         return _showRewardedAd;
     }
 
-    public void ShowRewardedAd(SkinCardCS rewardedSkinCard)
+    public void ShowRewardedAd(SkinCardCS rewardedSkinCard, int rewardScore = 0)
     {
         _showRewardedAd = true;
 
         if(null == _rewardedAd && null != _rewardedAdNext)
         {
+            _rewardScore = rewardScore;
             _rewardSkinCard = rewardedSkinCard;
             _rewardedAd = _rewardedAdNext;
             _rewardedAdNext = null;
         }
+        
         CreateAndRequestRewardedAd();
+    }
+
+    public void ShowFightRewardedAd(int rewardScore)
+    {
+        ShowRewardedAd(null, rewardScore);
     }
 
     // Request
@@ -171,17 +182,25 @@ public class AdvertisementCS : MonoBehaviour
     public void HandleRewardedAdClosed(object sender, EventArgs args)
     {
         _showRewardedAd = false;
+        _rewardScore = 0;
         _rewardSkinCard = null;
         _rewardedAd = null;
     }
 
     public void HandleUserEarnedReward(object sender, Reward args)
     {
+        if(0 < _rewardScore)
+        {
+            _mainSceneManager.AddScore(_rewardScore);
+            _rewardScore = 0;
+        }
+
         if(null != _rewardSkinCard)
         {
             _rewardSkinCard.CallbackPurchaseSkinByAdvertisement();
             _rewardSkinCard = null;
         }
+
         // string type = args.Type;
         // double amount = args.Amount;
         // Debug.Log("HandleRewardedAdRewarded event received for " + amount.ToString() + " " + type);
