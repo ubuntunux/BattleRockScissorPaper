@@ -873,6 +873,7 @@ MonoBehaviour:
   Sprite_HitPaper: {fileID: 21300000, guid: 3ba1295a81def2ce4ac6922d1a44e0cb, type: 3}
   Sprite_Win: {fileID: 21300000, guid: 2ff5a25f79cedfd3582f0ac53a8b045e, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: bf39bd1cffc4f31e59217fc8e408ff60, type: 3}
+  Sprite_Annoying: {fileID: 21300000, guid: 2ff5a25f79cedfd3582f0ac53a8b045e, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
   Snd_AttackVoice: {fileID: 8910571199640331198}

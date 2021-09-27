@@ -16,6 +16,7 @@ public enum PlayerState
     Idle,
     ReadyToRound,
     AttackIdle,
+    Annoying,
     AttackMotion,
     AttackHit,
     Groggy,
@@ -167,6 +168,7 @@ public class PlayerCS : MonoBehaviour
     float _elapsedTime = 0.0f;
     float _idleMotionSpeed = 0.0f;
     float _attackMotionTime = 0.0f;
+    float _annoyingTime = 0.0f;
     float _nextAttackMotionTime = 0.0f;
     float _groggyTime = 0.0f;
     int _groggyRemainHP = 0;
@@ -203,6 +205,7 @@ public class PlayerCS : MonoBehaviour
     public Sprite Sprite_HitPaper;
     public Sprite Sprite_Win;
     public Sprite Sprite_Dead;
+    public Sprite Sprite_Annoying = null;
 
     // sounds
     public AudioSource Snd_Attack;
@@ -401,6 +404,7 @@ public class PlayerCS : MonoBehaviour
         Sprite_AttackPaper = skin.Sprite_AttackPaper;
         Sprite_Win = skin.Sprite_Win;
         Sprite_Dead = skin.Sprite_Dead;
+        Sprite_Annoying = skin.Sprite_Annoying;
         Snd_Name.clip = skin.Snd_Name.clip;
 
         LoadPlayerStat();
@@ -533,6 +537,7 @@ public class PlayerCS : MonoBehaviour
     public void SetAttackInner(AttackType attackType, bool isAttackHit)
     {
         if (false == isAlive() || 
+            PlayerState.Annoying == _playerState || 
             PlayerState.AttackHit == _playerState || 
             PlayerState.Groggy == _playerState)
         {
@@ -571,6 +576,33 @@ public class PlayerCS : MonoBehaviour
         }
 
         _lastAttackType = attackType;
+    }
+
+    public bool HasAnnoyingMotion()
+    {
+        return null != Sprite_Annoying;
+    }
+
+    public void SetAnnoying()
+    {
+        if (false == HasAnnoyingMotion() ||
+            false == isAlive() || 
+            PlayerState.Annoying == _playerState || 
+            PlayerState.AttackMotion == _playerState || 
+            PlayerState.AttackHit == _playerState || 
+            PlayerState.Groggy == _playerState)
+        {
+            return;
+        }
+
+        _annoyingTime = 0.0f;
+        _lastAttackType = AttackType.None;
+        _playerState = PlayerState.Annoying;
+
+        SetTexture(Sprite_Annoying);        
+        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(AttackType.None, _playerStat._power, _isPlayerA, _isPlayer);
+        Layer_AttackTimer.GetComponent<FightTimerCS>().ResetPowerGauge(_isPlayerA);
+        Snd_Attack.Play();
     }
 
     public void SetAttack(AttackType attackType)
@@ -691,6 +723,16 @@ public class PlayerCS : MonoBehaviour
             {
                 updateNPC();
             }
+        }
+        else if(PlayerState.Annoying == _playerState)
+        {
+            if (Constants.AnnoyingTime <= _annoyingTime)
+            {
+                SetAttackIdle();
+            }
+            
+            transform.position = new Vector3(_isPlayerA ? -Constants.AttackDistance : Constants.AttackDistance, Constants.GroundPosition, 0.0f);
+            _annoyingTime += Time.deltaTime;
         }
         else if(PlayerState.AttackMotion == _playerState || PlayerState.AttackHit == _playerState)
         {

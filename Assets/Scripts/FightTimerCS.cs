@@ -44,6 +44,18 @@ public class FightTimerCS : MonoBehaviour
         LayerPowerGuageB.GetComponent<PowerGaugeCS>().ResetPowerGauge();
     }
 
+    public void ResetPowerGauge(bool isPlayerA)
+    {
+        if(isPlayerA)
+        {
+            LayerPowerGuageA.GetComponent<PowerGaugeCS>().ResetPowerGauge();
+        }
+        else
+        {
+            LayerPowerGuageB.GetComponent<PowerGaugeCS>().ResetPowerGauge();
+        }
+    }
+
     public void SetAttackType(AttackType attackType, int power, bool isPlayerA, bool isPlayer)
     {
         GameObject obj = isPlayerA ? AttackTypeA : AttackTypeB;

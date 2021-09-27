@@ -36,6 +36,7 @@ public class GameManagerCS : MonoBehaviour
     float _roundTimer = Constants.RoundTime;
     bool _pause = false;
     bool _isVersusScene = false;
+    bool _showRewardAdvertisement = false;
     bool _stopRoundTimer = false;
     GameState _gameState = GameState.None;
 
@@ -89,6 +90,8 @@ public class GameManagerCS : MonoBehaviour
     public GameObject Image_Exit;
     public GameObject Layer_AttackButtonsA;
     public GameObject Layer_AttackButtonsB;
+    public GameObject Button_AnnoyingA;
+    public GameObject Button_AnnoyingB;
     public GameObject Layer_AttackTimer;
     FightTimerCS AttackTimer_CS;
     public GameObject Layer_HP_Bar_A;
@@ -130,6 +133,7 @@ public class GameManagerCS : MonoBehaviour
 
     public void ResetGameManager(bool isVersusScene, PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
     {
+        _showRewardAdvertisement = false;
         _isVersusScene = isVersusScene;
         _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
@@ -157,7 +161,11 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_A, Layer_AttackTimer, playerCreateInfoA);
         PlayerB_CS.ResetPlayer(GetComponent<GameManagerCS>(), Layer_HP_Bar_B, Layer_AttackTimer, playerCreateInfoB);
 
+        Button_AnnoyingA.SetActive(PlayerA_CS.HasAnnoyingMotion());
+        
         Layer_AttackButtonsB.SetActive(playerCreateInfoB._isPlayer);
+        Button_AnnoyingB.SetActive(PlayerB_CS.HasAnnoyingMotion());
+
         LayerResult.SetActive(false);
         Btn_Advertisement.SetActive(true);
 
@@ -244,6 +252,7 @@ public class GameManagerCS : MonoBehaviour
 
     public void OnClickAdvertisement()
     {
+        _showRewardAdvertisement = true;
         Btn_Advertisement.SetActive(false);
         MainSceneManager.GetComponent<MainSceneManagerCS>().ShowFightRewardedAd(_recordTotalScore);
     }
@@ -268,6 +277,10 @@ public class GameManagerCS : MonoBehaviour
         Attack(PlayerA_CS, AttackType.Paper);
 	}
 
+    public void Btn_PlayerA_Annoying_OnClick() {
+        PlayerA_CS.SetAnnoying();
+	}
+
     public void Btn_PlayerB_Rock_OnClick() {
         Attack(PlayerB_CS, AttackType.Rock);
 	}
@@ -278,6 +291,10 @@ public class GameManagerCS : MonoBehaviour
 
     public void Btn_PlayerB_Paper_OnClick() {
         Attack(PlayerB_CS, AttackType.Paper);
+	}
+
+    public void Btn_PlayerB_Annoying_OnClick() {
+        PlayerB_CS.SetAnnoying();
 	}
 
     void Attack(PlayerCS Player, AttackType attackType)
@@ -413,7 +430,7 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
         
-        float newAttackTime = 2.0f / Mathf.Max(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
+        float newAttackTime = 2.0f / Mathf.Min(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
         // prevent too fast
         _initialAttackTimerTime = Mathf.Lerp(_initialAttackTimerTime, Random.Range(newAttackTime, Constants.AttackTimerTime), 0.5f);
 
@@ -503,7 +520,7 @@ public class GameManagerCS : MonoBehaviour
         return 0;
     }
 
-    void SetHitPlayers(float shaderIntensity = 0.0f)
+    void SetHitPlayers(float shakeIntensity = 0.0f)
     {
         SetHitPlayer(PlayerB_CS, PlayerA_CS, Image_Bam_A, Image_Critical_A, Text_Damage_A);
         int damage = SetHitPlayer(PlayerA_CS, PlayerB_CS, Image_Bam_B, Image_Critical_B, Text_Damage_B);
@@ -511,30 +528,37 @@ public class GameManagerCS : MonoBehaviour
         {
             _recordAttackPoint += damage;
         }
-        MainCamera.GetComponent<CameraCS>().setShake(shaderIntensity);
+
+        
+        MainCamera.GetComponent<CameraCS>().setShake(shakeIntensity);
     }
 
     void SetAttackHitState()
     {
+        bool attackNone = AttackType.None == PlayerA_CS.getLastAttackType() && AttackType.None == PlayerB_CS.getLastAttackType();
+
         _gameState = GameState.AttackHit;
-        _attackHitTime = 0.0f;
+        _attackHitTime = attackNone ? Constants.AttackHitTime : 0.0f;
         AttackTimer_CS.setBar(0.0f);
 
-        int prevHP = PlayerA_CS.GetHP();
-
-        PlayerA_CS.SetAttackHit();
-        PlayerB_CS.SetAttackHit();
-
-        SetHitPlayers();
-
-        // set flicker
-        if(prevHP != PlayerA_CS.GetHP())
+        if(false == attackNone)
         {
-            _ko_sprite_flicker = true;
-            int flickerHP = PlayerA_CS.GetMaxHP() / Constants.WarningHPDivide;
-            if(PlayerA_CS.GetHP() <= flickerHP)
+            int prevHP = PlayerA_CS.GetHP();
+
+            PlayerA_CS.SetAttackHit();
+            PlayerB_CS.SetAttackHit();
+
+            SetHitPlayers();
+
+            // set flicker
+            if(prevHP != PlayerA_CS.GetHP())
             {
-                _ko_sprite_flicker_low_hp = true;
+                _ko_sprite_flicker = true;
+                int flickerHP = PlayerA_CS.GetMaxHP() / Constants.WarningHPDivide;
+                if(PlayerA_CS.GetHP() <= flickerHP)
+                {
+                    _ko_sprite_flicker_low_hp = true;
+                }
             }
         }
 	}
@@ -680,6 +704,10 @@ public class GameManagerCS : MonoBehaviour
                         {
                             Text_Result.GetComponent<TextMeshProUGUI>().text = "You Win";
                         }
+
+                        // record
+                        _recordHP += PlayerA_CS.GetHP();
+                        _recordTimePoint += Mathf.Max(0, (int)(Mathf.Ceil(_roundTimer))) * Constants.TimePoint;
                     }
                     else if(false == isAliveA && isAliveB)
                     {
@@ -714,10 +742,6 @@ public class GameManagerCS : MonoBehaviour
                     {
                         Snd_Bell_3.Play();
                     }
-
-                    // record
-                    _recordHP += PlayerA_CS.GetHP();
-                    _recordTimePoint += Mathf.Max(0, (int)(Mathf.Ceil(_roundTimer)));
 
                     SetRoundEnd();
                 }
@@ -777,7 +801,7 @@ public class GameManagerCS : MonoBehaviour
 
             if(0.0f == _groggyAttackTime)
             {
-                float shaderIntensity = Constants.CameraShakeIntensity * 0.2f;
+                float shakeIntensity = Constants.CameraShakeIntensity * 0.2f;
                 PlayerCS player = null;
                 if(false == isGroggyHP_A && AttackType.None != PlayerA_CS.getLastAttackType())
                 {
@@ -791,7 +815,7 @@ public class GameManagerCS : MonoBehaviour
                 if(null != player)
                 {
                     player.SetAttackHit();
-                    SetHitPlayers(shaderIntensity);
+                    SetHitPlayers(shakeIntensity);
                     _groggyAttackTime = Constants.AttackMotionTime;
                 }
             }
@@ -822,7 +846,7 @@ public class GameManagerCS : MonoBehaviour
                     if(false == _isVersusScene)
                     {
                         // record score
-                        _recordTotalScore = _recordAttackPoint + _recordHP + _recordTimePoint * Constants.TimePoint;
+                        _recordTotalScore = _recordAttackPoint + _recordHP + _recordTimePoint;
                         _recordBonus = isPlayerA_Win ? (_recordTotalScore / 2) : 0;
                         _recordTotalScore += _recordBonus;
                         MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(_recordTotalScore);
@@ -868,7 +892,7 @@ public class GameManagerCS : MonoBehaviour
         {
             if(Constants.GameResultTime <= _gameResultTime)
             {
-                if(false == _isVersusScene)
+                if(false == _isVersusScene && false == _showRewardAdvertisement)
                 {
                     MainSceneManager.GetComponent<MainSceneManagerCS>().ShowInterstitial();
                 }
