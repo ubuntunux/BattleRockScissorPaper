@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "ce12160cf0a758fe0c",
         "name": "com.EnuriSoft.BattleZone",
-        "processId": 5573,
+        "processId": 23887,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -228,6 +228,12 @@
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
             "processId": 5573,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 23887,
             "exited": false
         }
     ],

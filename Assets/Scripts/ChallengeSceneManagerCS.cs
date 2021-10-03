@@ -37,6 +37,8 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject PlayerB_Info;
 
     public GameObject[] ChallengePlayers;
+    List<GameObject> ChallengePlayerList = new List<GameObject>();
+    List<GameObject> PlayerSkinList = new List<GameObject>();
 
     ChallengeState _challengeState = ChallengeState.None;
 
@@ -66,10 +68,47 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         return GameSceneType.VersusScene == MainSceneManager.GetComponent<MainSceneManagerCS>().GetActivateSceneType();
     }
 
+    void SortPlayerList()
+    {
+        // sort challenge players
+        ChallengePlayerList.Clear();
+        foreach(GameObject player in ChallengePlayers)
+        {
+            ChallengePlayerList.Add(player);
+        }
+
+        ChallengePlayerList.Sort(delegate (GameObject a, GameObject b)
+        {
+            return a.GetComponent<PlayerCS>()._playerStat._rank < b.GetComponent<PlayerCS>()._playerStat._rank ? 1 : -1;
+        });
+
+        // sort player skins
+        PlayerSkinList.Clear();
+        GameObject[] playerSkins = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkins();
+        foreach(GameObject player in playerSkins)
+        {
+            PlayerSkinList.Add(player);
+        }
+        
+        PlayerSkinList.Sort(delegate (GameObject a, GameObject b)
+        {
+            bool purchasedA = a.GetComponent<PlayerCS>()._playerStat._purchased;
+            bool purchasedB = b.GetComponent<PlayerCS>()._playerStat._purchased;
+
+            if(purchasedA != purchasedB)
+            {
+                return purchasedA ? -1 : 1;
+            }
+            return 0;
+        });
+    }
+
     void ResetChallengeScene()
     {
         _timer = 0.0f;
         _challengeState = ChallengeState.None;
+
+        SortPlayerList();
 
         LayerPortrait.SetActive(true);
         LayerVersus.SetActive(false);
@@ -88,10 +127,10 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         PlayerB.GetComponent<PlayerCS>().SetStateIdle();
 
         GameObject[] playerSkins = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkins();
-        LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, playerSkins, PlayerA);
+        LayerSelectPlayerA.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, PlayerSkinList, PlayerA);
         LayerSelectPlayerA.SetActive(true);
 
-        LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, isVersusScene ? playerSkins : ChallengePlayers, PlayerB);
+        LayerSelectPlayerB.GetComponent<MatchCardManagerCS>().ResetMatchCardManager(this, isVersusScene ? PlayerSkinList : ChallengePlayerList, PlayerB);
         LayerSelectPlayerB.SetActive(true);
 
         VersusPortraitPlayerB.GetComponent<ChallengePortraitCS>().Reset();
@@ -113,9 +152,126 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     public void ClearChallengeInfo()
     {
-        PlayerA.GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
         MainSceneManager.GetComponent<MainSceneManagerCS>().ClearPlayerStats();
         ResetChallengeScene();
+    }
+
+    public void CalcChallengePlayersRank()
+    {
+        int maxRoundCount = 3;
+        int maxWinCount = 2;
+
+        List<GameObject> playerList = new List<GameObject>();
+        foreach(GameObject player in ChallengePlayers)
+        {
+            playerList.Add(player);
+        }
+        
+        // fight simulation
+        foreach(GameObject playerA in ChallengePlayers)
+        {
+            foreach(GameObject playerB in ChallengePlayers)
+            {
+                if(playerA != playerB)
+                {
+                    int roundIndex = 0;
+                    int winCountA = 0;
+                    int winCountB = 0;
+
+                    PlayerCS playerCS_A = playerA.GetComponent<PlayerCS>();
+                    PlayerCS playerCS_B = playerB.GetComponent<PlayerCS>();
+                    
+                    for(int i = 0; i < maxRoundCount; ++i)
+                    {
+                        int hpA = playerCS_A.GetMaxHP();
+                        int hpB = playerCS_B.GetMaxHP();
+
+                        while(0 < hpA && 0 < hpB)
+                        {
+                            float powerGuageA = 1.0f - Mathf.Pow(Random.value, 2.0f);
+                            float powerGuageB = 1.0f - Mathf.Pow(Random.value, 2.0f);
+
+                            int powerA = playerCS_A.GetPowerWithGuage(powerGuageA);
+                            int powerB = playerCS_B.GetPowerWithGuage(powerGuageB);
+
+                            AttackType attackTypeA = (AttackType)(Random.Range(0, 3) + 1);
+                            AttackType attackTypeB = (AttackType)(Random.Range(0, 3) + 1);
+
+                            if(AttackType.None != attackTypeB && (attackTypeB == attackTypeA || GameManagerCS.checkLose(attackTypeB, attackTypeA)))
+                            {
+                                hpA -= powerB;
+                            }
+
+                            if(AttackType.None != attackTypeA && (attackTypeA == attackTypeB || GameManagerCS.checkLose(attackTypeA, attackTypeB)))
+                            {
+                                hpB -= powerA;
+                            }
+
+                            if(hpB <= 0 && 0 < hpA)
+                            {
+                                ++winCountA;
+                            }
+                            else if(hpA <= 0 && 0 < hpB)
+                            {
+                                ++winCountB;
+                            }
+                        }
+
+                        if(maxWinCount <= winCountA || maxWinCount <= winCountB)
+                        {
+                            break;
+                        }
+                    }
+
+                    // round result
+                    if(winCountB < winCountA)
+                    {
+                        ++playerCS_A._playerStat._win;
+                        ++playerCS_B._playerStat._lose;
+                    }
+                    else if(winCountA < winCountB)
+                    {
+                        ++playerCS_B._playerStat._win;
+                        ++playerCS_A._playerStat._lose;
+                    }
+                    else
+                    {
+                        ++playerCS_A._playerStat._draw;
+                        ++playerCS_B._playerStat._draw;
+                    }
+                }
+            }
+        }
+
+        // sort by win, draw, lose
+        playerList.Sort(delegate (GameObject a, GameObject b)
+        {
+            PlayerStat playerStatA = a.GetComponent<PlayerCS>()._playerStat;
+            PlayerStat playerStatB = b.GetComponent<PlayerCS>()._playerStat;
+
+            if(playerStatA._win != playerStatB._win)
+            {
+                return playerStatA._win < playerStatB._win ? 1 : -1;
+            }
+
+            if(playerStatA._draw != playerStatB._draw)
+            {
+                return playerStatA._draw < playerStatB._draw ? 1 : -1;
+            }
+
+            if(playerStatA._lose != playerStatB._lose)
+            {
+                return playerStatA._lose < playerStatB._lose ? -1 : 1;
+            }
+            return 0;
+        });
+
+        // set rank
+        for(int i = 0; i < playerList.Count; ++i)
+        {
+            playerList[i].GetComponent<PlayerCS>()._playerStat._rank = i;
+            playerList[i].GetComponent<PlayerCS>().SavePlayerStat();
+        }
     }
 
     void ResetPlayerCharacter(bool isPlayerA)

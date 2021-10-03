@@ -59,7 +59,8 @@ public class SkinManagerCS : MonoBehaviour
         int skinCount = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinCount();
         int heightCount = 4;
         int widthCount = 4;
-        float cardSize = 170.0f;
+        float cardSizeX = 160.0f;
+        float cardSizeY = 190.0f;
         float offsetX = -240;
         float offsetY = 320;
         for(int y = 0; y < heightCount; ++y)
@@ -69,7 +70,7 @@ public class SkinManagerCS : MonoBehaviour
                 PlayerCS skin = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinByIndex(skinIndex++);
                 GameObject SkinCardEntry = (GameObject)GameObject.Instantiate(SkinCardPrefab);
                 SkinCardEntry.transform.SetParent(LayerSkinCardContents.transform);
-                SkinCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(offsetX + x * cardSize, offsetY + y * -cardSize, 0.0f);
+                SkinCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(offsetX + x * cardSizeX, offsetY + y * -cardSizeY, 0.0f);
                 SkinCardEntry.transform.localScale = new Vector3(1, 1, 1);
                 SkinCardEntry.GetComponent<SkinCardCS>().SetSkinCard(GetComponent<SkinManagerCS>(), skin);
 

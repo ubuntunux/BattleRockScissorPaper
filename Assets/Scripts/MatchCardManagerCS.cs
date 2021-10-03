@@ -9,7 +9,7 @@ public class MatchCardManagerCS : MonoBehaviour
     public GameObject LayerMatchCardPrefab;
 
     ChallengeSceneManagerCS _challengeSceneManager = null;
-    GameObject[] _playerList;
+    List<GameObject> _playerList = new List<GameObject>();
 
     List<GameObject> _matchCards = new List<GameObject>();
     MatchCardCS _lastSelectedMatchCard = null;
@@ -20,14 +20,14 @@ public class MatchCardManagerCS : MonoBehaviour
         
     }
 
-    public void ResetMatchCardManager(ChallengeSceneManagerCS challengeSceneManager, GameObject[] playerList, GameObject player)
+    public void ResetMatchCardManager(ChallengeSceneManagerCS challengeSceneManager, List<GameObject> playerList, GameObject player)
     {
         _challengeSceneManager = challengeSceneManager;
         _playerList = playerList;
         
         RemoveAllMatchCards();
 
-        int count = _playerList.Length;
+        int count = _playerList.Count;
         for(int i = 0; i < count; ++i)
         {
             AddMatchCardEntry(count, i, _playerList[i].GetComponent<PlayerCS>(), player);

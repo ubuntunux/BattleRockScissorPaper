@@ -6,7 +6,7 @@ public class Constants : MonoBehaviour
 {
     static public int DefaultSkinID = 1;
     static public int DefaultAdvertiseNum = 3;
-    static public int DefaultAccounts = 100000;
+    static public int DefaultAccounts = 900;
     static public int DefaultHP = 30;
     static public int DefaultPower = 10;
 
@@ -33,6 +33,6 @@ public class Constants : MonoBehaviour
     static public float CriticalPowerGuage = 0.95f;
     static public float MinPowerGuage = 0.2f;
     static public int WarningHPDivide = 3;
-    static public int GroggyHPDivide = 2;
+    static public int GroggyHPDivide = 5;
     static public int TimePoint = 10;
 }

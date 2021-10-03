@@ -25,7 +25,7 @@ public class PlayerInfoCS : MonoBehaviour
     {
         Text_Name.GetComponent<TextMeshProUGUI>().text = playerSkin.GetCharacterName();        
         Text_Win.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._win.ToString();
-        Text_Draw.GetComponent<TextMeshProUGUI>().text = playerSkin.Draw.ToString();        
+        Text_Draw.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._draw.ToString();        
         Text_Lose.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._lose.ToString();
         Text_HP.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._hp.ToString();
         Text_Power.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._power.ToString();

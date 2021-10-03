@@ -309,7 +309,7 @@ public class GameManagerCS : MonoBehaviour
         }
 	}
 
-    bool checkLose(AttackType lhs, AttackType rhs)
+    static public bool checkLose(AttackType lhs, AttackType rhs)
     {
         switch (rhs)
         {
@@ -325,7 +325,7 @@ public class GameManagerCS : MonoBehaviour
         return false;
     }
 
-    bool checkWin(AttackType lhs, AttackType rhs)
+    public bool checkWin(AttackType lhs, AttackType rhs)
     {
         switch (rhs)
         {
@@ -753,7 +753,7 @@ public class GameManagerCS : MonoBehaviour
                     int winCountA = PlayerA_CS.GetWin() + ((false == isGroggyHP_A && isGroggyHP_B) ? 1 : 0);
                     int winCountB = PlayerB_CS.GetWin() + ((false == isGroggyHP_B && isGroggyHP_A) ? 1 : 0);
                     int maxWinCount = Mathf.Max(winCountA, winCountB);
-                    if ((_maxRoundCount <= _round || _maxWinCount <= maxWinCount) && (isGroggyHP_A || isGroggyHP_B))
+                    if (_maxWinCount <= maxWinCount && (isGroggyHP_A || isGroggyHP_B))
                     {
                         SetGroggyState();
                     }

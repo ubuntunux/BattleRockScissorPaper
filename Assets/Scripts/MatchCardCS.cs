@@ -81,6 +81,7 @@ public class MatchCardCS : MonoBehaviour
         _player = player;
         _skin = skin;
         _unlocked = unlocked;
+        _colorTime = 0.0f;
         Image_Portrait.GetComponent<Image>().sprite = skin.GetImagePortrait();
         Image_Lock.SetActive(!unlocked);
     }
@@ -88,7 +89,7 @@ public class MatchCardCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(0.0f < _colorTime)
+        if(0.0f <= _colorTime)
         {
             _colorTime -= Time.deltaTime;
             float ratio = Mathf.Max(0.0f, _colorTime / BlendTime);
@@ -100,8 +101,11 @@ public class MatchCardCS : MonoBehaviour
             color.g = Mathf.Lerp(goalColor.g, color.g, ratio);
             color.b = Mathf.Lerp(goalColor.b, color.b, ratio);
             color.a = Mathf.Lerp(goalColor.a, color.a, ratio);
-
             GetComponent<Image>().color = color;
+
+            Color PortraitColor = Image_Portrait.GetComponent<Image>().color;
+            PortraitColor.a = color.a;
+            Image_Portrait.GetComponent<Image>().color = PortraitColor;
         }
     }
 }

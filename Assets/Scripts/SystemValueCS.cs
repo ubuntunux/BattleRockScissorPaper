@@ -16,6 +16,7 @@ public class SystemValue : MonoBehaviour
     public static string PlayerStatHPKey = "PlayerStatHP";
     public static string PlayerStatPowerKey = "PlayerStatPower";
     public static string PlayerStatSpeedKey = "PlayerStatSpeed";
+    public static string PlayerStatRankKey = "PlayerStatRank";
 
     public static string PlayerScoreKey = "PlayerScore";
     public static string PlayerLastStageKey = "PlayerLastStage";

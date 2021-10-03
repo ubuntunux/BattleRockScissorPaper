@@ -101,6 +101,11 @@ public class SkinCardCS : MonoBehaviour
         Btn_Advertisement.SetActive(locked && 0 < _skin.Advertisement);
         Image_Lock.SetActive(locked);
 
+        Color color = Image_Portrait.GetComponent<Image>().color;
+        color.a = locked ? 0.5f : 1.0f;
+        Image_Portrait.GetComponent<Image>().color = color;
+        Image_BG.GetComponent<Image>().color = locked ? new Color(0.5f, 0.5f, 0.5f, 1) : new Color(1, 1, 1, 1);
+
         SetAccountsText();
         SetAdvertisementText();
     }

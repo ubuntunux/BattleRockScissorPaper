@@ -47,6 +47,7 @@ public class PlayerStat
     public int _hp = Constants.DefaultHP;
     public int _power = Constants.DefaultPower;
     public float _speed = Constants.AttackTimerTime;
+    public int _rank = 0;
 
     public void PrintPlayerStat(string title = "")
     {
@@ -63,6 +64,7 @@ public class PlayerStat
             + ", _hp: " + _hp.ToString()
             + ", _power: " + _power.ToString()
             + ", _speed: " + _speed.ToString()
+            + ", _rank: " + _rank.ToString()
         );
     }
 
@@ -72,13 +74,14 @@ public class PlayerStat
         _skinID = player.SkinID;
         _advertisement = 0;
         _purchased = player.Purchased;
-        _perfect = usePlayerStat ? 0 : player.Perfect;
-        _win = usePlayerStat ? 0 : player.Win;
-        _draw = usePlayerStat ? 0 : player.Draw;
-        _lose = usePlayerStat ? 0 : player.Lose;
+        _perfect = 0;
+        _win = 0;
+        _draw = 0;
+        _lose = 0;
         _hp = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.DefaultHP : player.HP;
         _power = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.DefaultPower : player.Power;
         _speed = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.AttackTimerTime : player.Speed;
+        _rank = 0;
     }
 
     public string GetSkinIDString()
@@ -96,6 +99,7 @@ public class PlayerStat
         _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
+        _rank = SystemValue.GetInt(skinID + SystemValue.PlayerStatRankKey, _rank);
         
         if(_usePlayerStat && ENABLE_PLAYER_FIGHT_STAT)
         {
@@ -115,6 +119,7 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
+        SystemValue.SetInt(skinID + SystemValue.PlayerStatRankKey, _rank);
 
         if(_usePlayerStat && ENABLE_PLAYER_FIGHT_STAT)
         {
@@ -150,6 +155,12 @@ public class PlayerStat
         _purchased = purchased;
         SystemValue.SetBool(GetSkinIDString() + SystemValue.PlayerPurchasedKey, purchased);
     }
+
+    public void SetRank(int rank)
+    {
+        _rank = rank;
+        SystemValue.SetInt(GetSkinIDString() + SystemValue.PlayerStatRankKey, _rank);
+    }
 }
 
 public class PlayerCS : MonoBehaviour
@@ -177,10 +188,6 @@ public class PlayerCS : MonoBehaviour
 
     // Stat
     public int Age = 25;
-    public int Perfect = 0;
-    public int Win = 0;
-    public int Draw = 0;
-    public int Lose = 0;
     public int Score = 0;
     public int HP = 30;
     public int Power = 10;
@@ -275,9 +282,9 @@ public class PlayerCS : MonoBehaviour
         return Layer_AttackTimer.GetComponent<FightTimerCS>().GetPowerGuageColor(_isPlayerA);
     }
 
-    public int GetPowerWithGuage()
+    public int GetPowerWithGuage(float powerGuage = -1.0f)
     {
-        float powerGuage = Mathf.Max(Constants.MinPowerGuage, GetPowerGuage());
+        powerGuage = Mathf.Max(Constants.MinPowerGuage, (powerGuage < 0.0f) ? GetPowerGuage() : powerGuage);
         int damage = Mathf.Max(1, (int)Mathf.Ceil((float)_playerStat._power * powerGuage));
         if(Constants.CriticalPowerGuage <= powerGuage)
         {
@@ -385,26 +392,27 @@ public class PlayerCS : MonoBehaviour
 
         // player stat
         Age = skin.Age;
-        Win = skin.Win;
-        Draw = skin.Draw;
-        Lose = skin.Lose;
         Score = skin.Score;
-        Perfect = skin.Perfect;
         HP = skin.HP;
         Power = skin.Power;
         Speed = skin.Speed;
         
         _characterName = skin._characterName;
+        
         Sprite_Born = skin.Sprite_Born;
         Sprite_Portrait = skin.Sprite_Portrait;
         Sprite_PortraitLose = skin.Sprite_PortraitLose;
         Sprite_Idle = skin.Sprite_Idle;
+        Sprite_Groggy = skin.Sprite_Groggy;
         Sprite_AttackRock = skin.Sprite_AttackRock;
         Sprite_AttackScissor = skin.Sprite_AttackScissor;
         Sprite_AttackPaper = skin.Sprite_AttackPaper;
+        Sprite_HitRock = skin.Sprite_HitRock;
+        Sprite_HitPaper = skin.Sprite_HitPaper;
         Sprite_Win = skin.Sprite_Win;
         Sprite_Dead = skin.Sprite_Dead;
         Sprite_Annoying = skin.Sprite_Annoying;
+
         Snd_Name.clip = skin.Snd_Name.clip;
 
         LoadPlayerStat();
