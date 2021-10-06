@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
+    static public bool SHOW_ME_THE_MONEY = false;
+
     static public int DefaultSkinID = 1;
     static public int DefaultAdvertiseNum = 3;
     static public int DefaultAccounts = 900;
     static public int DefaultHP = 30;
     static public int DefaultPower = 10;
+    static public float DefaultSpeed = 1.0f;
+
+    static public int MaxHP = 300;
+    static public int MaxPower = 100;
+    static public float MaxSpeed = 10.0f;
 
     static public float FadeTime = 0.25f;
     static public float AttackRandomTermMin = 0.1f;
@@ -35,4 +42,5 @@ public class Constants : MonoBehaviour
     static public int WarningHPDivide = 3;
     static public int GroggyHPDivide = 5;
     static public int TimePoint = 10;
+    static public float TraningTime = 2.0f;
 }

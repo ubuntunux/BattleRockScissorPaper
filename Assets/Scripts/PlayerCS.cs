@@ -35,7 +35,6 @@ public class PlayerCreateInfo
 
 public class PlayerStat
 {
-    static bool ENABLE_PLAYER_FIGHT_STAT = false;
     public bool _usePlayerStat = false;    
     public int _skinID = Constants.DefaultSkinID;
     public int _advertisement = 0;
@@ -46,7 +45,7 @@ public class PlayerStat
     public int _lose = 0;
     public int _hp = Constants.DefaultHP;
     public int _power = Constants.DefaultPower;
-    public float _speed = Constants.AttackTimerTime;
+    public float _speed = Constants.DefaultSpeed;
     public int _rank = 0;
 
     public void PrintPlayerStat(string title = "")
@@ -78,9 +77,9 @@ public class PlayerStat
         _win = 0;
         _draw = 0;
         _lose = 0;
-        _hp = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.DefaultHP : player.HP;
-        _power = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.DefaultPower : player.Power;
-        _speed = (usePlayerStat && ENABLE_PLAYER_FIGHT_STAT) ? Constants.AttackTimerTime : player.Speed;
+        _hp = usePlayerStat ? Constants.DefaultHP : player.HP;
+        _power = usePlayerStat ? Constants.DefaultPower : player.Power;
+        _speed = usePlayerStat ? Constants.DefaultSpeed : player.Speed;
         _rank = 0;
     }
 
@@ -101,7 +100,7 @@ public class PlayerStat
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         _rank = SystemValue.GetInt(skinID + SystemValue.PlayerStatRankKey, _rank);
         
-        if(_usePlayerStat && ENABLE_PLAYER_FIGHT_STAT)
+        if(_usePlayerStat)
         {
             _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
             _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
@@ -121,7 +120,7 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatRankKey, _rank);
 
-        if(_usePlayerStat && ENABLE_PLAYER_FIGHT_STAT)
+        if(_usePlayerStat)
         {
             SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
             SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
@@ -187,12 +186,9 @@ public class PlayerCS : MonoBehaviour
     int _wins = 0;
 
     // Stat
-    public int Age = 25;
-    public int Score = 0;
-    public int HP = 30;
-    public int Power = 10;
-    public int Level = 1;
-    public float Speed = Constants.AttackTimerTime;
+    public int HP = Constants.DefaultHP;
+    public int Power = Constants.DefaultPower;
+    public float Speed = Constants.DefaultSpeed;
     public PlayerStat _playerStat = new PlayerStat();
 
     // Skin
@@ -391,8 +387,6 @@ public class PlayerCS : MonoBehaviour
         SkinID = skin.SkinID; 
 
         // player stat
-        Age = skin.Age;
-        Score = skin.Score;
         HP = skin.HP;
         Power = skin.Power;
         Speed = skin.Speed;
@@ -569,7 +563,10 @@ public class PlayerCS : MonoBehaviour
                 break;
         }
 
-        Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _playerStat._power, _isPlayerA, _isPlayer);
+        if(null != Layer_AttackTimer)
+        {
+            Layer_AttackTimer.GetComponent<FightTimerCS>().SetAttackType(attackType, _playerStat._power, _isPlayerA, _isPlayer);
+        }
 
         if(isAttackHit)
         {
@@ -579,6 +576,7 @@ public class PlayerCS : MonoBehaviour
         }
         else if(AttackType.None != attackType)
         {
+            //Snd_AttackVoice.Play();
             Snd_Attack.Play();
             _playerState = PlayerState.AttackMotion;
         }

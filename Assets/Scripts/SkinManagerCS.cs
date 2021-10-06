@@ -99,7 +99,7 @@ public class SkinManagerCS : MonoBehaviour
         PlayerCS skin = skinCard.GetSkin();
         int score = MainSceneManager.GetComponent<MainSceneManagerCS>().GetScore() - skin.Accounts;
 
-        if(0 <= score)
+        if(Constants.SHOW_ME_THE_MONEY || 0 <= score)
         {
             MainSceneManager.GetComponent<MainSceneManagerCS>().SetScore(score);
             skinCard.PurchaseSkinCard();

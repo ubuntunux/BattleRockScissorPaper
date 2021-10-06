@@ -269,8 +269,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         // set rank
         for(int i = 0; i < playerList.Count; ++i)
         {
-            playerList[i].GetComponent<PlayerCS>()._playerStat._rank = i;
-            playerList[i].GetComponent<PlayerCS>().SavePlayerStat();
+            playerList[i].GetComponent<PlayerCS>()._playerStat.SetRank(i);
         }
     }
 

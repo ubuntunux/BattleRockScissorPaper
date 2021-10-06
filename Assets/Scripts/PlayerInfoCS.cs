@@ -29,7 +29,7 @@ public class PlayerInfoCS : MonoBehaviour
         Text_Lose.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._lose.ToString();
         Text_HP.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._hp.ToString();
         Text_Power.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._power.ToString();
-        Text_Speed.GetComponent<TextMeshProUGUI>().text = playerSkin._playerStat._speed.ToString();
+        Text_Speed.GetComponent<TextMeshProUGUI>().text = string.Format("{0:F1}", playerSkin._playerStat._speed);
         Image_Born.GetComponent<Image>().sprite = playerSkin.GetImageBorn();
     }
 

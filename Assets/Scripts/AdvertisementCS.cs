@@ -11,6 +11,7 @@ using GoogleMobileAds.Common;
 public class AdvertisementCS : MonoBehaviour
 {
     MainSceneManagerCS _mainSceneManager = null;
+    ResultCS _resultScene = null;
     BannerView _bannerView = null;
 
     InterstitialAd _interstitial = null;
@@ -93,9 +94,10 @@ public class AdvertisementCS : MonoBehaviour
         return _showRewardedAd;
     }
 
-    public void ShowRewardedAd(SkinCardCS rewardedSkinCard, int rewardScore = 0)
+    public void ShowRewardedAd(SkinCardCS rewardedSkinCard, int rewardScore = 0, ResultCS resultScene = null)
     {
         _showRewardedAd = true;
+        _resultScene = resultScene;
 
         if(null == _rewardedAd && null != _rewardedAdNext)
         {
@@ -108,9 +110,9 @@ public class AdvertisementCS : MonoBehaviour
         CreateAndRequestRewardedAd();
     }
 
-    public void ShowFightRewardedAd(int rewardScore)
+    public void ShowFightRewardedAd(int rewardScore, ResultCS resultScene)
     {
-        ShowRewardedAd(null, rewardScore);
+        ShowRewardedAd(null, rewardScore, resultScene);
     }
 
     // Request
@@ -191,6 +193,10 @@ public class AdvertisementCS : MonoBehaviour
     {
         if(0 < _rewardScore)
         {
+            if(null != _resultScene)
+            {
+                _resultScene.CallbackAdvertisement(_rewardScore);
+            }
             _mainSceneManager.AddScore(_rewardScore);
             _rewardScore = 0;
         }

@@ -24,6 +24,7 @@ public class ResultCS : MonoBehaviour
     public AudioSource Snd_CoinLoop;
 
     float _timer = 0.0f;
+    int _totalScore = 0;
     int _initialScore = 0;
     int _goalScore = 0;
     bool _isVersusScene = false;
@@ -35,6 +36,11 @@ public class ResultCS : MonoBehaviour
     }
 
     void OnDisable()
+    {
+        StopCoinSound();
+    }
+
+    public void StopCoinSound()
     {
         Snd_CoinLoop.Stop();
     }
@@ -61,7 +67,8 @@ public class ResultCS : MonoBehaviour
         else
         {
             int score = MainSceneManager.GetComponent<MainSceneManagerCS>().GetScore();
-            _initialScore = score - totalScore;
+            _totalScore = totalScore;
+            _initialScore = score - totalScore;            
             _goalScore = score;
 
             if(0 < totalScore)
@@ -137,6 +144,15 @@ public class ResultCS : MonoBehaviour
         Result_PlayerB.GetComponent<VersusPortraitCS>().SetVersusPortrait(playerB.GetComponent<PlayerCS>().GetCharacterName(), spritePlayerB, null);
     }
 
+    public void CallbackAdvertisement(int rewardScore)
+    {
+        _timer = Constants.GameResultTime;
+        _goalScore += rewardScore;
+        _totalScore += rewardScore;
+        Text_Total.GetComponent<TextMeshProUGUI>().text = _totalScore.ToString();
+        Text_Score.GetComponent<TextMeshProUGUI>().text = _goalScore.ToString();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -148,7 +164,7 @@ public class ResultCS : MonoBehaviour
             Text_Score.GetComponent<TextMeshProUGUI>().text = score.ToString();
             if(scoreTime <= _timer && Snd_CoinLoop.isPlaying)
             {
-                Snd_CoinLoop.Stop();
+                StopCoinSound();
             }
         }
 

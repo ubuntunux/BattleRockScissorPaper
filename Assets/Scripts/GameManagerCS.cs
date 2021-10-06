@@ -13,7 +13,6 @@ public enum GameState
     ReadyToAttack,
     AttackHit,
     Groggy,
-    GroggyAttack,
     RoundEnd,
     GameResult,
 }
@@ -22,7 +21,7 @@ public class GameManagerCS : MonoBehaviour
 {
     // Properties    
     float _elapsedTime = 0.0f;
-    float _initialAttackTimerTime = Constants.AttackTimerTime;
+    float _initialAttackTimerTime = 0.0f;
     float _attackTimerTime = 0.0f;
     float _attackHitTime = 0.0f;
     float _readyToRoundTime = 0.0f;
@@ -39,6 +38,7 @@ public class GameManagerCS : MonoBehaviour
     bool _showRewardAdvertisement = false;
     bool _stopRoundTimer = false;
     GameState _gameState = GameState.None;
+    GameState _gameStatePrev = GameState.None;
 
     // Record
     int _recordTimePoint = 0;
@@ -131,11 +131,18 @@ public class GameManagerCS : MonoBehaviour
         return _gameState == gameState;
     }
 
+    public void SetGameState(GameState gameState)
+    {
+        _gameStatePrev = _gameState;
+        _gameState = gameState;
+    }
+
     public void ResetGameManager(bool isVersusScene, PlayerCreateInfo playerCreateInfoA, PlayerCreateInfo playerCreateInfoB)
     {
+        _gameState = GameState.ReadyToFight;
+        _gameStatePrev = GameState.None;
         _showRewardAdvertisement = false;
         _isVersusScene = isVersusScene;
-        _gameState = GameState.ReadyToFight;
         _elapsedTime = 0.0f;
         _round = 1;
         _stopRoundTimer = false;
@@ -254,7 +261,8 @@ public class GameManagerCS : MonoBehaviour
     {
         _showRewardAdvertisement = true;
         Btn_Advertisement.SetActive(false);
-        MainSceneManager.GetComponent<MainSceneManagerCS>().ShowFightRewardedAd(_recordTotalScore);
+        LayerResult.GetComponent<ResultCS>().StopCoinSound();
+        MainSceneManager.GetComponent<MainSceneManagerCS>().ShowFightRewardedAd(_recordTotalScore, LayerResult.GetComponent<ResultCS>());
     }
 
     public void Btn_Back_OnClick()
@@ -381,10 +389,10 @@ public class GameManagerCS : MonoBehaviour
         Text_Result.GetComponent<TextMeshProUGUI>().text = (_maxRoundCount == _round) ? "Final Round" : ("Round " + _round.ToString());
         Text_Result.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, Text_Result.GetComponent<RectTransform>().anchoredPosition.y);
 
-        _initialAttackTimerTime = Constants.AttackTimerTime;
+        _initialAttackTimerTime = 2.0f / Constants.DefaultSpeed;
         _roundTimer = Constants.RoundTime;
 
-        _gameState = GameState.ReadyToRound;
+        SetGameState(GameState.ReadyToRound);
     }
 
     void RoundEnd()
@@ -399,7 +407,7 @@ public class GameManagerCS : MonoBehaviour
     {
         RoundEnd();
         _roundEndTime = 0.0f;
-        _gameState = GameState.RoundEnd;
+        SetGameState(GameState.RoundEnd);
     }
 
     void SetGameResult()
@@ -418,7 +426,7 @@ public class GameManagerCS : MonoBehaviour
             _recordTotalScore
         );
         _gameResultTime = 0.0f;
-        _gameState = GameState.GameResult;
+        SetGameState(GameState.GameResult);
     }
 
     void SetReadyToAttack()
@@ -430,12 +438,11 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
         
-        float newAttackTime = 2.0f / Mathf.Min(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
-        // prevent too fast
-        _initialAttackTimerTime = Mathf.Lerp(_initialAttackTimerTime, Random.Range(newAttackTime, Constants.AttackTimerTime), 0.5f);
-
+        float newAttackTime = 2.0f / Random.Range(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);        
+        // mix
+        _initialAttackTimerTime = Mathf.Lerp(_initialAttackTimerTime, newAttackTime, 0.5f);
         _attackTimerTime = 0.0f;
-        _gameState = GameState.ReadyToAttack;
+        SetGameState(GameState.ReadyToAttack);
     }
 
     void SetGroggyState()
@@ -466,7 +473,7 @@ public class GameManagerCS : MonoBehaviour
         _stopRoundTimer = true;
         _groggyTime = 0.0f;
         _groggyAttackTime = 0.0f;        
-        _gameState = GameState.Groggy;
+        SetGameState(GameState.Groggy);
     }
 
     float GetHitImagePositionY(AttackType attackType)
@@ -490,15 +497,15 @@ public class GameManagerCS : MonoBehaviour
         if(AttackType.None != attackerAttackType && (attackerAttackType == attackeeAttackType || checkLose(attackerAttackType, attackeeAttackType)))
         {
             CreateEffectAttackHit(attackerAttackType, attackee.GetIsPlayerA());
-            bool isGroggyHP = attackee.isGroggyHP();
-            bool isCritical = attacker.IsCriticalAttack() && false == isGroggyHP;
+            bool isGroggyState = CheckGameState(GameState.Groggy);
+            bool isCritical = attacker.IsCriticalAttack() && false == isGroggyState;
             Vector3 imagePosition = Image_Bam.transform.localPosition;
             imagePosition.y = GetHitImagePositionY(attackerAttackType);
             Image_Bam.transform.localPosition = imagePosition;
             Image_Bam.SetActive(!isCritical);
             Image_Critical.transform.localPosition = imagePosition;
             Image_Critical.SetActive(isCritical);
-            int damage = isGroggyHP ? attacker.GetPower() : attacker.GetPowerWithGuage();
+            int damage = isGroggyState ? attacker.GetPower() : attacker.GetPowerWithGuage();
             attackee.SetDamage(damage, attackerAttackType);
 
             // first you need the RectTransform component of your canvas
@@ -537,7 +544,7 @@ public class GameManagerCS : MonoBehaviour
     {
         bool attackNone = AttackType.None == PlayerA_CS.getLastAttackType() && AttackType.None == PlayerB_CS.getLastAttackType();
 
-        _gameState = GameState.AttackHit;
+        SetGameState(GameState.AttackHit);
         _attackHitTime = attackNone ? Constants.AttackHitTime : 0.0f;
         AttackTimer_CS.setBar(0.0f);
 
@@ -659,8 +666,12 @@ public class GameManagerCS : MonoBehaviour
         }
         else if(GameState.AttackHit == _gameState)
         {
+            bool isAliveA = PlayerA_CS.isAlive();
+            bool isAliveB = PlayerB_CS.isAlive();
+            bool wasGroggyState = GameState.Groggy == _gameStatePrev;
+
             // delay
-            float attackHitTimeDelay = (false == PlayerA_CS.isAlive() || false == PlayerB_CS.isAlive()) ? Constants.AttackHitTimeDelay : 0.0f;
+            float attackHitTimeDelay = ((false == isAliveA || false == isAliveB) && wasGroggyState) ? Constants.AttackHitTimeDelay : 0.0f;
 
             if((Constants.AttackHitTime + attackHitTimeDelay) <= _attackHitTime)
             {
@@ -671,9 +682,16 @@ public class GameManagerCS : MonoBehaviour
                 Text_Damage_A.SetActive(false);
                 Text_Damage_B.SetActive(false);
 
-                bool isAliveA = PlayerA_CS.isAlive();
-                bool isAliveB = PlayerB_CS.isAlive();
-                if (false == isAliveA || false == isAliveB || _roundTimer <= 0.0f)
+                bool isGroggyHP_A = PlayerA_CS.isGroggyHP();
+                bool isGroggyHP_B = PlayerB_CS.isGroggyHP();
+                int willWinCountA = PlayerA_CS.GetWin() + ((false == isGroggyHP_A && isGroggyHP_B) ? 1 : 0);
+                int willWinCountB = PlayerB_CS.GetWin() + ((false == isGroggyHP_B && isGroggyHP_A) ? 1 : 0);
+                int willMaxWinCount = Mathf.Max(willWinCountA, willWinCountB);
+                if (false == wasGroggyState && _maxWinCount <= willMaxWinCount && (isGroggyHP_A || isGroggyHP_B))
+                {
+                    SetGroggyState();
+                }
+                else if (false == isAliveA || false == isAliveB || _roundTimer <= 0.0f)
                 {
                     Text_Result.SetActive(true);
                     float textResultPosOffsetX = 270.0f;
@@ -747,20 +765,7 @@ public class GameManagerCS : MonoBehaviour
                 }
                 else
                 {
-                    // check is groggy
-                    bool isGroggyHP_A = PlayerA_CS.isAlive() && PlayerA_CS.isGroggyHP();
-                    bool isGroggyHP_B = PlayerB_CS.isAlive() && PlayerB_CS.isGroggyHP();
-                    int winCountA = PlayerA_CS.GetWin() + ((false == isGroggyHP_A && isGroggyHP_B) ? 1 : 0);
-                    int winCountB = PlayerB_CS.GetWin() + ((false == isGroggyHP_B && isGroggyHP_A) ? 1 : 0);
-                    int maxWinCount = Mathf.Max(winCountA, winCountB);
-                    if (_maxWinCount <= maxWinCount && (isGroggyHP_A || isGroggyHP_B))
-                    {
-                        SetGroggyState();
-                    }
-                    else
-                    {
-                        SetReadyToAttack();
-                    }
+                    SetReadyToAttack();
                 }
             }
             _attackHitTime += Time.deltaTime;
@@ -801,7 +806,6 @@ public class GameManagerCS : MonoBehaviour
 
             if(0.0f == _groggyAttackTime)
             {
-                float shakeIntensity = Constants.CameraShakeIntensity * 0.2f;
                 PlayerCS player = null;
                 if(false == isGroggyHP_A && AttackType.None != PlayerA_CS.getLastAttackType())
                 {
@@ -815,7 +819,7 @@ public class GameManagerCS : MonoBehaviour
                 if(null != player)
                 {
                     player.SetAttackHit();
-                    SetHitPlayers(shakeIntensity);
+                    SetHitPlayers(Constants.CameraShakeIntensity * 0.2f);
                     _groggyAttackTime = Constants.AttackMotionTime;
                 }
             }
@@ -823,7 +827,7 @@ public class GameManagerCS : MonoBehaviour
             // end groggy
             if(Constants.GroggyHitTime <= _groggyTime)
             {
-                _gameState = GameState.AttackHit;
+                SetGameState(GameState.AttackHit);
             }
 
             _groggyTime += Time.deltaTime;

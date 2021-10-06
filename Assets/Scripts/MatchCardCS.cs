@@ -54,7 +54,7 @@ public class MatchCardCS : MonoBehaviour
 
     Color GetColor(bool selected)
     {
-        return selected ? new Color(1, 1, 1, 1) : new Color(0.0f, 0.0f, 0.0f, 0.5f);
+        return selected ? new Color(1, 1, 1, 1) : new Color(0.4f, 0.4f, 0.4f, 1.0f);
     }
 
     void Awake()
@@ -102,10 +102,7 @@ public class MatchCardCS : MonoBehaviour
             color.b = Mathf.Lerp(goalColor.b, color.b, ratio);
             color.a = Mathf.Lerp(goalColor.a, color.a, ratio);
             GetComponent<Image>().color = color;
-
-            Color PortraitColor = Image_Portrait.GetComponent<Image>().color;
-            PortraitColor.a = color.a;
-            Image_Portrait.GetComponent<Image>().color = PortraitColor;
+            Image_Portrait.GetComponent<Image>().color = color;
         }
     }
 }

@@ -133,9 +133,9 @@ public class MainSceneManagerCS : MonoBehaviour
         _advertisementManager.ShowRewardedAd(rewardedSkinCard);
     }
 
-    public void ShowFightRewardedAd(int rewardScore)
+    public void ShowFightRewardedAd(int rewardScore, ResultCS resultScene)
     {
-        _advertisementManager.ShowFightRewardedAd(rewardScore);
+        _advertisementManager.ShowFightRewardedAd(rewardScore, resultScene);
     }
 
     public int GetScore()
