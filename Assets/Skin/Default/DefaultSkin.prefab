@@ -593,15 +593,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Player
-  Age: 25
-  Perfect: 0
-  Win: 0
-  Draw: 0
-  Lose: 0
-  Score: 0
   HP: 30
   Power: 10
-  Level: 1
   Speed: 1
   SkinID: 0
   Accounts: 1000

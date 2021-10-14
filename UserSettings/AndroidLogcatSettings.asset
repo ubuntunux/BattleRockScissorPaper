@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "ce12160cf0a758fe0c",
         "name": "com.EnuriSoft.BattleZone",
-        "processId": 30025,
+        "processId": 1804,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -288,6 +288,36 @@
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
             "processId": 30025,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 25196,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 20326,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 25659,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 31804,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 1804,
             "exited": false
         }
     ],

@@ -407,6 +407,11 @@ public class PlayerCS : MonoBehaviour
         Sprite_Dead = skin.Sprite_Dead;
         Sprite_Annoying = skin.Sprite_Annoying;
 
+        Snd_Attack.clip = skin.Snd_Attack.clip;;
+        Snd_AttackHit.clip = skin.Snd_AttackHit.clip;;
+        Snd_AttackVoice.clip = skin.Snd_AttackVoice.clip;;
+        Snd_AttackHitVoice.clip = skin.Snd_AttackHitVoice.clip;;
+        Snd_AttackDeadVoice.clip = skin.Snd_AttackDeadVoice.clip;;
         Snd_Name.clip = skin.Snd_Name.clip;
 
         LoadPlayerStat();
