@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "ce12160cf0a758fe0c",
         "name": "com.EnuriSoft.BattleZone",
-        "processId": 1804,
+        "processId": 15242,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -318,6 +318,18 @@
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
             "processId": 1804,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 29934,
+            "exited": false
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 15242,
             "exited": false
         }
     ],
