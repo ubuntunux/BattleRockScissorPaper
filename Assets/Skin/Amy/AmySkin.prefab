@@ -602,7 +602,7 @@ MonoBehaviour:
   Purchased: 1
   Sprite_Born: {fileID: 21300000, guid: 13dac12ae9de62eae92edf3e8e144969, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: 3517aff039d8211589bcb8496a1f5cc1, type: 3}
-  Sprite_PortraitLose: {fileID: 21300000, guid: 3517aff039d8211589bcb8496a1f5cc1, type: 3}
+  Sprite_PortraitLose: {fileID: 21300000, guid: ea94468b78bf8009bb400c95a7098dc9, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: 128d1dd72650c28e59cad369133ad994, type: 3}
   Sprite_Groggy: {fileID: 21300000, guid: 00cac55d47bede139b8df9b3106e6ff3, type: 3}
   Sprite_AttackRock: {fileID: 21300000, guid: e04baeca376c7ddbf8f274a0bf05d0ee, type: 3}
