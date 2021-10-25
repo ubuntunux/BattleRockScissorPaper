@@ -530,6 +530,7 @@ public class PlayerCS : MonoBehaviour
             float offsetX = _isPlayerA ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
             float offsetY = Constants.GroundPosition;
             transform.position = new Vector3(offsetX, offsetY, 0.0f);
+            transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 
             _lastAttackType = AttackType.None;
             _playerState = PlayerState.Dead;
