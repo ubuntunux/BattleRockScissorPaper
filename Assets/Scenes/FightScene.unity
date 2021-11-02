@@ -16875,6 +16875,8 @@ MonoBehaviour:
   - {fileID: 5144627951773092416, guid: b0048a0369cd73637b462705d7f6d974, type: 3}
   - {fileID: 5144627951773092416, guid: 968c4f31b24bd75f7ac4ba5f8023ac94, type: 3}
   - {fileID: 5144627951773092416, guid: 03c1f4d72af03acdd8e16b097a067103, type: 3}
+  - {fileID: 5144627951773092416, guid: 5fd786a8a6c5e80d593f824ee33e061a, type: 3}
+  - {fileID: 5144627951773092416, guid: a48128cfe5c7e59a98f6ce75f2974c66, type: 3}
 --- !u!4 &1061397221
 Transform:
   m_ObjectHideFlags: 0
@@ -21347,6 +21349,8 @@ MonoBehaviour:
   - {fileID: 5144627951773092416, guid: b0048a0369cd73637b462705d7f6d974, type: 3}
   - {fileID: 5144627951773092416, guid: 968c4f31b24bd75f7ac4ba5f8023ac94, type: 3}
   - {fileID: 5144627951773092416, guid: 03c1f4d72af03acdd8e16b097a067103, type: 3}
+  - {fileID: 5144627951773092416, guid: 5fd786a8a6c5e80d593f824ee33e061a, type: 3}
+  - {fileID: 5144627951773092416, guid: a48128cfe5c7e59a98f6ce75f2974c66, type: 3}
 --- !u!4 &1295620382
 Transform:
   m_ObjectHideFlags: 0
