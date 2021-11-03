@@ -263,7 +263,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: cbd4545814f1e14c585b38d12cfc8d3d, type: 3}
+  m_audioClip: {fileID: 8300000, guid: e59e36797ca2ff7b1a1fb8e895e58686, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -719,7 +719,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c52f1964bff72334085d3834fa008744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterName: Macho Man
+  _characterName: Roi
   HP: 30
   Power: 10
   Speed: 1.1
@@ -735,7 +735,6 @@ MonoBehaviour:
   Sprite_AttackRock: {fileID: 21300000, guid: 6ace81373c63a1b58bfd17a018eb703d, type: 3}
   Sprite_AttackScissor: {fileID: 21300000, guid: b950ec76f8b88ede59500e96e9d4df78, type: 3}
   Sprite_AttackPaper: {fileID: 21300000, guid: e3ae1a538fe3dd1c088dcf7b8bf02d94, type: 3}
-  Sprite_HitRock: {fileID: 21300000, guid: 4cabb6230d92c7010aeb4939c2f75e17, type: 3}
   Sprite_HitPaper: {fileID: 21300000, guid: 0283dfca9f86271b186fbdc5e30b2177, type: 3}
   Sprite_Win: {fileID: 21300000, guid: e46573e11fec4ffe19807a9d69011e38, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: 23977cd1453e810a0862a53789df32e2, type: 3}

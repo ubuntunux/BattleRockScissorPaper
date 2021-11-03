@@ -190,6 +190,8 @@ public class PlayerCS : MonoBehaviour
     public int Power = Constants.DefaultPower;
     public float Speed = Constants.DefaultSpeed;
     public PlayerStat _playerStat = new PlayerStat();
+    public float IdleMotionStep = 0.4f;
+    public float IdleMotionJump = 0.25f;
 
     // Skin
     public int SkinID = 0;
@@ -204,7 +206,7 @@ public class PlayerCS : MonoBehaviour
     public Sprite Sprite_AttackRock;
     public Sprite Sprite_AttackScissor;
     public Sprite Sprite_AttackPaper;
-    public Sprite Sprite_HitRock;
+    //public Sprite Sprite_HitRock;
     public Sprite Sprite_HitPaper;
     public Sprite Sprite_Win;
     public Sprite Sprite_Dead;
@@ -390,6 +392,8 @@ public class PlayerCS : MonoBehaviour
         HP = skin.HP;
         Power = skin.Power;
         Speed = skin.Speed;
+        IdleMotionStep = skin.IdleMotionStep;
+        IdleMotionJump = skin.IdleMotionJump;
         
         _characterName = skin._characterName;
         
@@ -401,7 +405,7 @@ public class PlayerCS : MonoBehaviour
         Sprite_AttackRock = skin.Sprite_AttackRock;
         Sprite_AttackScissor = skin.Sprite_AttackScissor;
         Sprite_AttackPaper = skin.Sprite_AttackPaper;
-        Sprite_HitRock = skin.Sprite_HitRock;
+        //Sprite_HitRock = skin.Sprite_HitRock;
         Sprite_HitPaper = skin.Sprite_HitPaper;
         Sprite_Win = skin.Sprite_Win;
         Sprite_Dead = skin.Sprite_Dead;
@@ -644,7 +648,8 @@ public class PlayerCS : MonoBehaviour
         // hit texture
         if(AttackType.None == _lastAttackType)
         {
-            SetTexture((AttackType.Paper == hitType) ? Sprite_HitPaper : Sprite_HitRock);
+            //SetTexture((AttackType.Paper == hitType) ? Sprite_HitPaper : Sprite_HitRock);
+            SetTexture(Sprite_HitPaper);
         }
 
         Layer_HP_Bar.GetComponent<UIBarCS>().setBar((float)_hp / _playerStat._hp);
@@ -709,15 +714,15 @@ public class PlayerCS : MonoBehaviour
         {
             float speed = _elapsedTime * _idleMotionSpeed;
             float offsetX = _isPlayerA ? (1.0f - Constants.SelectDistance) : (Constants.SelectDistance - 1.0f);
-            float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
+            float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * IdleMotionJump;
             transform.position = new Vector3(offsetX, offsetY, 0.0f);
         }
         else if(PlayerState.ReadyToRound == _playerState || PlayerState.AttackIdle == _playerState)
         {
             // update AttackIdle
             float speed = _elapsedTime * _idleMotionSpeed;
-            float offsetX = Mathf.Sin(speed) * 0.4f;
-            float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * 0.25f;
+            float offsetX = Mathf.Sin(speed) * IdleMotionStep;
+            float offsetY = Constants.GroundPosition + Mathf.Abs(Mathf.Cos(speed)) * IdleMotionJump;
 
             if(_isPlayerA)
             {
