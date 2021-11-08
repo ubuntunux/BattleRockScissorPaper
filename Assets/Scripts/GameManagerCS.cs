@@ -154,7 +154,7 @@ public class GameManagerCS : MonoBehaviour
         _recordBonus = 0;
         _recordTotalScore = 0;
 
-        for(int i=0; i < 3; ++i)
+        for(int i = 0; i < 3; ++i)
         {
             Layer_Wins.transform.Find("WinA" + i.ToString()).gameObject.SetActive(false);
             Layer_Wins.transform.Find("WinB" + i.ToString()).gameObject.SetActive(false);
@@ -438,8 +438,8 @@ public class GameManagerCS : MonoBehaviour
         PlayerA_CS.SetReadyToAttack();
         PlayerB_CS.SetReadyToAttack();
         
-        float newAttackTime = 2.0f / Random.Range(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);        
         // mix
+        float newAttackTime = 2.0f / Random.Range(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
         _initialAttackTimerTime = Mathf.Lerp(_initialAttackTimerTime, newAttackTime, 0.5f);
         _attackTimerTime = 0.0f;
         SetGameState(GameState.ReadyToAttack);
@@ -572,7 +572,7 @@ public class GameManagerCS : MonoBehaviour
 
     void SetPause(bool pause)
     {
-        if(GameState.RoundEnd == _gameState && false == _pause)
+        if(GameState.GameResult == _gameState)
         {
             return;
         }
