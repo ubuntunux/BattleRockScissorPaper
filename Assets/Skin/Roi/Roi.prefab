@@ -733,14 +733,14 @@ MonoBehaviour:
   Sprite_Portrait: {fileID: 21300000, guid: f162422c2634a0155aefa8e3b821d452, type: 3}
   Sprite_PortraitLose: {fileID: 21300000, guid: 96ed69e2089fabca9a4b9ebb0d9b622c, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: 3ecdab6c50688a5c38138bca557bc21e, type: 3}
-  Sprite_Groggy: {fileID: 21300000, guid: 3ecdab6c50688a5c38138bca557bc21e, type: 3}
+  Sprite_Groggy: {fileID: 21300000, guid: 67e38ff0d405e724fa6b779d40d23499, type: 3}
   Sprite_AttackRock: {fileID: 21300000, guid: db4f2942b61e35b47afbb53ba702fe8a, type: 3}
   Sprite_AttackScissor: {fileID: 21300000, guid: 6ce1b6b197cf7efc5a0cb21aa88c6107, type: 3}
   Sprite_AttackPaper: {fileID: 21300000, guid: ee67ba0b37d69cb1c89fccd7fe1cbf41, type: 3}
   Sprite_HitPaper: {fileID: 21300000, guid: 8b3609b47b43b0bd2ac012f18ace3d6e, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: ee67ba0b37d69cb1c89fccd7fe1cbf41, type: 3}
+  Sprite_Win: {fileID: 21300000, guid: d8519eb75e83cc707bfa51c4066f1189, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: ff97001cbf76194e18fac8d9016af96e, type: 3}
-  Sprite_Annoying: {fileID: 21300000, guid: 8b3609b47b43b0bd2ac012f18ace3d6e, type: 3}
+  Sprite_Annoying: {fileID: 21300000, guid: ae014feae6b020c6ea57d30a59824957, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
   Snd_AttackVoice: {fileID: 442064227764087990}
