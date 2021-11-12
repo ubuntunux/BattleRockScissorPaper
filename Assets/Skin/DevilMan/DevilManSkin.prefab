@@ -850,24 +850,24 @@ MonoBehaviour:
   HP: 36
   Power: 11
   Speed: 1.2
-  IdleMotionStep: 0
-  IdleMotionJump: 0
+  IdleMotionStep: 0.4
+  IdleMotionJump: 0.1
   SkinID: 3
   Accounts: 1000
   Advertisement: 3
   Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: af31f81045ff02190a6ce481b3c7f541, type: 3}
-  Sprite_PortraitLose: {fileID: 21300000, guid: af31f81045ff02190a6ce481b3c7f541, type: 3}
+  Sprite_PortraitLose: {fileID: 21300000, guid: fd537fe7f7f1bcfcb984d05f5eb98186, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: 98da63d64252a7bfda78f659f1f8e3a7, type: 3}
-  Sprite_Groggy: {fileID: 21300000, guid: baef8e69b4a303973b584848c4a7ee03, type: 3}
-  Sprite_AttackRock: {fileID: 21300000, guid: f3e8ed5b006e5aaeab1f8fca0e082bd2, type: 3}
-  Sprite_AttackScissor: {fileID: 21300000, guid: f1c5c5c62722c09a8856412ca28481b7, type: 3}
-  Sprite_AttackPaper: {fileID: 21300000, guid: 5b5f341e31c9d8ac8b9175b5b4b91180, type: 3}
-  Sprite_HitPaper: {fileID: 21300000, guid: 3ba1295a81def2ce4ac6922d1a44e0cb, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: 2ff5a25f79cedfd3582f0ac53a8b045e, type: 3}
-  Sprite_Dead: {fileID: 21300000, guid: bf39bd1cffc4f31e59217fc8e408ff60, type: 3}
-  Sprite_Annoying: {fileID: 21300000, guid: 2ff5a25f79cedfd3582f0ac53a8b045e, type: 3}
+  Sprite_Groggy: {fileID: 21300000, guid: 83e130d1783b8e43486a8907023987d7, type: 3}
+  Sprite_AttackRock: {fileID: 21300000, guid: 4f2068fac90c128339c15f7ab7c7e9b0, type: 3}
+  Sprite_AttackScissor: {fileID: 21300000, guid: e5e409490795382a7badf9dab161a155, type: 3}
+  Sprite_AttackPaper: {fileID: 21300000, guid: 2932a1606d81b49efaacba46ad59629a, type: 3}
+  Sprite_HitPaper: {fileID: 21300000, guid: 960bf8874704a89078d659cb6a80dc50, type: 3}
+  Sprite_Win: {fileID: 21300000, guid: 8504ee34c89de1bfab8e108af299e2d2, type: 3}
+  Sprite_Dead: {fileID: 21300000, guid: e8cf4c00205961b52b238fc43bb8d112, type: 3}
+  Sprite_Annoying: {fileID: 21300000, guid: ee46ae58374f16629bfef4b31aed81bc, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
   Snd_AttackVoice: {fileID: 4340831156474583041}
