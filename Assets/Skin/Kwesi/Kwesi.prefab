@@ -723,22 +723,24 @@ MonoBehaviour:
   HP: 30
   Power: 10
   Speed: 1.1
+  IdleMotionStep: 0.4
+  IdleMotionJump: 0.25
   SkinID: 7
   Accounts: 1000
   Advertisement: 3
   Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: 72534dde2a947c5d2b1eb9342199959f, type: 3}
-  Sprite_PortraitLose: {fileID: 21300000, guid: 72534dde2a947c5d2b1eb9342199959f, type: 3}
+  Sprite_PortraitLose: {fileID: 21300000, guid: 8a95619eca8bba93eb6e9a034b84d55a, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: 316f865b5433d0a578bd306cc9b57a3f, type: 3}
-  Sprite_Groggy: {fileID: 21300000, guid: 78f1b08019f5e6f6a9c14adcb07fa5cf, type: 3}
-  Sprite_AttackRock: {fileID: 21300000, guid: 6ace81373c63a1b58bfd17a018eb703d, type: 3}
-  Sprite_AttackScissor: {fileID: 21300000, guid: b950ec76f8b88ede59500e96e9d4df78, type: 3}
-  Sprite_AttackPaper: {fileID: 21300000, guid: e3ae1a538fe3dd1c088dcf7b8bf02d94, type: 3}
-  Sprite_HitPaper: {fileID: 21300000, guid: 0283dfca9f86271b186fbdc5e30b2177, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: e46573e11fec4ffe19807a9d69011e38, type: 3}
-  Sprite_Dead: {fileID: 21300000, guid: 23977cd1453e810a0862a53789df32e2, type: 3}
-  Sprite_Annoying: {fileID: 21300000, guid: e46573e11fec4ffe19807a9d69011e38, type: 3}
+  Sprite_Groggy: {fileID: 21300000, guid: e0b3d9c5cd029b0bd9a9b36dee312195, type: 3}
+  Sprite_AttackRock: {fileID: 21300000, guid: eae9ddef10737da93baa035e986476aa, type: 3}
+  Sprite_AttackScissor: {fileID: 21300000, guid: 5859d58b0b2d11b9390921bf672d1db6, type: 3}
+  Sprite_AttackPaper: {fileID: 21300000, guid: 883e68017b92021d5bafcdee6597baec, type: 3}
+  Sprite_HitPaper: {fileID: 21300000, guid: 98612ece9047425928df7cf97f003865, type: 3}
+  Sprite_Win: {fileID: 21300000, guid: 433947f383245ea2fb9dc154841fbb0a, type: 3}
+  Sprite_Dead: {fileID: 21300000, guid: 0f2092aa08fab1c1caa609cb1b14a52f, type: 3}
+  Sprite_Annoying: {fileID: 21300000, guid: ef8842699901c4c8e98b223714d3c4ee, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
   Snd_AttackVoice: {fileID: 442064227764087990}
