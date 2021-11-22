@@ -439,8 +439,13 @@ public class GameManagerCS : MonoBehaviour
         PlayerB_CS.SetReadyToAttack();
         
         // mix
-        float newAttackTime = 2.0f / Random.Range(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
-        _initialAttackTimerTime = Mathf.Lerp(_initialAttackTimerTime, newAttackTime, 0.5f);
+        //float newAttackTime = 2.0f / Random.Range(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
+        //_initialAttackTimerTime = Mathf.Lerp(_initialAttackTimerTime, newAttackTime, 0.5f);
+        float maxTime = 2.0f / Mathf.Min(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
+        float minTime = 2.0f / Mathf.Max(PlayerA_CS._playerStat._speed, PlayerB_CS._playerStat._speed);
+        float ratio = Mathf.Max(Mathf.Min(1.0f, _roundTimer / Constants.RoundTime));
+        _initialAttackTimerTime = Mathf.Lerp(minTime, maxTime, ratio * ratio);
+
         _attackTimerTime = 0.0f;
         SetGameState(GameState.ReadyToAttack);
     }
