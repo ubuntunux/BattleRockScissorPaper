@@ -731,16 +731,15 @@ MonoBehaviour:
   Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: f87f271cb8b1661a881cd6fd03e0c971, type: 3}
-  Sprite_PortraitLose: {fileID: 21300000, guid: f87f271cb8b1661a881cd6fd03e0c971, type: 3}
+  Sprite_PortraitLose: {fileID: 21300000, guid: 9b81d761e0e8b067ab79e3efa5a2e674, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_Groggy: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_AttackRock: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_AttackScissor: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_AttackPaper: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_HitPaper: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_Dead: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
-  Sprite_Annoying: {fileID: 21300000, guid: bd0b2900d7e3821db8d18c7d45ced6c3, type: 3}
+  Sprite_Groggy: {fileID: 21300000, guid: 35d05e2085397abd2845f681b522eb16, type: 3}
+  Sprite_AttackRock: {fileID: 21300000, guid: bf646cd7ccc7ce40e82c9d746aec5443, type: 3}
+  Sprite_AttackScissor: {fileID: 21300000, guid: e1fe4c8adb75d3c05889ceb6aef87b35, type: 3}
+  Sprite_AttackPaper: {fileID: 21300000, guid: f725e4dd9ee2428579074f0e87b24b2d, type: 3}
+  Sprite_HitPaper: {fileID: 21300000, guid: aa43b1b42c351ccac99c86ec0f6845e5, type: 3}
+  Sprite_Dead: {fileID: 21300000, guid: 4f7587ccaf2518a6f925d22ecab24b81, type: 3}
+  Sprite_Annoying: {fileID: 21300000, guid: 27beb568a4b3bdfa58f5fe36cd8a494f, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
   Snd_AttackHit: {fileID: 2681030564873363885}
   Snd_AttackVoice: {fileID: 442064227764087990}

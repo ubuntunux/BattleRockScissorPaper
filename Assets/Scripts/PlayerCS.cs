@@ -208,7 +208,7 @@ public class PlayerCS : MonoBehaviour
     public Sprite Sprite_AttackPaper;
     //public Sprite Sprite_HitRock;
     public Sprite Sprite_HitPaper;
-    public Sprite Sprite_Win;
+    //public Sprite Sprite_Win;
     public Sprite Sprite_Dead;
     public Sprite Sprite_Annoying = null;
 
@@ -407,7 +407,7 @@ public class PlayerCS : MonoBehaviour
         Sprite_AttackPaper = skin.Sprite_AttackPaper;
         //Sprite_HitRock = skin.Sprite_HitRock;
         Sprite_HitPaper = skin.Sprite_HitPaper;
-        Sprite_Win = skin.Sprite_Win;
+        //Sprite_Win = skin.Sprite_Win;
         Sprite_Dead = skin.Sprite_Dead;
         Sprite_Annoying = skin.Sprite_Annoying;
 
@@ -518,7 +518,8 @@ public class PlayerCS : MonoBehaviour
     public void SetWin()
     {
         _wins += 1;
-        SetTexture(Sprite_Win);
+        //SetTexture(Sprite_Win);
+        SetTexture(Sprite_Annoying);
         _playerState = PlayerState.Win;
     }
 
