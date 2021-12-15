@@ -74,7 +74,10 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         ChallengePlayerList.Clear();
         foreach(GameObject player in ChallengePlayers)
         {
-            ChallengePlayerList.Add(player);
+            if(Constants.DefaultSkinID != player.GetComponent<PlayerCS>()._playerStat._skinID)
+            {
+                ChallengePlayerList.Add(player);
+            }
         }
 
         ChallengePlayerList.Sort(delegate (GameObject a, GameObject b)
@@ -92,13 +95,20 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         
         PlayerSkinList.Sort(delegate (GameObject a, GameObject b)
         {
+            bool isDefaultSkinA = Constants.DefaultSkinID == a.GetComponent<PlayerCS>()._playerStat._skinID;
+            bool isDefaultSkinB = Constants.DefaultSkinID == b.GetComponent<PlayerCS>()._playerStat._skinID;
+            if(isDefaultSkinA != isDefaultSkinB)
+            {
+                return isDefaultSkinA ? -1 : 1;
+            }
+
             bool purchasedA = a.GetComponent<PlayerCS>()._playerStat._purchased;
             bool purchasedB = b.GetComponent<PlayerCS>()._playerStat._purchased;
-
             if(purchasedA != purchasedB)
             {
                 return purchasedA ? -1 : 1;
             }
+
             return 0;
         });
     }

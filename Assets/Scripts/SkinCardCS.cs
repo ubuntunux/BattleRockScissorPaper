@@ -96,12 +96,19 @@ public class SkinCardCS : MonoBehaviour
 
     public void ResetSkinCard()
     {
-        bool locked = !_skin._playerStat._purchased;
-        Btn_Accounts.SetActive(locked);
-        Btn_Advertisement.SetActive(locked && 0 < _skin.Advertisement);
-        Image_Lock.SetActive(locked);
+        _skin._playerStat.LoadPlayerStat();
 
-        Color color = locked ? new Color(0.4f, 0.4f, 0.4f, 1) : new Color(1, 1, 1, 1);
+        bool isDefaultSkin = Constants.DefaultSkinID == _skin._playerStat._skinID;
+        
+        bool purchased = _skin._playerStat._purchased || isDefaultSkin;
+        bool locked = !purchased && _skin._playerStat._locked;
+        Image_Lock.SetActive(locked);
+        
+        bool needPurchased = !locked && !purchased;
+        Btn_Accounts.SetActive(needPurchased);
+        Btn_Advertisement.SetActive(needPurchased && 0 < _skin.Advertisement);
+
+        Color color = (locked || needPurchased) ? new Color(0.4f, 0.4f, 0.4f, 1) : new Color(1, 1, 1, 1);
         Image_Portrait.GetComponent<Image>().color = color;
         Image_BG.GetComponent<Image>().color = color;
 

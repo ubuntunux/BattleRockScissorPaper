@@ -45,7 +45,7 @@ public class MatchCardManagerCS : MonoBehaviour
         bool unlocked = false;
         if(player.GetComponent<PlayerCS>().GetIsPlayer())
         {
-            unlocked = skin._playerStat._purchased;
+            unlocked = skin._playerStat._purchased || (Constants.DefaultSkinID == skin._playerStat._skinID);
         }
         else
         {

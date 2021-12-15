@@ -3,147 +3,51 @@
     "m_SelectedPackage": {
         "deviceId": "ce12160cf0a758fe0c",
         "name": "com.EnuriSoft.BattleZone",
-        "processId": 23685,
+        "processId": 5779,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
         {
             "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.sec.android.app.launcher",
-            "processId": 5301,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
-            "processId": 3647,
+            "processId": 12410,
             "exited": true
         },
         {
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
-            "processId": 6431,
+            "processId": 14566,
             "exited": true
         },
         {
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
-            "processId": 31012,
+            "processId": 13805,
             "exited": true
         },
         {
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
-            "processId": 32542,
+            "processId": 21086,
             "exited": true
         },
         {
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
-            "processId": 2591,
+            "processId": 23744,
             "exited": true
         },
         {
             "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 5056,
+            "name": "com.android.chrome",
+            "processId": 793,
             "exited": false
         },
         {
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
-            "processId": 6723,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 17030,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 20028,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 30483,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 32248,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 1312,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 32265,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 2097,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 17560,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 4948,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 29043,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 2792,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 9037,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 11105,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 12796,
-            "exited": false
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 23685,
+            "processId": 5779,
             "exited": false
         }
     ],

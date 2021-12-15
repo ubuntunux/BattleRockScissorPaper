@@ -722,7 +722,7 @@ MonoBehaviour:
   _characterName: KimYuna
   HP: 30
   Power: 10
-  Speed: 1.1
+  Speed: 1
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 6
@@ -738,7 +738,6 @@ MonoBehaviour:
   Sprite_AttackScissor: {fileID: 21300000, guid: 8cd58365fc51e94278627f353233395e, type: 3}
   Sprite_AttackPaper: {fileID: 21300000, guid: ed2173e814dafa7e5a511019c530e2fe, type: 3}
   Sprite_HitPaper: {fileID: 21300000, guid: 2b89348196ea1e68d8f56be03a5921da, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: 444e1d17cd7b535a3aa781f48825e633, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: bbe0099a60f69822da41d7e9c453bf7a, type: 3}
   Sprite_Annoying: {fileID: 21300000, guid: cdf1f9caac511f603a9787b20f75612d, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}

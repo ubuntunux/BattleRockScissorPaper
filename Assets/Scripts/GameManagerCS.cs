@@ -860,10 +860,14 @@ public class GameManagerCS : MonoBehaviour
                         _recordTotalScore += _recordBonus;
                         MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(_recordTotalScore);
                         
+                        // player win
                         if(PlayerB_CS.GetWin() < PlayerA_CS.GetWin())
                         {
                             PlayerA_CS._playerStat._win += 1;
                             PlayerB_CS._playerStat._lose += 1;
+
+                            // unlock skin card
+                            PlayerB_CS._playerStat.SetLocked(false);
 
                             // next stage
                             if(false == PlayerB_CS.GetIsPlayer())

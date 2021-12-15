@@ -6,7 +6,7 @@ public class Constants : MonoBehaviour
 {
     static public bool SHOW_ME_THE_MONEY = false;
 
-    static public int DefaultSkinID = 1;
+    static public int DefaultSkinID = 6;
     static public int DefaultAdvertiseNum = 3;
     static public int DefaultAccounts = 900;
     static public int DefaultHP = 30;

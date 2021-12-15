@@ -9,6 +9,7 @@ public class SystemValue : MonoBehaviour
     public static string PlayerBSkinIDKey = "PlayerBSkinID";
     public static string PlayerAdvertisementKey = "PlayerAdvertisement";
     public static string PlayerPurchasedKey = "PlayerPurchased";
+    public static string PlayerLockedKey = "PlayerLocked";
     public static string PlayerStatPerfectKey = "PlayerStatPerfect";
     public static string PlayerStatWinKey = "PlayerStatWin";
     public static string PlayerStatDrawKey = "PlayerStatDraw";

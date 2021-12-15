@@ -14,6 +14,7 @@ public class SkinManagerCS : MonoBehaviour
     public GameObject LayerSkinCardContents;
 
     GameObject _targetPlayer = null;
+    List<SkinCardCS> _skinCards = new List<SkinCardCS>();
 
     // Start is called before the first frame update
     void Start()
@@ -46,6 +47,13 @@ public class SkinManagerCS : MonoBehaviour
         
         PlayerB.SetActive(false == showPlayerA);
         PlayerB.GetComponent<PlayerCS>().SetStateIdle();
+
+        // Reset Skin Cards
+        int count = _skinCards.Count;
+        for(int i = 0; i < count; ++i)
+        {
+            _skinCards[i].ResetSkinCard();
+        }
     }
 
     public void SetTargetPlayer(GameObject targetPlayer)
@@ -57,7 +65,7 @@ public class SkinManagerCS : MonoBehaviour
     {
         int skinIndex = 0;
         int skinCount = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinCount();
-        int heightCount = 4;
+        int heightCount = 2;
         int widthCount = 4;
         float cardSizeX = 160.0f;
         float cardSizeY = 190.0f;
@@ -73,6 +81,8 @@ public class SkinManagerCS : MonoBehaviour
                 SkinCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(offsetX + x * cardSizeX, offsetY + y * -cardSizeY, 0.0f);
                 SkinCardEntry.transform.localScale = new Vector3(1, 1, 1);
                 SkinCardEntry.GetComponent<SkinCardCS>().SetSkinCard(GetComponent<SkinManagerCS>(), skin);
+
+                _skinCards.Add(SkinCardEntry.GetComponent<SkinCardCS>());
 
                 if(skinCount <= skinIndex)
                 {

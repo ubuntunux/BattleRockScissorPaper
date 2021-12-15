@@ -39,6 +39,7 @@ public class PlayerStat
     public int _skinID = Constants.DefaultSkinID;
     public int _advertisement = 0;
     public bool _purchased = false;
+    public bool _locked = true;
     public int _perfect = 0;
     public int _win = 0;
     public int _draw = 0;
@@ -56,6 +57,7 @@ public class PlayerStat
             + ", _skinID: " + _skinID.ToString()
             + ", _advertisement: " + _advertisement.ToString()
             + ", _purchased: " + _purchased.ToString()
+            + ", _locked: " + _locked.ToString()
             + ", _perfect: " + _perfect.ToString()
             + ", _win: " + _win.ToString()
             + ", _draw: " + _draw.ToString()
@@ -73,6 +75,7 @@ public class PlayerStat
         _skinID = player.SkinID;
         _advertisement = 0;
         _purchased = player.Purchased;
+        _locked = true;
         _perfect = 0;
         _win = 0;
         _draw = 0;
@@ -94,6 +97,7 @@ public class PlayerStat
 
         _advertisement = SystemValue.GetInt(skinID + SystemValue.PlayerAdvertisementKey, _advertisement);
         _purchased = SystemValue.GetBool(skinID + SystemValue.PlayerPurchasedKey, _purchased);
+        _locked = SystemValue.GetBool(skinID + SystemValue.PlayerLockedKey, _locked);        
         _perfect = SystemValue.GetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         _win = SystemValue.GetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         _draw = SystemValue.GetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
@@ -114,6 +118,7 @@ public class PlayerStat
 
         SystemValue.SetInt(skinID + SystemValue.PlayerAdvertisementKey, _advertisement);
         SystemValue.SetBool(skinID + SystemValue.PlayerPurchasedKey, _purchased);
+        SystemValue.SetBool(skinID + SystemValue.PlayerLockedKey, _locked);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatPerfectKey, _perfect);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatWinKey, _win);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatDrawKey, _draw);
@@ -153,6 +158,12 @@ public class PlayerStat
     {
         _purchased = purchased;
         SystemValue.SetBool(GetSkinIDString() + SystemValue.PlayerPurchasedKey, purchased);
+    }
+
+    public void SetLocked(bool locked)
+    {
+        _locked = locked;
+        SystemValue.SetBool(GetSkinIDString() + SystemValue.PlayerLockedKey, locked);
     }
 
     public void SetRank(int rank)
@@ -674,13 +685,13 @@ public class PlayerCS : MonoBehaviour
             if(GameManager.CheckGameState(GameState.Groggy))
             {
                 SetAttackHit(attackType);
+                _nextAttackMotionTime = Constants.AttackRandomTermMin + Constants.AttackRandomTermMin * Random.insideUnitCircle.x;
             }
             else
             {
                 SetAttack(attackType);
+                _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
             }
-
-            _nextAttackMotionTime = Mathf.Lerp(Constants.AttackRandomTermMin, Constants.AttackRandomTermMax, Random.insideUnitCircle.x);
         }
         _nextAttackMotionTime -= Time.deltaTime;
     }
