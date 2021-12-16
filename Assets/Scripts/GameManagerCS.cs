@@ -503,14 +503,28 @@ public class GameManagerCS : MonoBehaviour
         {
             CreateEffectAttackHit(attackerAttackType, attackee.GetIsPlayerA());
             bool isGroggyState = CheckGameState(GameState.Groggy);
-            bool isCritical = attacker.IsCriticalAttack() && false == isGroggyState;
+            bool isCritical = attacker.IsCriticalAttack() || isGroggyState;
             Vector3 imagePosition = Image_Bam.transform.localPosition;
             imagePosition.y = GetHitImagePositionY(attackerAttackType);
             Image_Bam.transform.localPosition = imagePosition;
             Image_Bam.SetActive(!isCritical);
             Image_Critical.transform.localPosition = imagePosition;
             Image_Critical.SetActive(isCritical);
-            int damage = isGroggyState ? attacker.GetPower() : attacker.GetPowerWithGuage();
+            int damage = 0;
+            if(isGroggyState)
+            {
+                damage = attacker.GetPower();
+                
+                if(isCritical)
+                {
+                    damage *= Constants.CriticalDamageRatio;
+                }
+            }
+            else
+            {
+                damage = attacker.GetPowerWithGuage();
+            }
+            
             attackee.SetDamage(damage, attackerAttackType);
 
             // first you need the RectTransform component of your canvas
@@ -855,7 +869,7 @@ public class GameManagerCS : MonoBehaviour
                     if(false == _isVersusScene)
                     {
                         // record score
-                        _recordTotalScore = _recordAttackPoint + _recordHP + _recordTimePoint;
+                        _recordTotalScore = _recordAttackPoint + _recordHP * 10 + _recordTimePoint;
                         _recordBonus = isPlayerA_Win ? (_recordTotalScore / 2) : 0;
                         _recordTotalScore += _recordBonus;
                         MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(_recordTotalScore);

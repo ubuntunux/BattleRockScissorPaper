@@ -729,7 +729,7 @@ MonoBehaviour:
   Accounts: 1000
   Advertisement: 3
   Purchased: 0
-  Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}
+  Sprite_Born: {fileID: 21300000, guid: 13dac12ae9de62eae92edf3e8e144969, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: 88c4bd870b3479903a48c1db6c69fec1, type: 3}
   Sprite_PortraitLose: {fileID: 21300000, guid: d7de44f436ebb29adbb80fecc59be434, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: fd622feb2787bcd04b8dfa4518d26943, type: 3}

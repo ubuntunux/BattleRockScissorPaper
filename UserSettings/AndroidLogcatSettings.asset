@@ -1,25 +1,13 @@
 {
     "m_SelectedDeviceId": "ce12160cf0a758fe0c",
     "m_SelectedPackage": {
-        "deviceId": "ce12160cf0a758fe0c",
-        "name": "com.EnuriSoft.BattleZone",
-        "processId": 5779,
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 12410,
-            "exited": true
-        },
-        {
-            "deviceId": "ce12160cf0a758fe0c",
-            "name": "com.EnuriSoft.BattleZone",
-            "processId": 14566,
-            "exited": true
-        },
         {
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
@@ -48,7 +36,13 @@
             "deviceId": "ce12160cf0a758fe0c",
             "name": "com.EnuriSoft.BattleZone",
             "processId": 5779,
-            "exited": false
+            "exited": true
+        },
+        {
+            "deviceId": "ce12160cf0a758fe0c",
+            "name": "com.EnuriSoft.BattleZone",
+            "processId": 21523,
+            "exited": true
         }
     ],
     "m_Tags": {

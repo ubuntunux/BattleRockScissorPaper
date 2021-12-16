@@ -38,9 +38,10 @@ public class Constants : MonoBehaviour
     static public float CameraShakeRandomTerm = 0.01f;
     static public float CameraShakeIntensity = 1.0f;
     static public float CriticalPowerGuage = 0.95f;
+    static public int CriticalDamageRatio = 2;
     static public float MinPowerGuage = 0.2f;
     static public int WarningHPDivide = 3;
     static public int GroggyHPDivide = 5;
-    static public int TimePoint = 10;
+    static public int TimePoint = 100;
     static public float TraningTime = 2.0f;
 }

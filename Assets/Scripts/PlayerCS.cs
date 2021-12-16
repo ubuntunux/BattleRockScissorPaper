@@ -297,7 +297,7 @@ public class PlayerCS : MonoBehaviour
         int damage = Mathf.Max(1, (int)Mathf.Ceil((float)_playerStat._power * powerGuage));
         if(Constants.CriticalPowerGuage <= powerGuage)
         {
-            damage *= 2;
+            damage *= Constants.CriticalDamageRatio;
         }
         return damage;
     }

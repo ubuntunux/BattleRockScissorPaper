@@ -596,11 +596,13 @@ MonoBehaviour:
   HP: 30
   Power: 10
   Speed: 1
+  IdleMotionStep: 0.4
+  IdleMotionJump: 0.25
   SkinID: 4
   Accounts: 1000
   Advertisement: 3
   Purchased: 0
-  Sprite_Born: {fileID: 21300000, guid: 13dac12ae9de62eae92edf3e8e144969, type: 3}
+  Sprite_Born: {fileID: 21300000, guid: 06afc0c35c97a42a8a1f8deb97db68d8, type: 3}
   Sprite_Portrait: {fileID: 21300000, guid: 3517aff039d8211589bcb8496a1f5cc1, type: 3}
   Sprite_PortraitLose: {fileID: 21300000, guid: ea94468b78bf8009bb400c95a7098dc9, type: 3}
   Sprite_Idle: {fileID: 21300000, guid: 128d1dd72650c28e59cad369133ad994, type: 3}
@@ -608,9 +610,7 @@ MonoBehaviour:
   Sprite_AttackRock: {fileID: 21300000, guid: e04baeca376c7ddbf8f274a0bf05d0ee, type: 3}
   Sprite_AttackScissor: {fileID: 21300000, guid: d26b4217227c4f24795d89a4c948212e, type: 3}
   Sprite_AttackPaper: {fileID: 21300000, guid: 00cac55d47bede139b8df9b3106e6ff3, type: 3}
-  Sprite_HitRock: {fileID: 21300000, guid: 0cd78e3ddf273c89bb7c03f98899beb6, type: 3}
   Sprite_HitPaper: {fileID: 21300000, guid: 8309075653dd9850c82366637fad8f23, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: 84fed7bf04e3aa871b12cb167d3dca65, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: 4713eb83342aa7049a394fad14a6d24b, type: 3}
   Sprite_Annoying: {fileID: 21300000, guid: a1e0842fb700a90bbbbe38c230c6af7d, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}
