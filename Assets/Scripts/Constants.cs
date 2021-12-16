@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
+    static public bool TEST_SELECT_CARD = false;
+    static public bool CALCULATE_RANK = false;
     static public bool SHOW_ME_THE_MONEY = false;
 
     static public int DefaultSkinID = 6;

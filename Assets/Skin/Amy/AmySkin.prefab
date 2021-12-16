@@ -593,9 +593,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Amy
-  HP: 30
-  Power: 10
-  Speed: 1
+  WIN: 15
+  DRAW: 3
+  LOSE: 5
+  RANK: 10
+  HP: 250
+  Power: 25
+  Speed: 2
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 4

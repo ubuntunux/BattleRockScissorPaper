@@ -77,13 +77,13 @@ public class PlayerStat
         _purchased = player.Purchased;
         _locked = true;
         _perfect = 0;
-        _win = 0;
-        _draw = 0;
-        _lose = 0;
+        _win = usePlayerStat ? 0 : player.WIN;
+        _draw = usePlayerStat ? 0 : player.DRAW;
+        _lose = usePlayerStat ? 0 : player.LOSE;
+        _rank = usePlayerStat ? 0 : player.RANK;
         _hp = usePlayerStat ? Constants.DefaultHP : player.HP;
         _power = usePlayerStat ? Constants.DefaultPower : player.Power;
-        _speed = usePlayerStat ? Constants.DefaultSpeed : player.Speed;
-        _rank = 0;
+        _speed = usePlayerStat ? Constants.DefaultSpeed : player.Speed;        
     }
 
     public string GetSkinIDString()
@@ -197,6 +197,10 @@ public class PlayerCS : MonoBehaviour
     int _wins = 0;
 
     // Stat
+    public int WIN = 0;
+    public int DRAW = 0;
+    public int LOSE = 0;
+    public int RANK = 0;
     public int HP = Constants.DefaultHP;
     public int Power = Constants.DefaultPower;
     public float Speed = Constants.DefaultSpeed;
@@ -400,6 +404,10 @@ public class PlayerCS : MonoBehaviour
         SkinID = skin.SkinID; 
 
         // player stat
+        WIN = skin.WIN;
+        DRAW = skin.DRAW;
+        LOSE = skin.LOSE;
+        RANK = skin.RANK;
         HP = skin.HP;
         Power = skin.Power;
         Speed = skin.Speed;
@@ -685,7 +693,7 @@ public class PlayerCS : MonoBehaviour
             if(GameManager.CheckGameState(GameState.Groggy))
             {
                 SetAttackHit(attackType);
-                _nextAttackMotionTime = Constants.AttackRandomTermMin + Constants.AttackRandomTermMin * Random.insideUnitCircle.x;
+                _nextAttackMotionTime = Constants.AttackRandomTermMin * Random.insideUnitCircle.x * 2.0f;
             }
             else
             {

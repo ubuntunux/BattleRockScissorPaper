@@ -720,9 +720,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Roi
-  HP: 30
-  Power: 10
-  Speed: 1.1
+  WIN: 21
+  DRAW: 1
+  LOSE: 0
+  RANK: 2
+  HP: 550
+  Power: 55
+  Speed: 4
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 5

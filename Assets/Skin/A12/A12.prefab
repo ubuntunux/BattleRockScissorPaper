@@ -720,9 +720,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: A12
-  HP: 100
-  Power: 40
-  Speed: 5
+  HP: 1000
+  Power: 100
+  Speed: 10
   IdleMotionStep: 0
   IdleMotionJump: 0
   SkinID: 8

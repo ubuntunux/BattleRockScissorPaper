@@ -847,9 +847,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Devil Man
-  HP: 36
-  Power: 11
-  Speed: 1.2
+  WIN: 20
+  DRAW: 2
+  LOSE: 5
+  RANK: 7
+  HP: 350
+  Power: 35
+  Speed: 3
   IdleMotionStep: 0.2
   IdleMotionJump: 0.1
   SkinID: 3

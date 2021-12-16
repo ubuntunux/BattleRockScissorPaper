@@ -36,7 +36,6 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public GameObject PlayerA_Info;
     public GameObject PlayerB_Info;
 
-    public GameObject[] ChallengePlayers;
     List<GameObject> ChallengePlayerList = new List<GameObject>();
     List<GameObject> PlayerSkinList = new List<GameObject>();
 
@@ -70,9 +69,11 @@ public class ChallengeSceneManagerCS : MonoBehaviour
 
     void SortPlayerList()
     {
+        GameObject[] playerSkins = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkins();
+        
         // sort challenge players
         ChallengePlayerList.Clear();
-        foreach(GameObject player in ChallengePlayers)
+        foreach(GameObject player in playerSkins)
         {
             if(Constants.DefaultSkinID != player.GetComponent<PlayerCS>()._playerStat._skinID)
             {
@@ -86,8 +87,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         });
 
         // sort player skins
-        PlayerSkinList.Clear();
-        GameObject[] playerSkins = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkins();
+        PlayerSkinList.Clear();        
         foreach(GameObject player in playerSkins)
         {
             PlayerSkinList.Add(player);
@@ -109,7 +109,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
                 return purchasedA ? -1 : 1;
             }
 
-            return 0;
+            return a.GetComponent<PlayerCS>()._playerStat._rank < b.GetComponent<PlayerCS>()._playerStat._rank ? 1 : -1;
         });
     }
 
@@ -163,6 +163,10 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     public void ClearChallengeInfo()
     {
         MainSceneManager.GetComponent<MainSceneManagerCS>().ClearPlayerStats();
+        if(Constants.CALCULATE_RANK)
+        {
+            CalcChallengePlayersRank();
+        }
         ResetChallengeScene();
     }
 
@@ -170,17 +174,11 @@ public class ChallengeSceneManagerCS : MonoBehaviour
     {
         int maxRoundCount = 3;
         int maxWinCount = 2;
-
-        List<GameObject> playerList = new List<GameObject>();
-        foreach(GameObject player in ChallengePlayers)
-        {
-            playerList.Add(player);
-        }
         
         // fight simulation
-        foreach(GameObject playerA in ChallengePlayers)
+        foreach(GameObject playerA in ChallengePlayerList)
         {
-            foreach(GameObject playerB in ChallengePlayers)
+            foreach(GameObject playerB in ChallengePlayerList)
             {
                 if(playerA != playerB)
                 {
@@ -254,7 +252,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         }
 
         // sort by win, draw, lose
-        playerList.Sort(delegate (GameObject a, GameObject b)
+        ChallengePlayerList.Sort(delegate (GameObject a, GameObject b)
         {
             PlayerStat playerStatA = a.GetComponent<PlayerCS>()._playerStat;
             PlayerStat playerStatB = b.GetComponent<PlayerCS>()._playerStat;
@@ -277,9 +275,10 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         });
 
         // set rank
-        for(int i = 0; i < playerList.Count; ++i)
+        for(int i = 0; i < ChallengePlayerList.Count; ++i)
         {
-            playerList[i].GetComponent<PlayerCS>()._playerStat.SetRank(i);
+            ChallengePlayerList[i].GetComponent<PlayerCS>()._playerStat.SetRank(i);
+            ChallengePlayerList[i].GetComponent<PlayerCS>()._playerStat.SavePlayerStat();
         }
     }
 

@@ -847,9 +847,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: X-Man
-  HP: 40
-  Power: 10
-  Speed: 1
+  WIN: 25
+  DRAW: 0
+  LOSE: 0
+  RANK: 1
+  HP: 700
+  Power: 80
+  Speed: 5
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 2

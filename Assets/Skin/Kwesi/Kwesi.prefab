@@ -720,9 +720,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Kwesi
-  HP: 30
-  Power: 10
-  Speed: 1.1
+  WIN: 5
+  DRAW: 2
+  LOSE: 3
+  RANK: 25
+  HP: 50
+  Power: 15
+  Speed: 1.5
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 7

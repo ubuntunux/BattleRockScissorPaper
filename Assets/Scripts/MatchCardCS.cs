@@ -64,13 +64,20 @@ public class MatchCardCS : MonoBehaviour
 
     public void OnClick()
     {
-        if(_unlocked)
+        if(Constants.TEST_SELECT_CARD)
         {
             _matchCardManager.SelectMatchCard(this);
         }
         else
         {
-            _matchCardManager.UnlockMatchCard(this);
+            if(_unlocked)
+            {
+                _matchCardManager.SelectMatchCard(this);
+            }
+            else
+            {
+                _matchCardManager.UnlockMatchCard(this);
+            }
         }
     }
 

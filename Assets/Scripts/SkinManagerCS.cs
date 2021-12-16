@@ -63,19 +63,40 @@ public class SkinManagerCS : MonoBehaviour
 
     public void AddSkinCards()
     {
-        int skinIndex = 0;
+        List<PlayerCS> skinList = new List<PlayerCS>();
         int skinCount = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinCount();
+        for(int i = 0; i < skinCount; ++i)
+        {
+            PlayerCS skin = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinByIndex(i);
+            skinList.Add(skin);
+        }
+
+        // sort by win, draw, lose
+        skinList.Sort(delegate (PlayerCS a, PlayerCS b)
+        {
+            PlayerStat playerStatA = a._playerStat;
+            PlayerStat playerStatB = b._playerStat;
+
+            if(Constants.DefaultSkinID == playerStatA._skinID || Constants.DefaultSkinID == playerStatB._skinID)
+            {
+                return Constants.DefaultSkinID == playerStatA._skinID ? -1 : 1;
+            }
+
+            return playerStatA._rank < playerStatB._rank ? 1 : -1;
+        });
+
         int heightCount = 2;
         int widthCount = 4;
         float cardSizeX = 160.0f;
         float cardSizeY = 190.0f;
         float offsetX = -240;
         float offsetY = 320;
+        int skinIndex = 0;
         for(int y = 0; y < heightCount; ++y)
         {
             for(int x = 0; x < widthCount; ++x)
             {
-                PlayerCS skin = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkinByIndex(skinIndex++);
+                PlayerCS skin = skinList[skinIndex++];
                 GameObject SkinCardEntry = (GameObject)GameObject.Instantiate(SkinCardPrefab);
                 SkinCardEntry.transform.SetParent(LayerSkinCardContents.transform);
                 SkinCardEntry.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(offsetX + x * cardSizeX, offsetY + y * -cardSizeY, 0.0f);

@@ -720,9 +720,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Macho Man
+  WIN: 10
+  DRAW: 5
+  LOSE: 45
+  RANK: 32
   HP: 30
   Power: 10
-  Speed: 1.1
+  Speed: 1
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 1
