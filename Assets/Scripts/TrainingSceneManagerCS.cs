@@ -14,8 +14,8 @@ enum TraningState
 
 public class TrainingSceneManagerCS : MonoBehaviour
 {
-    static int UpgradeStepHP = 2;
-    static int UpgradeStepPower = 1;
+    static int UpgradeStepHP = 10;
+    static int UpgradeStepPower = 2;
     static float UpgradeStepSpeed = 0.2f;
 
     public GameObject MainSceneManager;
@@ -140,7 +140,7 @@ public class TrainingSceneManagerCS : MonoBehaviour
     void ResetTrainingScene()
     {
         PlayerA.SetActive(true);
-        PlayerA.GetComponent<PlayerCS>().SetPlayerInfo(true, true);
+        PlayerA.GetComponent<PlayerCS>().SetPlayerInfo(true, true, false);
         PlayerA.GetComponent<PlayerCS>().SetAttackIdle();
         
         PlayerB.SetActive(false);

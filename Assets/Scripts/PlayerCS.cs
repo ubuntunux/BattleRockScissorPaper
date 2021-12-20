@@ -29,13 +29,15 @@ public class PlayerCreateInfo
     public string _name = "";
     public bool _isPlayer = false;
     public bool _usePlayerStat = false;
+    public bool _isVersusScene = false;
     public bool _isPlayerA = true;
     public PlayerCS _skin = null;
 }
 
 public class PlayerStat
 {
-    public bool _usePlayerStat = false;    
+    public bool _usePlayerStat = false;
+    public bool _isVersusScene = false;
     public int _skinID = Constants.DefaultSkinID;
     public int _advertisement = 0;
     public bool _purchased = false;
@@ -69,21 +71,22 @@ public class PlayerStat
         );
     }
 
-    public void InitializePlayerStat(PlayerCS player, bool usePlayerStat)
+    public void InitializePlayerStat(PlayerCS player, bool usePlayerStat, bool isVersusScene)
     {
         _usePlayerStat = usePlayerStat;
+        _isVersusScene = isVersusScene;
         _skinID = player.SkinID;
         _advertisement = 0;
         _purchased = player.Purchased;
-        _locked = true;
+        _locked = Constants.SHOW_ME_THE_MONEY ? false : false;
         _perfect = 0;
         _win = usePlayerStat ? 0 : player.WIN;
         _draw = usePlayerStat ? 0 : player.DRAW;
         _lose = usePlayerStat ? 0 : player.LOSE;
         _rank = usePlayerStat ? 0 : player.RANK;
-        _hp = usePlayerStat ? Constants.DefaultHP : player.HP;
-        _power = usePlayerStat ? Constants.DefaultPower : player.Power;
-        _speed = usePlayerStat ? Constants.DefaultSpeed : player.Speed;        
+        _hp = Constants.TEST ? 1 : ((isVersusScene || usePlayerStat) ? Constants.DefaultHP : player.HP);
+        _power = (isVersusScene || usePlayerStat || Constants.TEST) ? Constants.DefaultPower : player.Power;
+        _speed = (isVersusScene || usePlayerStat || Constants.TEST) ? Constants.DefaultSpeed : player.Speed;        
     }
 
     public string GetSkinIDString()
@@ -104,7 +107,7 @@ public class PlayerStat
         _lose = SystemValue.GetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         _rank = SystemValue.GetInt(skinID + SystemValue.PlayerStatRankKey, _rank);
         
-        if(_usePlayerStat)
+        if(_usePlayerStat && !_isVersusScene && !Constants.TEST)
         {
             _hp = SystemValue.GetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
             _power = SystemValue.GetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
@@ -125,7 +128,7 @@ public class PlayerStat
         SystemValue.SetInt(skinID + SystemValue.PlayerStatLoseKey, _lose);
         SystemValue.SetInt(skinID + SystemValue.PlayerStatRankKey, _rank);
 
-        if(_usePlayerStat)
+        if(_usePlayerStat && !_isVersusScene && !Constants.TEST)
         {
             SystemValue.SetInt(skinID + SystemValue.PlayerStatHPKey, _hp);
             SystemValue.SetInt(skinID + SystemValue.PlayerStatPowerKey, _power);
@@ -175,14 +178,13 @@ public class PlayerStat
 
 public class PlayerCS : MonoBehaviour
 {
-    static public bool USE_PLAYER_STAT = true;
-
     // properties
     public string _characterName;
     string _name;
     bool _pause = false;
     bool _isPlayer = false;
     bool _usePlayerStat = false;
+    bool _isVersusScene = false;
     bool _isPlayerA = false;
     PlayerState _playerState = PlayerState.None;
     AttackType _lastAttackType = AttackType.None;
@@ -331,6 +333,7 @@ public class PlayerCS : MonoBehaviour
         _name = playerCreateInfo._name;
         _isPlayer = playerCreateInfo._isPlayer;
         _usePlayerStat = playerCreateInfo._usePlayerStat;
+        _isVersusScene = playerCreateInfo._isVersusScene;
         _isPlayerA = playerCreateInfo._isPlayerA;
         _idleMotionSpeed = 7.0f + Random.insideUnitCircle.x * 0.5f;
         _elapsedTime = 0.0f;
@@ -357,7 +360,7 @@ public class PlayerCS : MonoBehaviour
 
     public void InitializePlayerStat()
     {
-        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ? _usePlayerStat : _isPlayer);
+        _playerStat.InitializePlayerStat(this, _usePlayerStat, _isVersusScene);
     }
 
     public void LoadPlayerStat()
@@ -371,11 +374,12 @@ public class PlayerCS : MonoBehaviour
         _playerStat.SavePlayerStat();
     }
 
-    public void SetPlayerInfo(bool isPlayer, bool usePlayerStat)
+    public void SetPlayerInfo(bool isPlayer, bool usePlayerStat, bool isVersusScene)
     {
         _isPlayer = isPlayer;
         _usePlayerStat = usePlayerStat;
-        _playerStat.InitializePlayerStat(this, USE_PLAYER_STAT ? usePlayerStat : isPlayer);
+        _isVersusScene = isVersusScene;
+        _playerStat.InitializePlayerStat(this, usePlayerStat, isVersusScene);
         _playerStat.LoadPlayerStat();
     }
 
@@ -388,12 +392,7 @@ public class PlayerCS : MonoBehaviour
     {
         return _isPlayer;
     }
-
-    public bool GetUsePlayerStat()
-    {
-        return _usePlayerStat;
-    }
-
+    
     public bool GetIsPlayerA()
     {
         return _isPlayerA;

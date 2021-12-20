@@ -724,13 +724,13 @@ MonoBehaviour:
   DRAW: 2
   LOSE: 3
   RANK: 25
-  HP: 50
+  HP: 100
   Power: 15
   Speed: 1.5
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 7
-  Accounts: 1000
+  Accounts: 10000
   Advertisement: 3
   Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: c7374659d79e7af8c95ff8cf22b0e244, type: 3}

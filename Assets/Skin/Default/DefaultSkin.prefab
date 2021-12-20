@@ -593,11 +593,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: Player
+  WIN: 0
+  DRAW: 0
+  LOSE: 0
+  RANK: 0
   HP: 30
   Power: 10
   Speed: 1
+  IdleMotionStep: 0.4
+  IdleMotionJump: 0.25
   SkinID: 0
-  Accounts: 1000
+  Accounts: 10000
   Advertisement: 3
   Purchased: 1
   Sprite_Born: {fileID: 21300000, guid: 13dac12ae9de62eae92edf3e8e144969, type: 3}
@@ -608,9 +614,7 @@ MonoBehaviour:
   Sprite_AttackRock: {fileID: 21300000, guid: 4ecbbd7fbf7d74c6484bbfb3c29f67d0, type: 3}
   Sprite_AttackScissor: {fileID: 21300000, guid: af8506722ebaac57b8a6773901e52792, type: 3}
   Sprite_AttackPaper: {fileID: 21300000, guid: 05dee1b0a836ce178a6c042159c7fba2, type: 3}
-  Sprite_HitRock: {fileID: 21300000, guid: a685b643e076cca2d9c485cfbb3a45bc, type: 3}
   Sprite_HitPaper: {fileID: 21300000, guid: a9adf7ad968caf8c6ac53acc6ebf4e01, type: 3}
-  Sprite_Win: {fileID: 21300000, guid: c4470fc0b8b554c2abd4c440db1157fb, type: 3}
   Sprite_Dead: {fileID: 21300000, guid: 41ea76061275c57d8bb5519737f5fadb, type: 3}
   Sprite_Annoying: {fileID: 21300000, guid: c4470fc0b8b554c2abd4c440db1157fb, type: 3}
   Snd_Attack: {fileID: 8749532651456040722}

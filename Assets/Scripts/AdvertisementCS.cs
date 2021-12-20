@@ -98,6 +98,7 @@ public class AdvertisementCS : MonoBehaviour
     {
         _showRewardedAd = true;
         _resultScene = resultScene;
+        _rewardScore = 0;
 
         if(null == _rewardedAd && null != _rewardedAdNext)
         {
@@ -184,7 +185,6 @@ public class AdvertisementCS : MonoBehaviour
     public void HandleRewardedAdClosed(object sender, EventArgs args)
     {
         _showRewardedAd = false;
-        _rewardScore = 0;
         _rewardSkinCard = null;
         _rewardedAd = null;
     }

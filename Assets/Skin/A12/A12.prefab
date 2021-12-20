@@ -720,13 +720,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: A12
+  WIN: 0
+  DRAW: 0
+  LOSE: 0
+  RANK: 0
   HP: 1000
   Power: 100
   Speed: 10
   IdleMotionStep: 0
   IdleMotionJump: 0
   SkinID: 8
-  Accounts: 1000
+  Accounts: 10000
   Advertisement: 3
   Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}

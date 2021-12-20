@@ -720,13 +720,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterName: KimYuna
+  WIN: 0
+  DRAW: 0
+  LOSE: 0
+  RANK: 0
   HP: 30
   Power: 10
   Speed: 1
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 6
-  Accounts: 1000
+  Accounts: 10000
   Advertisement: 3
   Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: 13dac12ae9de62eae92edf3e8e144969, type: 3}

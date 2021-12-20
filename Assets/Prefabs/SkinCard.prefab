@@ -463,7 +463,6 @@ MonoBehaviour:
   Image_BG: {fileID: 193219190828564751}
   Image_Born: {fileID: 8635369037244125645}
   Image_Lock: {fileID: 2507846796982137481}
-  Image_LockedMask: {fileID: 0}
   Text_Name: {fileID: 6832402006981252875}
   Btn_Accounts: {fileID: 7107914077686808524}
   Text_Accounts: {fileID: 4716625178192614197}
@@ -696,7 +695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5978575336669913870
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1129,8 +1128,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -36, y: -72}
-  m_SizeDelta: {x: 78, y: 35}
+  m_AnchoredPosition: {x: 0, y: -72}
+  m_SizeDelta: {x: 150, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5358903951753386776
 CanvasRenderer:

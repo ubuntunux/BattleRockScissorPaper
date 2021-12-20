@@ -117,7 +117,8 @@ public class FightTimerCS : MonoBehaviour
         // update power guage
         float guageSpeed = 2.0f;
         float gaugeRatio = (ratio * guageSpeed) % 1.0f;
-        gaugeRatio = Mathf.Pow(1.0f - Mathf.Abs(gaugeRatio * 2.0f - 1.0f), 1.5f);
+        float p = 1.0f; // 1.5f;
+        gaugeRatio = Mathf.Pow(1.0f - Mathf.Abs(gaugeRatio * 2.0f - 1.0f), p);
         LayerPowerGuageA.GetComponent<PowerGaugeCS>().SetPowerGauage(gaugeRatio);
         LayerPowerGuageB.GetComponent<PowerGaugeCS>().SetPowerGauage(gaugeRatio);
     }

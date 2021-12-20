@@ -129,11 +129,11 @@ public class ChallengeSceneManagerCS : MonoBehaviour
         Text_Title.GetComponent<TextMeshProUGUI>().text = isVersusScene ? "1P vs 2P" : "Challenge League";
 
         PlayerA.SetActive(true);
-        PlayerA.GetComponent<PlayerCS>().SetPlayerInfo(true, false == isVersusScene);
+        PlayerA.GetComponent<PlayerCS>().SetPlayerInfo(true, true, isVersusScene);
         PlayerA.GetComponent<PlayerCS>().SetStateIdle();
 
         PlayerB.SetActive(true);
-        PlayerB.GetComponent<PlayerCS>().SetPlayerInfo(isVersusScene, false);
+        PlayerB.GetComponent<PlayerCS>().SetPlayerInfo(isVersusScene, isVersusScene, isVersusScene);
         PlayerB.GetComponent<PlayerCS>().SetStateIdle();
 
         GameObject[] playerSkins = MainSceneManager.GetComponent<MainSceneManagerCS>().GetSkins();
@@ -393,6 +393,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
                 playerCreateInfoA._name = PlayerA.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoA._isPlayer = true;
                 playerCreateInfoA._usePlayerStat = !isVersusScene;
+                playerCreateInfoA._isVersusScene = isVersusScene;
                 playerCreateInfoA._isPlayerA = true;
                 playerCreateInfoA._skin = PlayerA.GetComponent<PlayerCS>();
                 
@@ -400,6 +401,7 @@ public class ChallengeSceneManagerCS : MonoBehaviour
                 playerCreateInfoB._name = PlayerB.GetComponent<PlayerCS>().GetCharacterName();
                 playerCreateInfoB._isPlayer = isVersusScene;
                 playerCreateInfoB._usePlayerStat = false;
+                playerCreateInfoB._isVersusScene = isVersusScene;
                 playerCreateInfoB._isPlayerA = false;
                 playerCreateInfoB._skin = PlayerB.GetComponent<PlayerCS>();
 

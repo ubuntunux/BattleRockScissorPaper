@@ -87,6 +87,7 @@ public class MainSceneManagerCS : MonoBehaviour
         playerCreateInfoA._name = "PlayerA";
         playerCreateInfoA._isPlayer = true;
         playerCreateInfoA._usePlayerStat = true;
+        playerCreateInfoA._isVersusScene = false;
         playerCreateInfoA._isPlayerA = true;
         PlayerA.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoA);
         PlayerA.SetActive(false);
@@ -95,6 +96,7 @@ public class MainSceneManagerCS : MonoBehaviour
         playerCreateInfoB._name = "PlayerB";
         playerCreateInfoB._isPlayer = false;
         playerCreateInfoA._usePlayerStat = false;
+        playerCreateInfoB._isVersusScene = false;
         playerCreateInfoB._isPlayerA = false;
         PlayerB.GetComponent<PlayerCS>().ResetPlayer(null, null, null, playerCreateInfoB);
         PlayerB.SetActive(false);

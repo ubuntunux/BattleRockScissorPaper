@@ -49,7 +49,7 @@ public class MatchCardManagerCS : MonoBehaviour
         else
         {
             int lastStage = SystemValue.GetInt(SystemValue.PlayerLastStageKey);
-            unlocked = stageIndex <= lastStage;
+            unlocked = Constants.SHOW_ME_THE_MONEY || (stageIndex <= lastStage);
         }
 
         GameObject LayerMatchCardEntry = (GameObject)GameObject.Instantiate(LayerMatchCardPrefab);

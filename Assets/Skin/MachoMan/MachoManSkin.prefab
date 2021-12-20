@@ -730,7 +730,7 @@ MonoBehaviour:
   IdleMotionStep: 0.4
   IdleMotionJump: 0.25
   SkinID: 1
-  Accounts: 1000
+  Accounts: 10000
   Advertisement: 3
   Purchased: 0
   Sprite_Born: {fileID: 21300000, guid: e2306a1d99e45784b9eb294402c2d307, type: 3}

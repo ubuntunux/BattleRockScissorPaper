@@ -106,7 +106,7 @@ public class SkinCardCS : MonoBehaviour
         
         bool needPurchased = !locked && !purchased;
         Btn_Accounts.SetActive(needPurchased);
-        Btn_Advertisement.SetActive(needPurchased && 0 < _skin.Advertisement);
+        //Btn_Advertisement.SetActive(needPurchased && 0 < _skin.Advertisement);
 
         Color color = (locked || needPurchased) ? new Color(0.4f, 0.4f, 0.4f, 1) : new Color(1, 1, 1, 1);
         Image_Portrait.GetComponent<Image>().color = color;

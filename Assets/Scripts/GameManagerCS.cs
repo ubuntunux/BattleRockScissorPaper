@@ -29,8 +29,8 @@ public class GameManagerCS : MonoBehaviour
     float _groggyAttackTime = 0.0f;
     float _roundEndTime = 0.0f;
     float _gameResultTime = 0.0f;
-    int _maxRoundCount = 3;
-    int _maxWinCount = 2;
+    int _maxRoundCount = Constants.TEST ? 2 : 3;
+    int _maxWinCount = Constants.TEST ? 1 : 2;
     int _round = 1;
     float _roundTimer = Constants.RoundTime;
     bool _pause = false;
@@ -46,6 +46,7 @@ public class GameManagerCS : MonoBehaviour
     int _recordHP = 0;
     int _recordBonus = 0;
     int _recordTotalScore = 0;
+    int _rewardedADScore = 0;
 
     //
     public GameObject MainCamera;
@@ -262,7 +263,8 @@ public class GameManagerCS : MonoBehaviour
         _showRewardAdvertisement = true;
         Btn_Advertisement.SetActive(false);
         LayerResult.GetComponent<ResultCS>().StopCoinSound();
-        MainSceneManager.GetComponent<MainSceneManagerCS>().ShowFightRewardedAd(_recordTotalScore, LayerResult.GetComponent<ResultCS>());
+        MainSceneManager.GetComponent<MainSceneManagerCS>().ShowFightRewardedAd(_rewardedADScore, LayerResult.GetComponent<ResultCS>());
+        _rewardedADScore = 0;
     }
 
     public void Btn_Back_OnClick()
@@ -614,6 +616,18 @@ public class GameManagerCS : MonoBehaviour
                     SetPause(!_pause);
                 }
             }
+            else if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                Btn_PlayerA_Scissor_OnClick();
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                Btn_PlayerA_Rock_OnClick();
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                Btn_PlayerA_Paper_OnClick();
+            }
         }
 
         if(_pause)
@@ -872,6 +886,7 @@ public class GameManagerCS : MonoBehaviour
                         _recordTotalScore = _recordAttackPoint + _recordHP * 10 + _recordTimePoint;
                         _recordBonus = isPlayerA_Win ? (_recordTotalScore / 2) : 0;
                         _recordTotalScore += _recordBonus;
+                        _rewardedADScore = _recordTotalScore;
                         MainSceneManager.GetComponent<MainSceneManagerCS>().AddScore(_recordTotalScore);
                         
                         // player win
